@@ -15,19 +15,22 @@ spi:
 
 # XPT2046 Touch Controller Configuration
 touchscreen:
+  id: cyd_touch
   platform: xpt2046
+  display: esp_display
   spi_id: touch
   cs_pin: GPIO33
   interrupt_pin: GPIO36
   update_interval: 50ms
   threshold: 400
   calibration:
-    x_min: 280
-    x_max: 3860
-    y_min: 280
-    y_max: 3860
+    x_min: 320
+    x_max: 3820
+    y_min: 330
+    y_max: 3750
   transform:
-    mirror_y: true
+    mirror_x: true
+    mirror_y: false
 
 # PWM Outputs for Backlight and RGB LED
 output:

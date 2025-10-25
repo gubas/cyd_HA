@@ -1,0 +1,353 @@
+# =============================================================================
+# ESP32 CYD — Touch Calibration/Diagnostics (Minimal)
+# =============================================================================
+# Purpose: Minimal firmware to validate touchscreen transform + calibration.
+# - Draws a 2x4 button grid identical to the main UI.
+# - Logs exact touch coordinates (x/y) and raw values (x_raw/y_raw).
+# - On each zone press, logs expected center and measured touch for quick alignment.
+#
+# Usage:
+# 1) Compile/flash this file instead of the main config.
+# 2) When the grid shows, tap near the center of each button in this order:
+#    Row 1: Left, Right; Row 2: Left, Right; Row 3: Left, Right; Row 4: Left, Right
+# 3) Copy the logs and share them to fine-tune transform/calibration if needed.
+# =============================================================================
+
+substitutions:
+  device_name: cyd_ha_calib
+  device_friendly_name: CYD Touch Calib
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_friendly_name}
+  comment: "CYD minimal touch diagnostics"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+  level: DEBUG
+
+api:
+  # No encryption for simplicity in diagnostics
+
+ota:
+  - platform: esphome
+    password: !secret cyd_ha_ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  power_save_mode: none
+  ap:
+    ssid: ${device_name}_AP
+    password: !secret cyd_ha_ap_password
+
+captive_portal:
+
+# -----------------------------------------------------------------------------
+# Hardware (SPI, Display, Touch, Backlight)
+# -----------------------------------------------------------------------------
+spi:
+  - id: tft
+    clk_pin: GPIO14
+    mosi_pin: GPIO13
+    miso_pin: GPIO12
+  - id: touch
+    clk_pin: GPIO25
+    mosi_pin: GPIO32
+    miso_pin: GPIO39
+
+output:
+  - platform: ledc
+    pin: GPIO21
+    id: backlight_pwm
+
+light:
+  - platform: monochromatic
+    output: backlight_pwm
+    name: Display Backlight
+    id: backlight
+    restore_mode: ALWAYS_ON
+
+display:
+  - platform: ili9xxx
+    id: esp_display
+    model: ili9342
+    spi_id: tft
+    cs_pin: GPIO15
+    dc_pin: GPIO2
+    invert_colors: true
+    color_palette: 8BIT
+    dimensions:
+      width: 320
+      height: 240
+    rotation: 90
+    update_interval: 1s
+    lambda: |-
+      // Grid constants (match main UI)
+      const int BW = 100;  // button width
+      const int BH = 65;   // button height
+      const int XS = 15;   // x_start
+      const int YS = 15;   // y_start
+      const int XP = 10;   // x_padding
+      const int YP = 10;   // y_padding
+
+      // Background
+      it.fill(Color::BLACK);
+
+      // Draw button grid and labels 1..8
+      int idx = 0;
+      for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 2; col++) {
+          int x = XS + col * (BW + XP);
+          int y = YS + row * (BH + YP);
+          idx++;
+          it.rectangle(x, y, BW, BH, Color::WHITE);
+          it.printf(x + BW/2, y + BH/2 - 8, id(buttons), TextAlign::CENTER, "BTN %d", idx);
+          // Draw center marker
+          it.filled_circle(x + BW/2, y + BH/2, 2, Color(128, 128, 128));
+        }
+      }
+
+      // Touch overlay: draw a blue dot where the driver thinks the finger is
+      auto touch_opt = id(cyd_touch)->get_touch();
+      if (touch_opt.has_value()) {
+        auto tp = touch_opt.value();
+        it.filled_circle(tp.x, tp.y, 4, Color(0, 0, 255));
+      }
+
+# Dummy font (reuses any existing font from common if present).
+# If build errors due to missing 'buttons' font, replace id(buttons) with built-in font as needed.
+font:
+  - file: "gfonts://Roboto@400"
+    id: buttons
+    size: 16
+
+# Touchscreen with current transform + calibration
+touchscreen:
+  id: cyd_touch
+  platform: xpt2046
+  display: esp_display
+  spi_id: touch
+  cs_pin: GPIO33
+  interrupt_pin: GPIO36
+  update_interval: 50ms
+  threshold: 400
+  calibration:
+    x_min: 320
+    x_max: 3820
+      y_min: 330
+      y_max: 3750
+  transform:
+    mirror_x: true
+      mirror_y: false
+  on_touch:
+    then:
+      - lambda: |-
+          ESP_LOGI("cal", "on_touch x=%d y=%d x_raw=%d y_raw=%d",
+                   (int)touch.x, (int)touch.y, (int)touch.x_raw, (int)touch.y_raw);
+  on_update:
+    then:
+      - lambda: |-
+          for (auto t : touches) {
+            if (t.state <= 2) {
+              ESP_LOGD("cal", "on_update id=%d x=%d y=%d x_raw=%d y_raw=%d",
+                       t.id, (int)t.x, (int)t.y, (int)t.x_raw, (int)t.y_raw);
+            }
+          }
+  on_release:
+    then:
+      - logger.log:
+          level: INFO
+          tag: cal
+          format: "on_release"
+
+# -----------------------------------------------------------------------------
+# Eight touch zones matching the grid
+# -----------------------------------------------------------------------------
+# Helper macro for logging BTN presses with expected centers.
+# For simplicity, compute centers per BTN inline.
+# BTN order (idx):
+# 1: r0,c0 | 2: r0,c1 | 3: r1,c0 | 4: r1,c1 | 5: r2,c0 | 6: r2,c1 | 7: r3,c0 | 8: r3,c1
+# Centers: cx = XS + col*(BW+XP) + BW/2; cy = YS + row*(BH+YP) + BH/2
+
+binary_sensor:
+  # BTN 1 (row 0, col 0)
+  - platform: touchscreen
+    name: BTN 1
+    x_min: 15
+    x_max: 115
+    y_min: 15
+    y_max: 80
+    on_press:
+      then:
+        - lambda: |-
+            auto t = id(cyd_touch)->get_touch();
+            const int BW=100, BH=65, XS=15, YS=15, XP=10, YP=10;
+            int cx = XS + 0*(BW+XP) + BW/2;
+            int cy = YS + 0*(BH+YP) + BH/2;
+            if (t) {
+              auto tp = t.value();
+              ESP_LOGI("cal", "BTN1 center=(%d,%d) touch=(%d,%d) raw=(%d,%d)",
+                       cx, cy, (int)tp.x, (int)tp.y, (int)tp.x_raw, (int)tp.y_raw);
+            } else {
+              ESP_LOGW("cal", "BTN1 pressed but no touchpoint available");
+            }
+
+  # BTN 2 (row 0, col 1)
+  - platform: touchscreen
+    name: BTN 2
+    x_min: 125
+    x_max: 225
+    y_min: 15
+    y_max: 80
+    on_press:
+      then:
+        - lambda: |-
+            auto t = id(cyd_touch)->get_touch();
+            const int BW=100, BH=65, XS=15, YS=15, XP=10, YP=10;
+            int cx = XS + 1*(BW+XP) + BW/2;
+            int cy = YS + 0*(BH+YP) + BH/2;
+            if (t) {
+              auto tp = t.value();
+              ESP_LOGI("cal", "BTN2 center=(%d,%d) touch=(%d,%d) raw=(%d,%d)",
+                       cx, cy, (int)tp.x, (int)tp.y, (int)tp.x_raw, (int)tp.y_raw);
+            } else {
+              ESP_LOGW("cal", "BTN2 pressed but no touchpoint available");
+            }
+
+  # BTN 3 (row 1, col 0)
+  - platform: touchscreen
+    name: BTN 3
+    x_min: 15
+    x_max: 115
+    y_min: 90
+    y_max: 155
+    on_press:
+      then:
+        - lambda: |-
+            auto t = id(cyd_touch)->get_touch();
+            const int BW=100, BH=65, XS=15, YS=15, XP=10, YP=10;
+            int cx = XS + 0*(BW+XP) + BW/2;
+            int cy = YS + 1*(BH+YP) + BH/2;
+            if (t) {
+              auto tp = t.value();
+              ESP_LOGI("cal", "BTN3 center=(%d,%d) touch=(%d,%d) raw=(%d,%d)",
+                       cx, cy, (int)tp.x, (int)tp.y, (int)tp.x_raw, (int)tp.y_raw);
+            } else {
+              ESP_LOGW("cal", "BTN3 pressed but no touchpoint available");
+            }
+
+  # BTN 4 (row 1, col 1)
+  - platform: touchscreen
+    name: BTN 4
+    x_min: 125
+    x_max: 225
+    y_min: 90
+    y_max: 155
+    on_press:
+      then:
+        - lambda: |-
+            auto t = id(cyd_touch)->get_touch();
+            const int BW=100, BH=65, XS=15, YS=15, XP=10, YP=10;
+            int cx = XS + 1*(BW+XP) + BW/2;
+            int cy = YS + 1*(BH+YP) + BH/2;
+            if (t) {
+              auto tp = t.value();
+              ESP_LOGI("cal", "BTN4 center=(%d,%d) touch=(%d,%d) raw=(%d,%d)",
+                       cx, cy, (int)tp.x, (int)tp.y, (int)tp.x_raw, (int)tp.y_raw);
+            } else {
+              ESP_LOGW("cal", "BTN4 pressed but no touchpoint available");
+            }
+
+  # BTN 5 (row 2, col 0)
+  - platform: touchscreen
+    name: BTN 5
+    x_min: 15
+    x_max: 115
+    y_min: 165
+    y_max: 230
+    on_press:
+      then:
+        - lambda: |-
+            auto t = id(cyd_touch)->get_touch();
+            const int BW=100, BH=65, XS=15, YS=15, XP=10, YP=10;
+            int cx = XS + 0*(BW+XP) + BW/2;
+            int cy = YS + 2*(BH+YP) + BH/2;
+            if (t) {
+              auto tp = t.value();
+              ESP_LOGI("cal", "BTN5 center=(%d,%d) touch=(%d,%d) raw=(%d,%d)",
+                       cx, cy, (int)tp.x, (int)tp.y, (int)tp.x_raw, (int)tp.y_raw);
+            } else {
+              ESP_LOGW("cal", "BTN5 pressed but no touchpoint available");
+            }
+
+  # BTN 6 (row 2, col 1)
+  - platform: touchscreen
+    name: BTN 6
+    x_min: 125
+    x_max: 225
+    y_min: 165
+    y_max: 230
+    on_press:
+      then:
+        - lambda: |-
+            auto t = id(cyd_touch)->get_touch();
+            const int BW=100, BH=65, XS=15, YS=15, XP=10, YP=10;
+            int cx = XS + 1*(BW+XP) + BW/2;
+            int cy = YS + 2*(BH+YP) + BH/2;
+            if (t) {
+              auto tp = t.value();
+              ESP_LOGI("cal", "BTN6 center=(%d,%d) touch=(%d,%d) raw=(%d,%d)",
+                       cx, cy, (int)tp.x, (int)tp.y, (int)tp.x_raw, (int)tp.y_raw);
+            } else {
+              ESP_LOGW("cal", "BTN6 pressed but no touchpoint available");
+            }
+
+  # BTN 7 (row 3, col 0)
+  - platform: touchscreen
+    name: BTN 7
+    x_min: 15
+    x_max: 115
+    y_min: 240
+    y_max: 305
+    on_press:
+      then:
+        - lambda: |-
+            auto t = id(cyd_touch)->get_touch();
+            const int BW=100, BH=65, XS=15, YS=15, XP=10, YP=10;
+            int cx = XS + 0*(BW+XP) + BW/2;
+            int cy = YS + 3*(BH+YP) + BH/2;
+            if (t) {
+              auto tp = t.value();
+              ESP_LOGI("cal", "BTN7 center=(%d,%d) touch=(%d,%d) raw=(%d,%d)",
+                       cx, cy, (int)tp.x, (int)tp.y, (int)tp.x_raw, (int)tp.y_raw);
+            } else {
+              ESP_LOGW("cal", "BTN7 pressed but no touchpoint available");
+            }
+
+  # BTN 8 (row 3, col 1)
+  - platform: touchscreen
+    name: BTN 8
+    x_min: 125
+    x_max: 225
+    y_min: 240
+    y_max: 305
+    on_press:
+      then:
+        - lambda: |-
+            auto t = id(cyd_touch)->get_touch();
+            const int BW=100, BH=65, XS=15, YS=15, XP=10, YP=10;
+            int cx = XS + 1*(BW+XP) + BW/2;
+            int cy = YS + 3*(BH+YP) + BH/2;
+            if (t) {
+              auto tp = t.value();
+              ESP_LOGI("cal", "BTN8 center=(%d,%d) touch=(%d,%d) raw=(%d,%d)",
+                       cx, cy, (int)tp.x, (int)tp.y, (int)tp.x_raw, (int)tp.y_raw);
+            } else {
+              ESP_LOGW("cal", "BTN8 pressed but no touchpoint available");
+            }
