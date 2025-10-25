@@ -1,0 +1,69 @@
+# Home Assistant Sensors Integration
+# Imports sensor data from Home Assistant entities
+
+# Numeric Sensors (Temperature, Humidity, Weather Probabilities)
+sensor:
+  - platform: homeassistant
+    id: temp_int
+    entity_id: $internal_temp_sensor
+    internal: true
+  - platform: homeassistant
+    id: hum_int
+    entity_id: $internal_humidity_sensor
+    internal: true
+  - platform: homeassistant
+    id: int2_temp
+    entity_id: $int2_temp_sensor
+    internal: true
+  - platform: homeassistant
+    id: int2_hum
+    entity_id: $int2_humidity_sensor
+    internal: true
+  - platform: homeassistant
+    id: temp_ext
+    entity_id: $outside_temp_sensor
+    internal: true
+  - platform: homeassistant
+    id: rainchance
+    entity_id: $rain_chance
+    internal: true
+  - platform: homeassistant
+    id: snowchance
+    entity_id: $snow_chance
+    internal: true
+  - platform: homeassistant
+    id: freezechance
+    entity_id: $freeze_chance
+    internal: true
+
+# Text Sensors (Entity States)
+text_sensor:
+  - platform: homeassistant
+    id: button1_entity_color
+    entity_id: $button1_entity
+    internal: true
+  - platform: homeassistant
+    id: button2_entity_color
+    entity_id: $button2_entity
+    internal: true
+  - platform: homeassistant
+    id: button3_entity_color
+    entity_id: $button3_entity
+    internal: true
+  - platform: homeassistant
+    id: button4_entity_color
+    entity_id: $button4_entity
+    internal: true
+  - platform: homeassistant
+    id: button5_entity_color
+    entity_id: $button5_entity
+    internal: true
+  - platform: homeassistant
+    id: button6_entity_color
+    entity_id: $button6_entity
+    internal: true
+  - platform: homeassistant
+    id: weather_state
+    name: "Current Weather Icon"
+    entity_id: $weather_entity
+    internal: true

@@ -1,0 +1,225 @@
+# Display Configuration with UI Rendering Logic
+# ILI9342 320x240 TFT Display with custom UI
+
+display:
+  - platform: ili9xxx
+    id: esp_display
+    model: ili9342
+    spi_id: tft
+    cs_pin: GPIO15
+    dc_pin: GPIO2
+    invert_colors: true
+    color_palette: 8BIT
+    dimensions:
+      width: 320
+      height: 240
+    rotation: 270
+    update_interval: 1s
+    lambda: |-
+      // Button Menu Page
+      if (id(show_return_page)) {
+        // Layout configuration
+        const int button_width = 100;
+        const int button_height = 65;
+        const int x_start = 15;
+        const int y_start = 15;
+        const int x_padding = 10;
+        const int y_padding = 10;
+
+        // Button labels
+        const char* button_texts[] = {
+          "Volets du bas",
+          "LumiereS",
+          "Volets du bas",
+          "Lampadaire",
+          "Volets du bas",
+          "3D Print",
+          "Habbit",
+          "Retour"
+        };
+
+        // Draw button grid (4 rows x 2 columns)
+        for (int row = 0; row < 4; row++) {
+          for (int col = 0; col < 2; col++) {
+            int button_index = row * 2 + col;
+            int x = x_start + col * (button_width + x_padding);
+            int y = y_start + row * (button_height + y_padding);
+            
+            // Draw button rectangle
+            it.rectangle(x, y, button_width, button_height, id(grey));
+            
+            // Center text (heuristic calculation)
+            int text_width = strlen(button_texts[button_index]) * 5.5; 
+            int text_height = 16; 
+            it.print(x + (button_width - text_width) / 2, 
+                     y + (button_height - text_height) / 2 + 20, 
+                     id(buttons), 
+                     button_texts[button_index]);
+          }
+        }
+
+        // Draw icons with state-based colors
+        // Button 1: Cover up icon
+        if (id(button1_entity_color).has_state() && id(button1_entity_color).state == "on") {
+          it.image(45, 20, id(up), id(blue));
+        } else {
+          it.image(45, 20, id(up), id(grey));
+        }
+
+        // Button 2: Meeting/light icon
+        if (id(button2_entity_color).has_state() && id(button2_entity_color).state != "off") {
+          it.image(155, 20, id(meeting), id(blue));
+        } else {
+          it.image(155, 20, id(meeting), id(grey));
+        }
+
+        // Button 3: Stop icon
+        if (id(button3_entity_color).has_state() && id(button3_entity_color).state == "docked") {
+          it.image(45, 95, id(stop), id(blue));
+        } else {
+          it.image(45, 95, id(stop), id(grey));
+        }
+
+        // Button 4: Lamp icon
+        if (id(button4_entity_color).has_state() && id(button4_entity_color).state == "on") {
+          it.image(155, 95, id(lampadaire), id(blue));
+        } else {
+          it.image(155, 95, id(lampadaire), id(grey));
+        }
+
+        // Button 5: Cover down icon
+        if (id(button5_entity_color).has_state() && id(button5_entity_color).state == "on") {
+          it.image(45, 170, id(down), id(blue));
+        } else {
+          it.image(45, 170, id(down), id(grey));
+        }
+
+        // Button 6: 3D printer icon
+        if (id(button6_entity_color).has_state() && id(button6_entity_color).state == "on") {
+          it.image(155, 170, id(printer3d), id(blue));
+        } else {
+          it.image(155, 170, id(printer3d), id(grey));
+        }
+
+        // Button 7 & 8: Static icons
+        it.image(45, 245, id(habbit), id(grey));
+        it.image(155, 245, id(back), id(grey));
+
+      } else {
+        // Main Home Screen
+        it.fill(id(black));
+        
+        // Display date
+        it.strftime(120, 60, id(date), TextAlign::CENTER, "%d/%m/%Y", id(esptime).now());
+
+        // Display time
+        it.strftime(120, 100, id(hour), TextAlign::CENTER, "%H:%M", id(esptime).now());
+
+        // Weather icon display with fallback
+        if (id(weather_state).has_state()) {
+          std::map<std::string, std::string> weather_icon_map = {
+            {"clear-night", "\U000F0594"},
+            {"cloudy", "\U000F0590"},
+            {"fog", "\U000F0591"},
+            {"hail", "\U000F0592"},
+            {"lightning", "\U000F0593"},
+            {"lightning-rainy", "\U000F067E"},
+            {"partlycloudy", "\U000F0595"},
+            {"pouring", "\U000F0596"},
+            {"rainy", "\U000F0597"},
+            {"snowy", "\U000F0598"},
+            {"snowy-rainy", "\U000F067F"},
+            {"sunny", "\U000F0599"},
+            {"windy", "\U000F059D"},
+            {"windy-variant", "\U000F059E"},
+          };
+          
+          // Safe lookup with fallback to sunny icon
+          auto weather_str = id(weather_state).state;
+          auto icon_it = weather_icon_map.find(weather_str);
+          if (icon_it != weather_icon_map.end()) {
+            it.printf(120, 180, id(fontmeteo), TextAlign::CENTER, icon_it->second.c_str());
+          } else {
+            // Fallback: display sunny icon if weather state unknown
+            it.printf(120, 180, id(fontmeteo), TextAlign::CENTER, "\U000F0599");
+          }
+        }
+
+        // Rotating information display (5 second intervals)
+        // Using millis() for precise timing instead of incremental counter
+        static uint32_t last_change_time = 0;
+        static int current_text_index = 0;
+        const uint32_t TEXT_INTERVAL_MS = 5000;  // 5 seconds
+        
+        uint32_t current_time = millis();
+        if (current_time - last_change_time >= TEXT_INTERVAL_MS) {
+          last_change_time = current_time;
+          current_text_index = (current_text_index + 1) % 4;
+        }
+
+        // Display information based on current index
+        if (current_text_index == 0) {
+          // Indoor Room 1: Temperature & Humidity
+          it.image(15, 260, id(hometemperature), id(blue));
+          it.print(70, 260, id(info), "Temperature");
+          if (id(temp_int).has_state()) {
+            it.printf(175, 260, id(info), "%.1f C", id(temp_int).state);
+          } else {
+            it.print(175, 260, id(info), "-- C");
+          }
+          it.print(70, 280, id(info), "Humidite");
+          if (id(hum_int).has_state()) {
+            it.printf(175, 280, id(info), "%.1f %%", id(hum_int).state);
+          } else {
+            it.print(175, 280, id(info), "-- %");
+          }
+
+        } else if (current_text_index == 1) {
+          // Indoor Room 2 (Kitchen): Temperature & Humidity
+          it.image(15, 260, id(kitchenroom), id(blue));
+          it.print(70, 260, id(info), "Temperature");
+          if (id(int2_temp).has_state()) {
+            it.printf(175, 260, id(info), "%.1f C", id(int2_temp).state);
+          } else {
+            it.print(175, 260, id(info), "-- C");
+          }
+          it.print(70, 280, id(info), "Humidite");
+          if (id(int2_hum).has_state()) {
+            it.printf(175, 280, id(info), "%.1f %%", id(int2_hum).state);
+          } else {
+            it.print(175, 280, id(info), "-- %");
+          }
+
+        } else if (current_text_index == 2) {
+          // Outdoor: Temperature & Rain Probability
+          it.image(15, 260, id(weather), id(blue));
+          it.print(70, 260, id(info), "Temperature");
+          if (id(temp_ext).has_state()) {
+            it.printf(175, 260, id(info), "%.1f C", id(temp_ext).state);
+          } else {
+            it.print(175, 260, id(info), "-- C");
+          }
+          it.print(70, 280, id(info), "Prob. Pluie");
+          if (id(rainchance).has_state()) {
+            it.printf(175, 280, id(info), "%.1f %%", id(rainchance).state);
+          } else {
+            it.print(175, 280, id(info), "-- %");
+          }
+
+        } else if (current_text_index == 3) {
+          // Winter Weather: Snow & Freeze Probability
+          it.image(15, 260, id(snow), id(blue));
+          it.print(70, 260, id(info), "Prob. Neige");
+          if (id(snowchance).has_state()) {
+            it.printf(175, 260, id(info), "%.0f %%", id(snowchance).state);
+          } else {
+            it.print(175, 260, id(info), "-- %");
+          }
+          it.print(70, 280, id(info), "Prob. Gel");
+          if (id(freezechance).has_state()) {
+            it.printf(175, 280, id(info), "%.0f %%", id(freezechance).state);
+          } else {
+            it.print(175, 280, id(info), "-- %");
+          }
+        }
+      }

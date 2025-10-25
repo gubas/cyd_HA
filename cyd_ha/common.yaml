@@ -1,0 +1,127 @@
+# Common UI Resources: Fonts, Colors, Images
+# This file contains all visual assets used by the display
+
+# Font Definitions
+font:
+  - file: "gfonts://Verdana"
+    id: date
+    size: 25
+  - file: "gfonts://Verdana"
+    id: hour
+    size: 60
+  - file: "gfonts://Verdana"
+    id: info
+    size: 15
+  - file: "gfonts://Verdana"
+    id: buttons
+    size: 11
+  - file: 'materialdesignicons-webfont.ttf'
+    id: fontmeteo
+    size: 70
+    glyphs:
+      - "\U000F0594" # clear-night
+      - "\U000F0590" # cloudy
+      - "\U000F0591" # fog
+      - "\U000F0592" # hail
+      - "\U000F0593" # lightning
+      - "\U000F067E" # lightning-rainy
+      - "\U000F0595" # partlycloudy
+      - "\U000F0596" # pouring
+      - "\U000F0597" # rainy
+      - "\U000F0598" # snowy
+      - "\U000F067F" # snowy-rainy
+      - "\U000F0599" # sunny
+      - "\U000F059D" # windy
+      - "\U000F059E" # windy-variant
+
+# Color Palette
+color:
+  - id: black
+    hex: '000000'
+  - id: blue
+    hex: '16afd9'
+  - id: grey
+    hex: '464646'
+
+# Icon Library (Material Design Icons)
+image:
+  - file: mdi:home-thermometer
+    id: hometemperature
+    resize: 40x40
+    type: BINARY
+  - file: mdi:weather-partly-cloudy
+    id: weather
+    resize: 40x40
+    type: BINARY
+  - file: mdi:finance
+    id: finance
+    resize: 40x40
+    type: BINARY
+  - file: mdi:heart-pulse
+    id: health
+    resize: 40x40
+    type: BINARY
+  - file: mdi:page-previous
+    id: back
+    resize: 40x40
+    type: BINARY
+  - file: mdi:fan
+    id: fan
+    resize: 40x40
+    type: BINARY
+  - file: mdi:thermostat
+    id: thermostat
+    resize: 40x40
+    type: BINARY
+  - file: mdi:robot-vacuum
+    id: vacuum
+    resize: 40x40
+    type: BINARY
+  - file: mdi:desk-lamp
+    id: deskicon
+    resize: 40x40
+    type: BINARY
+  - file: mdi:printer
+    id: printer
+    resize: 40x40
+    type: BINARY
+  - file: mdi:printer-3d-nozzle
+    id: printer3d
+    resize: 40x40
+    type: BINARY
+  - file: mdi:arrow-up-bold-outline
+    id: up
+    resize: 40x40
+    type: BINARY
+  - file: mdi:arrow-down-bold-outline
+    id: down
+    resize: 40x40
+    type: BINARY
+  - file: mdi:stop-circle-outline
+    id: stop
+    resize: 40x40
+    type: BINARY
+  - file: mdi:traffic-light
+    id: meeting
+    resize: 40x40
+    type: BINARY
+  - file: mdi:home-assistant
+    id: habbit
+    resize: 40x40
+    type: BINARY
+  - file: mdi:snowflake-alert
+    id: snow
+    resize: 40x40
+    type: BINARY
+  - file: mdi:desk
+    id: deskroom
+    resize: 40x40
+    type: BINARY
+  - file: mdi:countertop-outline    
+    id: kitchenroom
+    resize: 40x40
+    type: BINARY
+  - file: mdi:floor-lamp-outline
+    id: lampadaire
+    resize: 40x40
+    type: BINARY
