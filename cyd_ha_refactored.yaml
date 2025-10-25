@@ -1,0 +1,144 @@
+# =============================================================================
+# ESP32 CYD (Cheap Yellow Display) - Home Assistant Touch Panel
+# =============================================================================
+# 
+# Project: Smart Home Control Panel for ESP32-2432S028R
+# Device: 320x240 ILI9342 TFT Display with XPT2046 Touch Controller
+# Purpose: Provides a touchscreen interface to control Home Assistant entities
+#          and displays real-time sensor data (weather, temperature, humidity)
+#
+# Architecture:
+#   - Main configuration: cyd_ha_refactored.yaml (this file)
+#   - Secrets: secrets.yaml (WiFi, API keys, passwords)
+#   - UI Resources: cyd_ha/common.yaml (fonts, colors, icons)
+#   - Hardware: cyd_ha/hardware.yaml (SPI, touch, display, outputs)
+#   - Sensors: cyd_ha/sensors.yaml (Home Assistant integrations)
+#   - Controls: cyd_ha/buttons.yaml (touchscreen button definitions)
+#   - Display: cyd_ha/display.yaml (UI rendering logic)
+#
+# Author: Refactored for maintainability and security
+# Date: October 2025
+# =============================================================================
+
+# Substitutions - Customize these for your Home Assistant entities
+substitutions:
+  # Device Identity
+  device_name: cyd_ha
+  device_friendly_name: CYD HA
+
+  # Home Assistant Sensor Entities (Temperature & Humidity)
+  internal_temp_sensor: sensor.0xb4e3f9fffe277666_temperature
+  internal_humidity_sensor: sensor.0xb4e3f9fffe277666_humidity
+  int2_temp_sensor: sensor.0x00158d0002e96f44_temperature
+  int2_humidity_sensor: sensor.0x00158d0002e96f44_humidity
+  outside_temp_sensor: sensor.out_meteofrance_temperature
+
+  # Weather Entities
+  weather_entity: weather.macon
+  freeze_chance: sensor.macon_freeze_chance
+  snow_chance: sensor.macon_snow_chance
+  rain_chance: sensor.macon_rain_chance
+
+  # Button Configurations (Service & Entity Mappings)
+  button1_service: cover.open_cover
+  button1_entity: cover.volets_du_bas
+  button2_service: light.toggle
+  button2_entity: light.lumieres_salon_cuisine
+  button3_service: cover.stop_cover
+  button3_entity: cover.volets_du_bas
+  button4_service: light.toggle
+  button4_entity: light.0x842e14fffe2fb774
+  button5_service: cover.close_cover
+  button5_entity: cover.volets_du_bas
+  button6_service: switch.toggle
+  button6_entity: switch.powerprint
+
+# =============================================================================
+# Core ESPHome Configuration
+# =============================================================================
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_friendly_name}
+  comment: "ESP32 CYD Touch Panel for Home Assistant"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Logging Configuration
+logger:
+  level: INFO  # Options: NONE, ERROR, WARN, INFO, DEBUG, VERBOSE
+  logs:
+    sensor: WARN
+    text_sensor: WARN
+
+# Home Assistant API (encrypted connection)
+api:
+  encryption:
+    key: !secret cyd_ha_api_encryption_key
+  reboot_timeout: 15min
+
+# Over-The-Air Updates (secured with password)
+ota:
+  - platform: esphome
+    password: !secret cyd_ha_ota_password
+
+# WiFi Configuration (credentials stored in secrets.yaml)
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  
+  # Fast connection for better responsiveness
+  fast_connect: true
+  
+  # Power saving disabled for stable touch response
+  power_save_mode: none
+
+  # Fallback Access Point (if WiFi fails)
+  ap:
+    ssid: !secret cyd_ha_ap_ssid
+    password: !secret cyd_ha_ap_password
+
+# Captive Portal (for WiFi setup via fallback AP)
+captive_portal:
+
+# =============================================================================
+# Global Variables
+# =============================================================================
+
+globals:
+  - id: show_return_page
+    type: bool
+    restore_value: yes
+    initial_value: "false"
+
+# =============================================================================
+# Time Synchronization
+# =============================================================================
+
+# Fetch time from Home Assistant for display
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/Paris
+
+# =============================================================================
+# Modular Includes (organized configuration)
+# =============================================================================
+
+# UI Resources: Fonts, Colors, Icons
+<<: !include cyd_ha/common.yaml
+
+# Hardware: SPI, Touch, Display, Outputs, Lights
+<<: !include cyd_ha/hardware.yaml
+
+# Home Assistant Sensors Integration
+<<: !include cyd_ha/sensors.yaml
+
+# Touchscreen Button Definitions
+<<: !include cyd_ha/buttons.yaml
+
+# Display UI Rendering Logic
+<<: !include cyd_ha/display.yaml

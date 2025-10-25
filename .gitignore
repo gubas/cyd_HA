@@ -1,0 +1,42 @@
+# ESPHome Build Files
+.esphome/
+.pioenvs/
+.piolibdeps/
+
+# Secrets (DO NOT COMMIT)
+secrets.yaml
+
+# Backups
+*.backup
+*.bak
+*.old
+
+# Logs
+*.log
+
+# Fonts (can be re-downloaded)
+materialdesignicons-webfont.ttf
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Compiled binaries
+*.bin
+*.elf
+firmware*.bin
