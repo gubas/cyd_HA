@@ -1,178 +1,216 @@
-# Touchscreen Button Definitions
-# Each button is a touchscreen area with associated Home Assistant service call
+# Touchscreen Button Definitions (list format for inclusion under `binary_sensor:`)
 
-# Helper script to call Home Assistant service
-script:
-  - id: call_ha_service
-    parameters:
-      service_name: string
-      entity_id: string
+# Button 1: Top Left (e.g., Open Cover)
+- platform: touchscreen
+  name: Button 1
+  x_min: 15
+  x_max: 115
+  y_min: 15
+  y_max: 80
+  on_press:
     then:
-      - homeassistant.service:
-          service: !lambda 'return service_name;'
-          data:
-            entity_id: !lambda 'return entity_id;'
+      - logger.log:
+          level: INFO
+          tag: touch
+          format: "Button 1 pressed"
+      - if:
+          condition:
+            lambda: 'return !id(show_return_page);'
+          then:
+            - globals.set:
+                id: show_return_page
+                value: !lambda "return !id(show_return_page);"
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
+          else:
+            - homeassistant.service:
+                service: $button1_service
+                data:
+                  entity_id: $button1_entity
 
-# Button Touch Areas
-binary_sensor:
-  # Button 1: Top Left (e.g., Open Cover)
-  - platform: touchscreen
-    name: Button 1
-    x_min: 15
-    x_max: 115
-    y_min: 15
-    y_max: 80
-    on_press:
-      then:
-        - if:
-            condition:
-              lambda: 'return !id(show_return_page);'
-            then:
-              - globals.set:
-                  id: show_return_page
-                  value: !lambda "return !id(show_return_page);"
-            else:
-              - homeassistant.service:
-                  service: $button1_service
-                  data:
-                    entity_id: $button1_entity
+# Button 2: Top Right (e.g., Toggle Light)
+- platform: touchscreen
+  name: Button 2
+  x_min: 125
+  x_max: 225
+  y_min: 15
+  y_max: 80
+  on_press:
+    then:
+      - logger.log:
+          level: INFO
+          tag: touch
+          format: "Button 2 pressed"
+      - if:
+          condition:
+            lambda: 'return !id(show_return_page);'
+          then:
+            - globals.set:
+                id: show_return_page
+                value: !lambda "return !id(show_return_page);"
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
+          else:
+            - homeassistant.service:
+                service: $button2_service
+                data:
+                  entity_id: $button2_entity
 
-  # Button 2: Top Right (e.g., Toggle Light)
-  - platform: touchscreen
-    name: Button 2
-    x_min: 125
-    x_max: 325
-    y_min: 15
-    y_max: 80
-    on_press:
-      then:
-        - if:
-            condition:
-              lambda: 'return !id(show_return_page);'
-            then:
-              - globals.set:
-                  id: show_return_page
-                  value: !lambda "return !id(show_return_page);"
-            else:
-              - homeassistant.service:
-                  service: $button2_service
-                  data:
-                    entity_id: $button2_entity
+# Button 3: Middle Left (e.g., Stop Cover)
+- platform: touchscreen
+  name: Button 3
+  x_min: 15
+  x_max: 115
+  y_min: 90
+  y_max: 155
+  on_press:
+    then:
+      - logger.log:
+          level: INFO
+          tag: touch
+          format: "Button 3 pressed"
+      - if:
+          condition:
+            lambda: 'return !id(show_return_page);'
+          then:
+            - globals.set:
+                id: show_return_page
+                value: !lambda "return !id(show_return_page);"
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
+          else:
+            - homeassistant.service:
+                service: $button3_service
+                data:
+                  entity_id: $button3_entity
 
-  # Button 3: Middle Left (e.g., Stop Cover)
-  - platform: touchscreen
-    name: Button 3
-    x_min: 15
-    x_max: 115
-    y_min: 90
-    y_max: 155
-    on_press:
-      then:
-        - if:
-            condition:
-              lambda: 'return !id(show_return_page);'
-            then:
-              - globals.set:
-                  id: show_return_page
-                  value: !lambda "return !id(show_return_page);"
-            else:
-              - homeassistant.service:
-                  service: $button3_service
-                  data:
-                    entity_id: $button3_entity
+# Button 4: Middle Right (e.g., Toggle Lamp)
+- platform: touchscreen
+  name: Button 4
+  x_min: 125
+  x_max: 225
+  y_min: 90
+  y_max: 155
+  on_press:
+    then:
+      - logger.log:
+          level: INFO
+          tag: touch
+          format: "Button 4 pressed"
+      - if:
+          condition:
+            lambda: 'return !id(show_return_page);'
+          then:
+            - globals.set:
+                id: show_return_page
+                value: !lambda "return !id(show_return_page);"
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
+          else:
+            - homeassistant.service:
+                service: $button4_service
+                data:
+                  entity_id: $button4_entity
 
-  # Button 4: Middle Right (e.g., Toggle Lamp)
-  - platform: touchscreen
-    name: Button 4
-    x_min: 125
-    x_max: 325
-    y_min: 90
-    y_max: 155
-    on_press:
-      then:
-        - if:
-            condition:
-              lambda: 'return !id(show_return_page);'
-            then:
-              - globals.set:
-                  id: show_return_page
-                  value: !lambda "return !id(show_return_page);"
-            else:
-              - homeassistant.service:
-                  service: $button4_service
-                  data:
-                    entity_id: $button4_entity
+# Button 5: Bottom Left (e.g., Close Cover)
+- platform: touchscreen
+  name: Button 5
+  x_min: 15
+  x_max: 115
+  y_min: 165
+  y_max: 230
+  on_press:
+    then:
+      - logger.log:
+          level: INFO
+          tag: touch
+          format: "Button 5 pressed"
+      - if:
+          condition:
+            lambda: 'return !id(show_return_page);'
+          then:
+            - globals.set:
+                id: show_return_page
+                value: !lambda "return !id(show_return_page);"
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
+          else:
+            - homeassistant.service:
+                service: $button5_service
+                data:
+                  entity_id: $button5_entity
 
-  # Button 5: Bottom Left (e.g., Close Cover)
-  - platform: touchscreen
-    name: Button 5
-    x_min: 15
-    x_max: 115
-    y_min: 165
-    y_max: 230
-    on_press:
-      then:
-        - if:
-            condition:
-              lambda: 'return !id(show_return_page);'
-            then:
-              - globals.set:
-                  id: show_return_page
-                  value: !lambda "return !id(show_return_page);"
-            else:
-              - homeassistant.service:
-                  service: $button5_service
-                  data:
-                    entity_id: $button5_entity
+# Button 6: Bottom Middle (e.g., Toggle Switch)
+- platform: touchscreen
+  name: Button 6
+  x_min: 125
+  x_max: 225
+  y_min: 165
+  y_max: 230
+  on_press:
+    then:
+      - logger.log:
+          level: INFO
+          tag: touch
+          format: "Button 6 pressed"
+      - if:
+          condition:
+            lambda: 'return !id(show_return_page);'
+          then:
+            - globals.set:
+                id: show_return_page
+                value: !lambda "return !id(show_return_page);"
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
+          else:
+            - homeassistant.service:
+                service: $button6_service
+                data:
+                  entity_id: $button6_entity
 
-  # Button 6: Bottom Middle (e.g., Toggle Switch)
-  - platform: touchscreen
-    name: Button 6
-    x_min: 125
-    x_max: 325
-    y_min: 165
-    y_max: 230
-    on_press:
-      then:
-        - if:
-            condition:
-              lambda: 'return !id(show_return_page);'
-            then:
-              - globals.set:
-                  id: show_return_page
-                  value: !lambda "return !id(show_return_page);"
-            else:
-              - homeassistant.service:
-                  service: $button6_service
-                  data:
-                    entity_id: $button6_entity
+# Button 7: Lower Left (Navigation)
+- platform: touchscreen
+  name: Button 7
+  x_min: 15
+  x_max: 115
+  y_min: 240
+  y_max: 305
+  on_press:
+    then:
+      - logger.log:
+          level: INFO
+          tag: touch
+          format: "Button 7 pressed"
+      - if:
+          condition:
+            lambda: 'return !id(show_return_page);'
+          then:
+            - globals.set:
+                id: show_return_page
+                value: !lambda "return !id(show_return_page);"
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
 
-  # Button 7: Lower Left (Navigation)
-  - platform: touchscreen
-    name: Button 7
-    x_min: 15
-    x_max: 115
-    y_min: 240
-    y_max: 305
-    on_press:
-      then:
-        - if:
-            condition:
-              lambda: 'return !id(show_return_page);'
-            then:
-              - globals.set:
-                  id: show_return_page
-                  value: !lambda "return !id(show_return_page);"
-
-  # Button 8: Lower Right (Return/Back)
-  - platform: touchscreen
-    name: Button 8
-    x_min: 125
-    x_max: 325
-    y_min: 240
-    y_max: 305
-    on_press:
-      then:
-        - globals.set:
-            id: show_return_page
-            value: !lambda "return !id(show_return_page);"
+# Button 8: Lower Right (Return/Back)
+- platform: touchscreen
+  name: Button 8
+  x_min: 125
+  x_max: 225
+  y_min: 240
+  y_max: 305
+  on_press:
+    then:
+      - logger.log:
+          level: INFO
+          tag: touch
+          format: "Button 8 pressed"
+      - globals.set:
+          id: show_return_page
+          value: !lambda "return !id(show_return_page);"

@@ -113,6 +113,10 @@ globals:
     type: bool
     restore_value: yes
     initial_value: "false"
+  - id: menu_display_time
+    type: unsigned long
+    restore_value: no
+    initial_value: "0"
 
 # =============================================================================
 # Time Synchronization
@@ -123,6 +127,21 @@ time:
   - platform: homeassistant
     id: esptime
     timezone: Europe/Paris
+
+# =============================================================================
+# Auto-return to main screen after 30 seconds
+# =============================================================================
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (id(show_return_page)) {
+            // Check if 30 seconds have passed since menu was displayed
+            if (millis() - id(menu_display_time) >= 30000) {
+              id(show_return_page) = false;
+            }
+          }
 
 # =============================================================================
 # Modular Includes (organized configuration)
@@ -138,7 +157,7 @@ time:
 <<: !include cyd_ha/sensors.yaml
 
 # Touchscreen Button Definitions
-<<: !include cyd_ha/buttons.yaml
+binary_sensor: !include cyd_ha/buttons.yaml
 
 # Display UI Rendering Logic
 <<: !include cyd_ha/display.yaml

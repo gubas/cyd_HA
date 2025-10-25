@@ -13,7 +13,7 @@ display:
     dimensions:
       width: 320
       height: 240
-    rotation: 270
+    rotation: 90
     update_interval: 1s
     lambda: |-
       // Button Menu Page
@@ -104,6 +104,13 @@ display:
         // Button 7 & 8: Static icons
         it.image(45, 245, id(habbit), id(grey));
         it.image(155, 245, id(back), id(grey));
+
+        // Touch debug overlay: draw a small dot at the current touch point
+        auto touch_opt = id(cyd_touch)->get_touch();
+        if (touch_opt.has_value()) {
+          auto tp = touch_opt.value();
+          it.filled_circle(tp.x, tp.y, 4, id(blue));
+        }
 
       } else {
         // Main Home Screen
