@@ -6,12 +6,16 @@ Un panneau tactile intelligent pour contrôler Home Assistant à l'aide d'un ESP
 
 ## 📋 Fonctionnalités
 
-- **Écran principal** : Affichage de l'heure, de la date et des conditions météorologiques
-- **Capteurs rotatifs** : Affichage cyclique des données de température et d'humidité (intérieur/extérieur)
-- **Menu de contrôle** : 8 boutons tactiles configurables pour contrôler des entités Home Assistant
+- **Affichage multi-pages** : 3 écrans défilant automatiquement toutes les 8 secondes
+  - **Page Météo** : Conditions météo actuelles avec grande icône animée, température extérieure, pluie, vent, neige, gel et alertes Météo-France en temps réel (vigilance jaune/orange/rouge)
+  - **Page Capteurs** : Températures et humidité de 2 zones (Salon/Cuisine et Bureau)
+  - **Page Imprimante** : État BambuLab en temps réel (fichier, progression, températures buse/lit, temps restant)
+- **Menu de contrôle** : Accessible au toucher, 8 boutons tactiles configurables pour contrôler des entités Home Assistant (volets, lumières, imprimante 3D)
+- **En-tête global** : Nom du device et date/heure (JJ/MM HH:MM) sur toutes les pages
 - **Interface tactile responsive** : Détection précise avec calibration XPT2046
 - **Connexion sécurisée** : API chiffrée, OTA protégé par mot de passe
 - **Architecture modulaire** : Configuration organisée en fichiers séparés pour faciliter la maintenance
+- **Auto-retour** : Retour automatique au cycle d'affichage après 30s d'inactivité dans le menu
 
 ## 🛠️ Matériel requis
 
@@ -27,20 +31,15 @@ Un panneau tactile intelligent pour contrôler Home Assistant à l'aide d'un ESP
 ```
 cyd_HA/
 ├── cyd_ha_refactored.yaml   # ✅ Fichier principal (UTILISEZ CELUI-CI)
-├── cyd_ha/                  # � Sous-dossier modules
+├── cyd_ha/                  # 📂 Sous-dossier modules
 │   ├── common.yaml          # 🎨 Ressources UI (fonts, colors, icons)
 │   ├── hardware.yaml        # ⚙️ Configuration matérielle (SPI, touch, outputs)
 │   ├── sensors.yaml         # 📊 Intégration capteurs Home Assistant
 │   ├── buttons.yaml         # 🔘 Définitions des zones tactiles
-│   └── display.yaml         # 🖥️ Logique de rendu UI
+│   └── display_pages.yaml   # 🖥️ Logique de rendu UI multi-pages
 ├── secrets.yaml             # 🔐 Credentials (partagé entre projets ESPHome)
 ├── secrets.yaml.example     # 📄 Template de secrets
-├── deploy.ps1               # ⚡ Script déploiement PowerShell
-├── SECRETS_GUIDE.md         # 🔐 Guide secrets partagés
-├── INSTALLATION.md          # 🚀 Guide d'installation
-├── ARCHITECTURE.md          # 🏗️ Architecture technique
-├── CHECKLIST.md             # ☑️ Checklist déploiement
-├── CHANGELOG.md             # 📝 Changements
+├── materialdesignicons-webfont.ttf  # � Police d'icônes météo
 └── README.md                # 📖 Documentation
 ```
 
@@ -85,8 +84,17 @@ cyd_ha_ap_password: "CHANGEZ_MOI_12345"
 ```yaml
 substitutions:
   # Capteurs de température/humidité
-  internal_temp_sensor: sensor.votre_capteur_temp
-  internal_humidity_sensor: sensor.votre_capteur_humidity
+  internal_temp_sensor: sensor.votre_capteur_temp_salon
+  internal_humidity_sensor: sensor.votre_capteur_humidity_salon
+  int2_temp_sensor: sensor.votre_capteur_temp_bureau
+  int2_humidity_sensor: sensor.votre_capteur_humidity_bureau
+  outside_temp_sensor: sensor.votre_capteur_temp_exterieur
+  
+  # Météo
+  weather_entity: weather.votre_ville
+  freeze_chance: sensor.votre_ville_freeze_chance
+  snow_chance: sensor.votre_ville_snow_chance
+  rain_chance: sensor.votre_ville_rain_chance
   
   # Entités contrôlées par les boutons
   button1_service: cover.open_cover
@@ -96,31 +104,8 @@ substitutions:
 
 #### c) Télécharger la font Material Design Icons
 
-```powershell
-# PowerShell
-Invoke-WebRequest -Uri "https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf" -OutFile "materialdesignicons-webfont.ttf"
-```
-
 Ou téléchargez manuellement : [MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf)
 
-### 3. Compilation et flash
-
-#### Première installation (via USB)
-
-```powershell
-# Valider la configuration
-esphome config cyd_ha_refactored.yaml
-
-# Compiler et flasher via USB
-esphome run cyd_ha_refactored.yaml
-```
-
-#### Mises à jour ultérieures (OTA sans fil)
-
-```powershell
-# Flash OTA (après première installation USB)
-esphome run cyd_ha_refactored.yaml --device cyd_ha.local
-```
 
 ## 🎨 Personnalisation
 
@@ -175,15 +160,6 @@ touchscreen:
     y_max: 3860
 ```
 
-### API encryption key invalide
-
-Générez une nouvelle clé :
-
-```powershell
-esphome config cyd_ha_refactored.yaml
-# La clé sera générée automatiquement si absente
-```
-
 ### Capteurs affichent "--"
 
 - Vérifiez que les `entity_id` dans `substitutions` correspondent aux entités Home Assistant
@@ -196,11 +172,37 @@ esphome config cyd_ha_refactored.yaml
 ```
 Home Assistant API
         ↓
-  cyd_ha/sensors.yaml (import entités)
+  cyd_ha/sensors.yaml (import entités: météo, capteurs, imprimante, alertes)
         ↓
-  cyd_ha/display.yaml (logique rendering)
+  cyd_ha/display_pages.yaml (logique rendering multi-pages avec auto-cycle 8s)
         ↓
-    ESP32 Display (ILI9342)
+    ESP32 Display (ILI9342 - 320x240, rotation 90°)
+```
+
+### Pages et navigation
+
+```
+3 Pages en cycle automatique (8s):
+┌─────────────────────────────────────┐
+│ Page 0: Météo                       │
+│  - Grande icône météo (MDI)         │
+│  - Alertes Météo-France (🔴🟠🟡)    │
+│  - Temp/Pluie/Vent/Neige/Gel        │
+│  - Icônes 20x20 alignées            │
+├─────────────────────────────────────┤
+│ Page 1: Capteurs Maison             │
+│  - Salon/Cuisine (temp + humidité)  │
+│  - Bureau (temp + humidité)         │
+│  - Cartes avec icônes               │
+├─────────────────────────────────────┤
+│ Page 2: Imprimante BambuLab         │
+│  - Nom fichier (tronqué si > 26c)   │
+│  - Barre progression (sans %)       │
+│  - État / Temps restant / Fin       │
+│  - Températures buse/lit            │
+└─────────────────────────────────────┘
+
+Touch écran → Menu 8 boutons (30s timeout)
 ```
 
 ### Gestion tactile
@@ -237,6 +239,26 @@ Touch XPT2046
 - `update_interval: 1s` pour affichage fluide
 
 ## 📝 Changelog
+
+### v2.1 (Octobre 2025) - Interface multi-pages et alertes météo
+
+- 🔄 **3 pages auto-cycliques** (8s) : Météo / Capteurs / Imprimante 3D
+- 🌤️ **Page météo améliorée** :
+  - Grande icône météo avec 14 conditions (Material Design Icons)
+  - Alertes Météo-France en temps réel (Vent/Pluie/Orages/Neige/Inondation) avec niveaux (Jaune/Orange/Rouge)
+  - Affichage compact avec icônes 20x20 alignées : température ext., pluie, vent, neige, gel
+  - Capteur vitesse du vent depuis attribut weather entity
+- 🏠 **Page capteurs** : 2 zones (Salon/Cuisine + Bureau) avec température et humidité
+- 🖨️ **Page imprimante BambuLab** :
+  - Nom fichier avec troncature intelligente
+  - Barre de progression sans texte (clean)
+  - État, temps restant, heure de fin
+  - Températures buse/lit (actuelle/cible)
+- 📱 **En-tête global** : Device name + date/heure (JJ/MM HH:MM) sur toutes les pages
+- 🎯 **Indicateur de page** : 3 points en bas (• • •) avec mise en évidence page active
+- ⏱️ **Auto-retour menu** : 30s timeout vers cycle automatique
+- 🎨 **Alignement parfait** : Icônes et textes centrés verticalement avec `TextAlign::CENTER_LEFT`
+- 🛠️ **Optimisations** : Buffers statiques, pas d'allocation dynamique dans lambda
 
 ### v2.0 (Octobre 2025) - Refactorisation complète
 
