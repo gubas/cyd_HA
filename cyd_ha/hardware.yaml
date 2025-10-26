@@ -22,7 +22,7 @@ touchscreen:
   cs_pin: GPIO33
   interrupt_pin: GPIO36
   update_interval: 50ms
-  threshold: 400
+  threshold: 800
   calibration:
     x_min: 320
     x_max: 3820
