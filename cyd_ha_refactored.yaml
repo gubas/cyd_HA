@@ -29,8 +29,8 @@ substitutions:
   # Home Assistant Sensor Entities (Temperature & Humidity)
   internal_temp_sensor: sensor.0xb4e3f9fffe277666_temperature
   internal_humidity_sensor: sensor.0xb4e3f9fffe277666_humidity
-  int2_temp_sensor: sensor.0x00158d0002e96f44_temperature
-  int2_humidity_sensor: sensor.0x00158d0002e96f44_humidity
+  int2_temp_sensor: sensor.0xa4c138d73acf9da2_temperature
+  int2_humidity_sensor: sensor.0xa4c138d73acf9da2_humidity
   outside_temp_sensor: sensor.out_meteofrance_temperature
 
   # Weather Entities
@@ -111,11 +111,15 @@ captive_portal:
 globals:
   - id: show_return_page
     type: bool
-    restore_value: yes
+    restore_value: no
     initial_value: "false"
   - id: menu_display_time
     type: unsigned long
     restore_value: no
+    initial_value: "0"
+  - id: current_page
+    type: int
+    restore_value: yes
     initial_value: "0"
 
 # =============================================================================
@@ -159,5 +163,5 @@ interval:
 # Touchscreen Button Definitions
 binary_sensor: !include cyd_ha/buttons.yaml
 
-# Display UI Rendering Logic
-<<: !include cyd_ha/display.yaml
+# Display UI Rendering Logic (menu classique + pages défilantes)
+<<: !include cyd_ha/display_pages.yaml

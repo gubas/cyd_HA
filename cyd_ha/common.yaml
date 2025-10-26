@@ -6,15 +6,19 @@ font:
   - file: "gfonts://Verdana"
     id: date
     size: 25
+    glyphs: &latin_glyphs " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,;:!?+-/%°()[]'\"&|àâäçèéêëîïôöùûüÿÂÄÇÈÉÊËÎÏÔÖÙÛÜŸ—"
   - file: "gfonts://Verdana"
     id: hour
     size: 60
+    glyphs: *latin_glyphs
   - file: "gfonts://Verdana"
     id: info
     size: 15
+    glyphs: *latin_glyphs
   - file: "gfonts://Verdana"
     id: buttons
     size: 11
+    glyphs: *latin_glyphs
   - file: 'materialdesignicons-webfont.ttf'
     id: fontmeteo
     size: 70
@@ -48,6 +52,26 @@ image:
   - file: mdi:home-thermometer
     id: hometemperature
     resize: 40x40
+    type: BINARY
+  - file: mdi:thermometer
+    id: temp_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:umbrella
+    id: umbrella
+    resize: 20x20
+    type: BINARY
+  - file: mdi:weather-windy
+    id: windy
+    resize: 20x20
+    type: BINARY
+  - file: mdi:snowflake
+    id: snow_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:thermometer-low
+    id: freeze_small
+    resize: 20x20
     type: BINARY
   - file: mdi:weather-partly-cloudy
     id: weather

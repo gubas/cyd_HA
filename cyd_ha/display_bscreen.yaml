@@ -1,0 +1,141 @@
+# Display with 1 global screen (Weather) + menu, no auto-cycle, no edge nav
+# Pour test progressif, inclure ce fichier à la place de display.yaml
+
+display:
+  - platform: ili9xxx
+    id: esp_display
+    model: ili9342
+    spi_id: tft
+    cs_pin: GPIO15
+    dc_pin: GPIO2
+    invert_colors: true
+    dimensions:
+      width: 240
+      height: 320
+    rotation: 90
+    color_palette: 8BIT
+    update_interval: 1s
+    lambda: |-
+      // Si menu affiché, on garde le menu classique
+      if (id(show_return_page)) {
+        it.fill(id(black));
+        const int button_width = 100;
+        const int button_height = 65;
+        const int x_start = 15;
+        const int y_start = 15;
+        const int x_padding = 10;
+        const int y_padding = 10;
+        const char* button_texts[] = {
+          "Volets du bas",
+          "LumiereS",
+          "Volets du bas",
+          "Lampadaire",
+          "Volets du bas",
+          "3D Print",
+          "Habbit",
+          "Retour"
+        };
+        for (int row = 0; row < 4; row++) {
+          for (int col = 0; col < 2; col++) {
+            int idx = row * 2 + col;
+            int x = x_start + col * (button_width + x_padding);
+            int y = y_start + row * (button_height + y_padding);
+            it.rectangle(x, y, button_width, button_height, id(grey));
+            int text_width = strlen(button_texts[idx]) * 5.5;
+            int text_height = 16;
+            it.print(x + (button_width - text_width) / 2,
+                     y + (button_height - text_height) / 2 + 20,
+                     id(buttons),
+                     button_texts[idx]);
+          }
+        }
+        // Icons
+        if (id(button1_entity_color).has_state() && id(button1_entity_color).state == "on") {
+          it.image(45, 20, id(up), id(blue));
+        } else {
+          it.image(45, 20, id(up), id(grey));
+        }
+        if (id(button2_entity_color).has_state() && id(button2_entity_color).state != "off") {
+          it.image(155, 20, id(meeting), id(blue));
+        } else {
+          it.image(155, 20, id(meeting), id(grey));
+        }
+        if (id(button3_entity_color).has_state() && id(button3_entity_color).state == "docked") {
+          it.image(45, 95, id(stop), id(blue));
+        } else {
+          it.image(45, 95, id(stop), id(grey));
+        }
+        if (id(button4_entity_color).has_state() && id(button4_entity_color).state == "on") {
+          it.image(155, 95, id(lampadaire), id(blue));
+        } else {
+          it.image(155, 95, id(lampadaire), id(grey));
+        }
+        if (id(button5_entity_color).has_state() && id(button5_entity_color).state == "on") {
+          it.image(45, 170, id(down), id(blue));
+        } else {
+          it.image(45, 170, id(down), id(grey));
+        }
+        if (id(button6_entity_color).has_state() && id(button6_entity_color).state == "on") {
+          it.image(155, 170, id(printer3d), id(blue));
+        } else {
+          it.image(155, 170, id(printer3d), id(grey));
+        }
+        it.image(45, 245, id(habbit), id(grey));
+        it.image(155, 245, id(back), id(grey));
+        return;
+      }
+      // Sinon, on affiche l'écran météo (plein écran, centré)
+      it.fill(id(black));
+      const int W = it.get_width();
+      const int H = it.get_height();
+      const int CX = W / 2;
+      const int M = 14;
+      it.strftime(CX, M + 6, id(date), TextAlign::CENTER, "%a %d %b %Y", id(esptime).now());
+      it.strftime(CX, M + 26, id(hour), TextAlign::CENTER, "%H:%M", id(esptime).now());
+      it.print(CX, 64, id(info), TextAlign::CENTER, "Météo — Mâcon");
+      // Icône météo
+      const int ICON_Y = 112;
+      if (id(weather_state).has_state()) {
+        std::map<std::string, std::string> weather_icon_map = {
+          {"clear-night", "\U000F0594"},
+          {"cloudy", "\U000F0590"},
+          {"fog", "\U000F0591"},
+          {"hail", "\U000F0592"},
+          {"lightning", "\U000F0593"},
+          {"lightning-rainy", "\U000F067E"},
+          {"partlycloudy", "\U000F0595"},
+          {"pouring", "\U000F0596"},
+          {"rainy", "\U000F0597"},
+          {"snowy", "\U000F0598"},
+          {"snowy-rainy", "\U000F067F"},
+          {"sunny", "\U000F0599"},
+          {"windy", "\U000F059D"},
+          {"windy-variant", "\U000F059E"},
+        };
+        auto ws = id(weather_state).state;
+        auto itw = weather_icon_map.find(ws);
+        const char* icon = (itw != weather_icon_map.end()) ? itw->second.c_str() : "\U000F0599";
+        it.printf(CX, ICON_Y, id(fontmeteo), TextAlign::CENTER, icon);
+      } else {
+        it.printf(CX, ICON_Y, id(fontmeteo), TextAlign::CENTER, "\U000F0599");
+      }
+      // Lignes de métriques
+      const int L1 = 160, L2 = 178, L3 = 196;
+      if (id(temp_ext).has_state()) it.printf(CX, L1, id(info), TextAlign::CENTER, "Temp ext: %.1f C", id(temp_ext).state);
+      else it.print(CX, L1, id(info), TextAlign::CENTER, "Temp ext: -- C");
+      if (id(rainchance).has_state()) it.printf(CX, L2, id(info), TextAlign::CENTER, "Pluie: %.0f %%", id(rainchance).state);
+      else it.print(CX, L2, id(info), TextAlign::CENTER, "Pluie: -- %");
+      if (id(snowchance).has_state() && id(freezechance).has_state()) it.printf(CX, L3, id(info), TextAlign::CENTER, "Neige/Gel: %.0f / %.0f %%", id(snowchance).state, id(freezechance).state);
+      else it.print(CX, L3, id(info), TextAlign::CENTER, "Neige/Gel: -- / -- %");
+      // Bouton "Menu" en bas à droite (zone tactile)
+      it.rectangle(W-54, H-54, 44, 44, id(blue));
+      it.print(W-32, H-32, id(info), TextAlign::CENTER, "Menu");
+      // Zone tactile pour ouvrir le menu
+      auto tp = id(cyd_touch)->get_touch();
+      if (tp.has_value()) {
+        auto t = tp.value();
+        if (t.x >= W-54 && t.x <= W-10 && t.y >= H-54 && t.y <= H-10) {
+          id(show_return_page) = true;
+          id(menu_display_time) = millis();
+        }
+      }

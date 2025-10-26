@@ -36,6 +36,35 @@ sensor:
     entity_id: $freeze_chance
     internal: true
 
+  # Weather - Wind speed from weather entity attribute
+  - platform: homeassistant
+    id: wind_speed
+    entity_id: ${weather_entity}
+    attribute: wind_speed
+    internal: true
+
+  # BambuLab Printer (numeric sensors)
+  - platform: homeassistant
+    id: print_progress
+    entity_id: sensor.p1s_01p09c482900380_progression_de_l_impression
+    internal: true
+  - platform: homeassistant
+    id: bed_temp
+    entity_id: sensor.p1s_01p09c482900380_temperature_du_lit
+    internal: true
+  - platform: homeassistant
+    id: bed_temp_set
+    entity_id: number.p1s_01p09c482900380_temperature_cible_du_lit
+    internal: true
+  - platform: homeassistant
+    id: nozzle_temp
+    entity_id: sensor.p1s_01p09c482900380_temperature_de_la_buse
+    internal: true
+  - platform: homeassistant
+    id: nozzle_temp_set
+    entity_id: number.p1s_01p09c482900380_temperature_cible_de_la_buse
+    internal: true
+
 # Text Sensors (Entity States)
 text_sensor:
   - platform: homeassistant
@@ -66,4 +95,53 @@ text_sensor:
     id: weather_state
     name: "Current Weather Icon"
     entity_id: $weather_entity
+    internal: true
+
+  # Weather Alert
+  - platform: homeassistant
+    id: weather_alert
+    entity_id: sensor.71_weather_alert
+    internal: true
+  - platform: homeassistant
+    id: alert_vent
+    entity_id: sensor.71_weather_alert
+    attribute: Vent violent
+    internal: true
+  - platform: homeassistant
+    id: alert_pluie
+    entity_id: sensor.71_weather_alert
+    attribute: Pluie-inondation
+    internal: true
+  - platform: homeassistant
+    id: alert_orages
+    entity_id: sensor.71_weather_alert
+    attribute: Orages
+    internal: true
+  - platform: homeassistant
+    id: alert_neige
+    entity_id: sensor.71_weather_alert
+    attribute: Neige-verglas
+    internal: true
+  - platform: homeassistant
+    id: alert_inondation
+    entity_id: sensor.71_weather_alert
+    attribute: Inondation
+    internal: true
+
+  # BambuLab Printer (text sensors)
+  - platform: homeassistant
+    id: print_status
+    entity_id: sensor.p1s_01p09c482900380_etat_de_l_impression
+    internal: true
+  - platform: homeassistant
+    id: time_remaining
+    entity_id: sensor.p1s_01p09c482900380_temps_restant
+    internal: true
+  - platform: homeassistant
+    id: end_time
+    entity_id: sensor.datefin_print
+    internal: true
+  - platform: homeassistant
+    id: current_file
+    entity_id: sensor.p1s_01p09c482900380_ficher_g_code
     internal: true
