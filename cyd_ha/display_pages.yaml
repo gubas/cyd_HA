@@ -257,7 +257,7 @@ display:
         if (id(hum_int).has_state()) it.printf(CARD_X + 140, C1_Y + 35, id(info), "%.0f %%", id(hum_int).state);
         else it.print(CARD_X + 140, C1_Y + 35, id(info), "-- %");
         it.rectangle(CARD_X, C2_Y, CARD_W, CARD_H, id(grey));
-        it.image(CARD_X + 8, C2_Y + 10, id(kitchenroom), id(blue));
+        it.image(CARD_X + 8, C2_Y + 10, id(deskroom), id(blue));
         it.print(CARD_X + 50, C2_Y + 12, id(info), "Bureau");
         if (id(int2_temp).has_state()) it.printf(CARD_X + 50, C2_Y + 35, id(info), "%.1f C", id(int2_temp).state);
         else it.print(CARD_X + 50, C2_Y + 35, id(info), "-- C");
