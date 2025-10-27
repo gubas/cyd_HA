@@ -211,97 +211,107 @@ display:
         const int TOTAL_RAIN_W = 9 * RECT_W + 8 * RECT_SPACING;
         const int RAIN_START_X = (W - TOTAL_RAIN_W) / 2;
         
-        // Fonction pour déterminer la couleur selon l'intensité
-        auto get_rain_color = [&](const std::string& rain_type) -> Color {
-          if (rain_type == "Temps sec") return Color(255, 255, 255);  // Blanc
-          else if (rain_type == "Pluie faible") return Color(100, 150, 200);  // Bleu clair
-          else if (rain_type == "Pluie modérée") return Color(50, 100, 180);  // Bleu moyen
-          else if (rain_type == "Pluie forte") return Color(0, 50, 150);  // Bleu foncé
-          else return Color(255, 255, 255);  // Blanc par défaut
+        // Fonction pour extraire valeur d'une clé dans le texte de l'attribut
+        auto extract_forecast = [&](const std::string& data, const char* key) -> std::string {
+          if (data.empty()) return "Temps sec";
+          std::string search_key = std::string("'") + key + "'";
+          size_t pos = data.find(search_key);
+          if (pos == std::string::npos) {
+            // Essayer avec guillemets doubles
+            search_key = std::string("\"") + key + "\"";
+            pos = data.find(search_key);
+          }
+          if (pos == std::string::npos) return "Temps sec";
+          
+          // Chercher ':' après la clé
+          size_t colon = data.find(':', pos);
+          if (colon == std::string::npos) return "Temps sec";
+          
+          // Chercher le début de la valeur (après : et espaces/guillemets)
+          size_t val_start = colon + 1;
+          while (val_start < data.size() && (data[val_start] == ' ' || data[val_start] == '\'' || data[val_start] == '"')) {
+            val_start++;
+          }
+          
+          // Chercher la fin de la valeur (virgule, guillemet, ou accolade)
+          size_t val_end = val_start;
+          while (val_end < data.size() && data[val_end] != ',' && data[val_end] != '\'' && data[val_end] != '"' && data[val_end] != '}') {
+            val_end++;
+          }
+          
+          return data.substr(val_start, val_end - val_start);
         };
         
-        // Dessiner chaque rectangle avec la couleur appropriée
+        // Fonction pour déterminer la couleur selon l'intensité
+        auto get_rain_color = [&](const std::string& rain_type) -> Color {
+          std::string lower_type;
+          for (char c : rain_type) {
+            lower_type += tolower(c);
+          }
+          
+          if (lower_type.find("forte") != std::string::npos || lower_type.find("fort") != std::string::npos) {
+            return Color(0, 50, 150);  // Bleu foncé
+          }
+          if (lower_type.find("mod") != std::string::npos) {
+            return Color(50, 100, 180);  // Bleu moyen
+          }
+          if (lower_type.find("faible") != std::string::npos) {
+            return Color(100, 150, 200);  // Bleu clair
+          }
+          return Color(255, 255, 255);  // Blanc (temps sec)
+        };
+
+        // Récupérer les données de prévision
+        std::string forecast_data = id(next_rain_forecast_data).has_state() ? id(next_rain_forecast_data).state : "";
+        
+        // Log de debug (une seule fois par cycle, pas à chaque frame)
+        static bool logged_once = false;
+        if (!logged_once && !forecast_data.empty()) {
+          ESP_LOGD("rain_forecast", "Data: %s", forecast_data.c_str());
+          logged_once = true;
+        }
+        
+        // Extraire chaque intervalle et dessiner
+        const char* intervals[] = {"0 min", "5 min", "10 min", "15 min", "20 min", "25 min", "35 min", "45 min", "55 min"};
         int rect_x = RAIN_START_X;
         
-        // 0 min
-        if (id(rain_0min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_0min).state));
-        } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        for (int i = 0; i < 9; i++) {
+          std::string rain_value = extract_forecast(forecast_data, intervals[i]);
+          
+          // Déterminer si on remplit ou pas
+          std::string lower_val;
+          for (char c : rain_value) lower_val += tolower(c);
+          bool is_dry = (lower_val.find("sec") != std::string::npos);
+          
+          if (is_dry) {
+            // Temps sec : rectangle vide (juste le contour gris)
+            it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+          } else {
+            // Pluie : rectangle rempli avec la couleur correspondante
+            Color fill_color = get_rain_color(rain_value);
+            it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, fill_color);
+            it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+          }
+          rect_x += RECT_W + RECT_SPACING;
         }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
-        rect_x += RECT_W + RECT_SPACING;
-        
-        // 5 min
-        if (id(rain_5min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_5min).state));
-        } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+
+        // Texte: prochaine pluie
+        std::string next_label = "";
+        for (int i = 0; i < 9; i++) {
+          std::string val = extract_forecast(forecast_data, intervals[i]);
+          std::string v;
+          for (char c : val) v += tolower(c);
+          if (!v.empty() && v.find("sec") == std::string::npos) {
+            next_label = intervals[i];
+            break;
+          }
         }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
-        rect_x += RECT_W + RECT_SPACING;
-        
-        // 10 min
-        if (id(rain_10min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_10min).state));
+        const int NEXT_TEXT_Y = RAIN_Y + RECT_H + 10;
+        if (!next_label.empty()) {
+          it.printf(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "Prochaine pluie: %s", next_label.c_str());
         } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+          it.print(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "Pas de pluie prévue");
         }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
-        rect_x += RECT_W + RECT_SPACING;
-        
-        // 15 min
-        if (id(rain_15min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_15min).state));
-        } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
-        }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
-        rect_x += RECT_W + RECT_SPACING;
-        
-        // 20 min
-        if (id(rain_20min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_20min).state));
-        } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
-        }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
-        rect_x += RECT_W + RECT_SPACING;
-        
-        // 25 min
-        if (id(rain_25min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_25min).state));
-        } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
-        }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
-        rect_x += RECT_W + RECT_SPACING;
-        
-        // 35 min
-        if (id(rain_35min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_35min).state));
-        } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
-        }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
-        rect_x += RECT_W + RECT_SPACING;
-        
-        // 45 min
-        if (id(rain_45min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_45min).state));
-        } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
-        }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
-        rect_x += RECT_W + RECT_SPACING;
-        
-        // 55 min
-        if (id(rain_55min).has_state()) {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_55min).state));
-        } else {
-          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
-        }
-        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
 
 
         // Grille d'informations météo (6 données en 3x2)

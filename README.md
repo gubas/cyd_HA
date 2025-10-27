@@ -8,6 +8,8 @@ Un panneau tactile intelligent pour contrôler Home Assistant à l'aide d'un ESP
 
 - **Affichage multi-pages** : 3 écrans défilant automatiquement toutes les 8 secondes
   - **Page Météo** : Conditions météo actuelles avec grande icône animée, température extérieure, pluie, vent, neige, gel et alertes Météo-France en temps réel (vigilance jaune/orange/rouge)
+    - 🌧️ **Prévisions de pluie** : 9 rectangles colorés représentant les prévisions minute par minute (0-55 min) avec code couleur intuitif (vide=sec, bleu clair/moyen/foncé=pluie faible/modérée/forte)
+    - 📍 **Texte "Prochaine pluie"** : Annonce automatique de la prochaine pluie ou "Pas de pluie prévue"
   - **Page Capteurs** : Températures et humidité de 2 zones (Salon/Cuisine et Bureau)
   - **Page Imprimante** : État BambuLab en temps réel (fichier, progression, températures buse/lit, temps restant)
 - **Menu de contrôle** : Accessible au toucher, 8 boutons tactiles configurables pour contrôler des entités Home Assistant (volets, lumières, imprimante 3D)
@@ -102,6 +104,8 @@ substitutions:
   # ... etc
 ```
 
+**Note sur les prévisions de pluie** : Le capteur `sensor.next_rain` doit avoir un attribut `1_hour_forecast` contenant un dictionnaire avec les clés `'0 min'`, `'5 min'`, etc. (format API Météo-France). Aucune configuration supplémentaire dans Home Assistant n'est requise - tout est parsé côté ESPHome.
+
 #### c) Télécharger la font Material Design Icons
 
 Ou téléchargez manuellement : [MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf)
@@ -187,6 +191,9 @@ Home Assistant API
 │ Page 0: Météo                       │
 │  - Grande icône météo (MDI)         │
 │  - Alertes Météo-France (🔴🟠🟡)    │
+│  - Prévisions pluie: 9 rectangles   │
+│    colorés (0-55min) + texte        │
+│    "Prochaine pluie: X min"         │
 │  - Temp/Pluie/Vent/Neige/Gel        │
 │  - Icônes 20x20 alignées            │
 ├─────────────────────────────────────┤
@@ -239,6 +246,31 @@ Touch XPT2046
 - `update_interval: 1s` pour affichage fluide
 
 ## 📝 Changelog
+
+### v3.0 (Octobre 2025) - Prévisions de pluie Météo-France
+
+- 🌧️ **Visualisation radar de pluie** :
+  - **9 rectangles** (22x8px) représentant les prévisions de pluie à 0, 5, 10, 15, 20, 25, 35, 45, 55 minutes
+  - Intégration directe de l'API Météo-France via attribut `1_hour_forecast` du capteur `sensor.next_rain`
+  - **Code couleur intuitif** :
+    - Rectangle **vide** (contour gris) : Temps sec
+    - **Bleu clair** (100, 150, 200) : Pluie faible
+    - **Bleu moyen** (50, 100, 180) : Pluie modérée
+    - **Bleu foncé** (0, 50, 150) : Pluie forte
+  - **Parsing intelligent** côté ESPHome (aucune configuration Home Assistant requise)
+  - Support des formats JSON avec guillemets simples ou doubles
+- 📍 **Texte "Prochaine pluie"** :
+  - Affiché juste sous les rectangles
+  - "Prochaine pluie: X min" si pluie détectée dans l'heure
+  - "Pas de pluie prévue" si toutes les cases sont "temps sec"
+  - Centré et espacé pour ne pas chevaucher la grille météo
+- 🔍 **Debug dans les logs** :
+  - Logging ESPHome (tag `rain_forecast`) pour diagnostiquer le format de données reçu
+  - Pas d'affichage debug à l'écran (interface propre)
+- ⚡ **Performance optimisée** :
+  - Un seul `text_sensor` pour récupérer l'attribut complet
+  - Parsing avec lambdas C++ efficaces (recherche de sous-chaînes)
+  - Normalisation insensible à la casse pour robustesse
 
 ### v2.2 (Octobre 2025) - Style HA et page imprimante redessinée
 
