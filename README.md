@@ -240,6 +240,36 @@ Touch XPT2046
 
 ## 📝 Changelog
 
+### v2.2 (Octobre 2025) - Style HA et page imprimante redessinée
+
+- 🌤️ **Page météo style Home Assistant** :
+  - Grande icône météo à gauche (70px Material Design Icons)
+  - Bloc température + humidité à droite avec petites icônes
+  - Ligne alertes météo centrée sous l'icône avec agrégation multi-sources
+  - Grille 4x2 compacte : Pluie, Vent (direction cardinale N/NE/E/etc + vitesse), Neige, Pression atmosphérique, Gel, Lever/Coucher soleil (HH:MM)
+  - Icônes 20x20 avec valeurs alignées
+- 🖨️ **Page imprimante BambuLab redesignée** :
+  - Icône imprimante 3D grande à gauche (40x40)
+  - Nom de fichier à droite avec **défilement automatique** si > 28 caractères (vitesse 150ms/caractère)
+  - État de l'impression sous le nom
+  - **Barre de progression agrandie** (24px de hauteur) avec pourcentage centré
+  - Grille style météo avec icônes :
+    - Ligne 1: ⏱️ Temps restant (min) | 🕐 Heure de fin (HH:MM)
+    - Ligne 2: 🔧 Température buse (actuelle/cible°) | 🔥 Température lit (actuelle/cible°)
+  - Format compact sans "C" (ex: "220/210°")
+  - Espacements optimisés pour éviter les chevauchements
+- 📐 **Alignements parfaits** :
+  - Tous les textes avec icônes utilisent `CENTER_LEFT` avec offset +2px
+  - Colonne gauche COL1_X=15, colonne droite COL2_X=125
+  - Grilles centrées et symétriques
+- 🎨 **Palette étendue** : Ajout couleur `white` pour futures utilisations
+- 🆕 **Nouvelles icônes** (20x20) :
+  - timer_small (mdi:timer-outline), clock_end_small (mdi:clock-end)
+  - nozzle_small (mdi:printer-3d-nozzle), bed_small (mdi:radiator)
+  - temp_small (mdi:thermometer), humidity_small (mdi:water-percent)
+  - pressure_small (mdi:gauge), sunrise_small/sunset_small
+- 🛠️ **Optimisations** : Simplification du code (pas de buffers statiques inutiles pour températures)
+
 ### v2.1 (Octobre 2025) - Interface multi-pages et alertes météo
 
 - 🔄 **3 pages auto-cycliques** (8s) : Météo / Capteurs / Imprimante 3D
