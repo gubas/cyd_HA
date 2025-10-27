@@ -128,68 +128,72 @@ display:
       it.strftime(W - HEADER_MARGIN, HEADER_Y, id(info), TextAlign::TOP_RIGHT, "%d/%m %H:%M", id(esptime).now());
       const int TITLE_Y = 64;
       if (page == 0) {
-        // Page 1 : Météo (pas de date/heure sur les pages, seulement dans le menu)
-        it.print(CX, TITLE_Y, id(info), TextAlign::CENTER, "Météo — Mâcon");
-        const int ICON_Y = 112;
+        // Page Météo - Style application
+        it.print(CX, TITLE_Y - 10, id(info), TextAlign::CENTER, "Météo — Mâcon");
+        
+        // Section haute: Icône météo + Température + Humidité
+        const int ICON_Y = 90;
+        const int ICON_SIZE_BIG = 60;
+        
+        // Grande icône météo (à gauche)
         if (id(weather_state).has_state()) {
           static std::map<std::string, std::string> weather_icon_map = {
-            {"clear-night", "\U000F0594"},
-            {"cloudy", "\U000F0590"},
-            {"fog", "\U000F0591"},
-            {"hail", "\U000F0592"},
-            {"lightning", "\U000F0593"},
-            {"lightning-rainy", "\U000F067E"},
-            {"partlycloudy", "\U000F0595"},
-            {"pouring", "\U000F0596"},
-            {"rainy", "\U000F0597"},
-            {"snowy", "\U000F0598"},
-            {"snowy-rainy", "\U000F067F"},
-            {"sunny", "\U000F0599"},
-            {"windy", "\U000F059D"},
-            {"windy-variant", "\U000F059E"},
+            {"clear-night", "\U000F0594"}, {"cloudy", "\U000F0590"}, {"fog", "\U000F0591"},
+            {"hail", "\U000F0592"}, {"lightning", "\U000F0593"}, {"lightning-rainy", "\U000F067E"},
+            {"partlycloudy", "\U000F0595"}, {"pouring", "\U000F0596"}, {"rainy", "\U000F0597"},
+            {"snowy", "\U000F0598"}, {"snowy-rainy", "\U000F067F"}, {"sunny", "\U000F0599"},
+            {"windy", "\U000F059D"}, {"windy-variant", "\U000F059E"},
           };
           const std::string& ws = id(weather_state).state;
           auto itw = weather_icon_map.find(ws);
           const char* icon = (itw != weather_icon_map.end()) ? itw->second.c_str() : "\U000F0599";
-          it.printf(CX, ICON_Y, id(fontmeteo), TextAlign::CENTER, icon);
+          it.printf(50, ICON_Y, id(fontmeteo), TextAlign::CENTER, icon);
         } else {
-          it.printf(CX, ICON_Y, id(fontmeteo), TextAlign::CENTER, "\U000F0599");
+          it.printf(50, ICON_Y, id(fontmeteo), TextAlign::CENTER, "\U000F0599");
+        }
+        
+        // Température avec icône (droite)
+        it.image(W - 100, ICON_Y - 10, id(temp_small), id(blue));
+        if (id(temp_ext).has_state()) {
+          it.printf(W - 70, ICON_Y, id(info), TextAlign::CENTER_LEFT, "%.1f°C", id(temp_ext).state);
+        } else {
+          it.print(W - 70, ICON_Y, id(info), TextAlign::CENTER_LEFT, "--°C");
+        }
+        
+        // Humidité (sous température)
+        it.image(W - 100, ICON_Y + 15, id(humidity_small), id(blue));
+        if (id(humidity_ext).has_state()) {
+          it.printf(W - 70, ICON_Y + 25, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(humidity_ext).state);
         }
 
-        // Alerte météo sous l'icône
-        const int ALERT_Y = ICON_Y + 50;
-        // Collecter toutes les alertes actives (non vertes)
+        // Alerte météo (ligne sous l'icône)
+        const int ALERT_Y = 135;
         static char alert_buffer[100];
         alert_buffer[0] = '\0';
         bool has_alert = false;
         
         if (id(alert_vent).has_state() && id(alert_vent).state != "Vert" && id(alert_vent).state != "vert") {
-          const char* level = id(alert_vent).state.c_str();
-          sprintf(alert_buffer + strlen(alert_buffer), "Vent(%s) ", level);
+          sprintf(alert_buffer + strlen(alert_buffer), "Vent(%s) ", id(alert_vent).state.c_str());
           has_alert = true;
         }
         if (id(alert_pluie).has_state() && id(alert_pluie).state != "Vert" && id(alert_pluie).state != "vert") {
           if (has_alert) strcat(alert_buffer, "| ");
-          const char* level = id(alert_pluie).state.c_str();
-          sprintf(alert_buffer + strlen(alert_buffer), "Pluie(%s) ", level);
+          sprintf(alert_buffer + strlen(alert_buffer), "Pluie(%s) ", id(alert_pluie).state.c_str());
           has_alert = true;
         }
         if (id(alert_orages).has_state() && id(alert_orages).state != "Vert" && id(alert_orages).state != "vert") {
           if (has_alert) strcat(alert_buffer, "| ");
-          const char* level = id(alert_orages).state.c_str();
-          sprintf(alert_buffer + strlen(alert_buffer), "Orage(%s) ", level);
+          sprintf(alert_buffer + strlen(alert_buffer), "Orage(%s) ", id(alert_orages).state.c_str());
           has_alert = true;
         }
         if (id(alert_neige).has_state() && id(alert_neige).state != "Vert" && id(alert_neige).state != "vert") {
           if (has_alert) strcat(alert_buffer, "| ");
-          const char* level = id(alert_neige).state.c_str();
-          sprintf(alert_buffer + strlen(alert_buffer), "Neige(%s) ", level);
+          sprintf(alert_buffer + strlen(alert_buffer), "Neige(%s) ", id(alert_neige).state.c_str());
           has_alert = true;
         }
         if (id(alert_inondation).has_state() && id(alert_inondation).state != "Vert" && id(alert_inondation).state != "vert") {
           if (has_alert) strcat(alert_buffer, "| ");
-          const char* level = id(alert_inondation).state.c_str();
-          sprintf(alert_buffer + strlen(alert_buffer), "Inond(%s) ", level);
+          sprintf(alert_buffer + strlen(alert_buffer), "Inond(%s) ", id(alert_inondation).state.c_str());
           has_alert = true;
         }
         
@@ -199,51 +203,74 @@ display:
           it.print(CX, ALERT_Y, id(info), TextAlign::CENTER, "Pas d'alerte");
         }
 
-        // Lignes compactes: temp ext + pluie/vent + neige/gel (ensemble centré)
-        const int ROW_Y = 200;
+        // Grille d'informations météo (6 données en 3x2)
+        const int GRID_START_Y = 165;
+        const int ROW_HEIGHT = 22;
+        const int COL1_X = 20;
+        const int COL2_X = 118; // décalé vers la gauche pour éviter les coupures
         const int ICON_SIZE = 20;
-        const int TEXT_GAP = 4;      // espace entre icône et texte
-        const int BLOCK_SPACING = 20; // espace horizontal entre les 2 blocs
+        const int TEXT_OFFSET = 22;
         
-        // Calcul des largeurs approximatives pour centrage
-        const int TEXT_WIDTH = 50;   // largeur max estimée du texte (ex: "100 %", "25 km/h")
-        const int BLOCK_WIDTH = ICON_SIZE + TEXT_GAP + TEXT_WIDTH;
-        const int TOTAL_WIDTH = 2 * BLOCK_WIDTH + BLOCK_SPACING;
-        const int START_X = (W - TOTAL_WIDTH) / 2;
-
-        // Positions des blocs gauche et droit
-        int left_icon_x = START_X;
-        int right_icon_x = START_X + BLOCK_WIDTH + BLOCK_SPACING;
-
-        // Ligne 1: Temp ext (gauche) | Pluie (droite)
-        // Temp ext: icône puis texte à droite (aligné au centre vertical de l'icône)
-        it.image(left_icon_x, ROW_Y - ICON_SIZE/2, id(temp_small), id(blue));
-        if (id(temp_ext).has_state()) it.printf(left_icon_x + ICON_SIZE + TEXT_GAP, ROW_Y + 2, id(info), TextAlign::CENTER_LEFT, "%.1f C", id(temp_ext).state);
-        else it.print(left_icon_x + ICON_SIZE + TEXT_GAP, ROW_Y + 2, id(info), TextAlign::CENTER_LEFT, "-- C");
-
-        // Pluie: icône puis texte à droite
-        it.image(right_icon_x, ROW_Y - ICON_SIZE/2, id(umbrella), id(blue));
-        if (id(rainchance).has_state()) it.printf(right_icon_x + ICON_SIZE + TEXT_GAP, ROW_Y + 2, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(rainchance).state);
-        else it.print(right_icon_x + ICON_SIZE + TEXT_GAP, ROW_Y + 2, id(info), TextAlign::CENTER_LEFT, "-- %");
-
-        // Ligne 2: Vent (gauche) | Neige (droite)
-        const int ROW2_Y = ROW_Y + 24;
-        // Vent: icône puis texte
-        it.image(left_icon_x, ROW2_Y - ICON_SIZE/2, id(windy), id(blue));
-        if (id(wind_speed).has_state()) it.printf(left_icon_x + ICON_SIZE + TEXT_GAP, ROW2_Y + 2, id(info), TextAlign::CENTER_LEFT, "%.0f km/h", id(wind_speed).state);
-        else it.print(left_icon_x + ICON_SIZE + TEXT_GAP, ROW2_Y + 2, id(info), TextAlign::CENTER_LEFT, "-- km/h");
-
-        // Neige: icône puis texte
-        it.image(right_icon_x, ROW2_Y - ICON_SIZE/2, id(snow_small), id(blue));
-        if (id(snowchance).has_state()) it.printf(right_icon_x + ICON_SIZE + TEXT_GAP, ROW2_Y + 2, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(snowchance).state);
-        else it.print(right_icon_x + ICON_SIZE + TEXT_GAP, ROW2_Y + 2, id(info), TextAlign::CENTER_LEFT, "-- %");
-
-        // Ligne 3: Gel (centré, seul bloc)
-        const int ROW3_Y = ROW2_Y + 24;
-        int center_icon_x = CX - (ICON_SIZE + TEXT_GAP + TEXT_WIDTH/2) / 2;
-        it.image(center_icon_x, ROW3_Y - ICON_SIZE/2, id(freeze_small), id(blue));
-        if (id(freezechance).has_state()) it.printf(center_icon_x + ICON_SIZE + TEXT_GAP, ROW3_Y + 2, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(freezechance).state);
-        else it.print(center_icon_x + ICON_SIZE + TEXT_GAP, ROW3_Y + 2, id(info), TextAlign::CENTER_LEFT, "-- %");
+        // Ligne 1: Pluie | Vent (direction avec flèches)
+        it.image(COL1_X, GRID_START_Y, id(umbrella), id(blue));
+        if (id(rainchance).has_state()) it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(rainchance).state);
+        else it.print(COL1_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "-- %");
+        
+        // Vent: afficher la direction avec des lettres
+        if (id(wind_bearing).has_state() && id(wind_speed).has_state()) {
+          float bearing = id(wind_bearing).state;
+          // Convertir bearing en direction cardinale
+          const char* direction;
+          if (bearing >= 337.5 || bearing < 22.5) direction = "N";
+          else if (bearing >= 22.5 && bearing < 67.5) direction = "NE";
+          else if (bearing >= 67.5 && bearing < 112.5) direction = "E";
+          else if (bearing >= 112.5 && bearing < 157.5) direction = "SE";
+          else if (bearing >= 157.5 && bearing < 202.5) direction = "S";
+          else if (bearing >= 202.5 && bearing < 247.5) direction = "SO";
+          else if (bearing >= 247.5 && bearing < 292.5) direction = "O";
+          else direction = "NO";
+          it.printf(COL2_X, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%s %.0f km/h", direction, id(wind_speed).state);
+        } else if (id(wind_speed).has_state()) {
+          it.printf(COL2_X, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%.0f km/h", id(wind_speed).state);
+        } else {
+          it.print(COL2_X, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "-- km/h");
+        }
+        
+        // Ligne 2: Neige | Pression
+        it.image(COL1_X, GRID_START_Y + ROW_HEIGHT, id(snow_small), id(blue));
+        if (id(snowchance).has_state()) it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(snowchance).state);
+        else it.print(COL1_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "-- %");
+        
+        it.image(COL2_X, GRID_START_Y + ROW_HEIGHT, id(pressure_small), id(blue));
+        if (id(pressure).has_state()) it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f hPa", id(pressure).state);
+        else it.print(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "-- hPa");
+        
+        // Ligne 3: Gel
+        it.image(COL1_X, GRID_START_Y + 2*ROW_HEIGHT, id(freeze_small), id(blue));
+        if (id(freezechance).has_state()) it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + 2*ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(freezechance).state);
+        else it.print(COL1_X + TEXT_OFFSET, GRID_START_Y + 2*ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "-- %");
+        
+        // Ligne 4: Lever du soleil | Coucher du soleil
+        it.image(COL1_X, GRID_START_Y + 3*ROW_HEIGHT, id(sunrise_small), id(blue));
+        if (id(sunrise_time).has_state()) {
+          // Parse ISO timestamp et extraire HH:MM
+          std::string sunrise_str = id(sunrise_time).state;
+          size_t time_pos = sunrise_str.find('T');
+          if (time_pos != std::string::npos && sunrise_str.length() > time_pos + 5) {
+            std::string time_part = sunrise_str.substr(time_pos + 1, 5); // HH:MM
+            it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + 3*ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%s", time_part.c_str());
+          }
+        }
+        
+        it.image(COL2_X, GRID_START_Y + 3*ROW_HEIGHT, id(sunset_small), id(blue));
+        if (id(sunset_time).has_state()) {
+          std::string sunset_str = id(sunset_time).state;
+          size_t time_pos = sunset_str.find('T');
+          if (time_pos != std::string::npos && sunset_str.length() > time_pos + 5) {
+            std::string time_part = sunset_str.substr(time_pos + 1, 5);
+            it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + 3*ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%s", time_part.c_str());
+          }
+        }
       } else if (page == 1) {
         // Page 2 : Home sensors
         it.print(CX, TITLE_Y, id(info), TextAlign::CENTER, "Capteurs — Maison");
@@ -264,26 +291,53 @@ display:
         if (id(int2_hum).has_state()) it.printf(CARD_X + 140, C2_Y + 35, id(info), "%.0f %%", id(int2_hum).state);
         else it.print(CARD_X + 140, C2_Y + 35, id(info), "-- %");
       } else {
-        // Page 3 : BambuLab
-        it.print(CX, TITLE_Y, id(info), TextAlign::CENTER, "Imprimante — BambuLab");
-        bool printing = (id(print_status).has_state() && id(print_status).state == "running");
-        const int FILE_NAME_Y = 100;
-        // Fichier (optimisé avec buffer statique)
+        // Page 3 : BambuLab - Style application
+        it.print(CX, TITLE_Y - 10, id(info), TextAlign::CENTER, "Imprimante — BambuLab");
+        
+        // Section haute: Icône imprimante + Nom de fichier
+        const int ICON_Y = 90;
+        
+        // Icône imprimante 3D (à gauche)
+        it.image(30, ICON_Y - 20, id(printer3d), id(blue));
+        
+        // Nom de fichier avec défilement (droite)
         if (id(current_file).has_state()) {
-          static char filename_buf[32];
+          static char filename_buf[64];
+          static int scroll_pos = 0;
+          static unsigned long last_scroll = 0;
           const char* fname = id(current_file).state.c_str();
           int len = strlen(fname);
-          if (len > 26) {
-            strncpy(filename_buf, fname, 26);
-            filename_buf[26] = '.'; filename_buf[27] = '.'; filename_buf[28] = '.'; filename_buf[29] = '\0';
+          const int MAX_DISPLAY_CHARS = 28;
+          
+          if (len <= MAX_DISPLAY_CHARS) {
+            // Pas de défilement nécessaire
+            it.printf(W - 135, ICON_Y - 15, id(info), TextAlign::TOP_LEFT, "%s", fname);
+            scroll_pos = 0;
           } else {
-            strcpy(filename_buf, fname);
+            // Défilement nécessaire
+            if (millis() - last_scroll > 150) {
+              scroll_pos++;
+              if (scroll_pos > len - MAX_DISPLAY_CHARS) scroll_pos = 0;
+              last_scroll = millis();
+            }
+            strncpy(filename_buf, fname + scroll_pos, MAX_DISPLAY_CHARS);
+            filename_buf[MAX_DISPLAY_CHARS] = '\0';
+            it.printf(W - 135, ICON_Y - 15, id(info), TextAlign::TOP_LEFT, "%s", filename_buf);
           }
-          it.printf(CX, FILE_NAME_Y, id(info), TextAlign::CENTER, "%s", filename_buf);
         } else {
-          it.print(CX, FILE_NAME_Y, id(info), TextAlign::CENTER, "Fichier: --");
+          it.print(W - 135, ICON_Y - 15, id(info), TextAlign::TOP_LEFT, "--");
         }
-        const int BAR_W = 200, BAR_H = 10, BAR_X = (W - BAR_W) / 2, BAR_Y = 136;
+        
+        // État (sous le nom de fichier)
+        if (id(print_status).has_state()) {
+          it.printf(W - 135, ICON_Y + 5, id(info), TextAlign::TOP_LEFT, "%s", id(print_status).state.c_str());
+        } else {
+          it.print(W - 135, ICON_Y + 5, id(info), TextAlign::TOP_LEFT, "--");
+        }
+        
+        // Barre de progression (centrée, sous l'icône et info)
+        const int BAR_Y = 130;
+        const int BAR_W = 200, BAR_H = 24, BAR_X = (W - BAR_W) / 2;
         it.rectangle(BAR_X, BAR_Y, BAR_W, BAR_H, id(grey));
         if (id(print_progress).has_state()) {
           float p = id(print_progress).state;
@@ -291,34 +345,67 @@ display:
           int fill = (int)((BAR_W - 2) * (p / 100.0f));
           if (fill > 0) it.filled_rectangle(BAR_X + 1, BAR_Y + 1, fill, BAR_H - 2, id(blue));
         }
-        const int R1_Y = 170, R2_Y = 190, R3_Y = 210;
-        if (id(print_status).has_state()) it.printf(CX, R1_Y, id(info), TextAlign::CENTER, "Etat: %s", id(print_status).state.c_str());
-        else it.print(CX, R1_Y, id(info), TextAlign::CENTER, "Etat: --");
-        // Temps restant et fin (direct, pas d'allocation)
-        const char* reste = id(time_remaining).has_state() ? id(time_remaining).state.c_str() : "--";
-        const char* fin = id(end_time).has_state() ? id(end_time).state.c_str() : "--";
-        it.printf(CX, R2_Y, id(info), TextAlign::CENTER, "Reste/Fin: %s / %s", reste, fin);
-        // Températures (buffers statiques)
-        static char buse_buf[24], lit_buf[24];
+        // Pourcentage au centre de la barre (dessiné après le remplissage)
+        if (id(print_progress).has_state()) {
+          float p = id(print_progress).state;
+          if (p < 0) p = 0; if (p > 100) p = 100;
+          it.printf(CX, BAR_Y + 12, id(info), TextAlign::CENTER, "%.0f%%", p);
+        } else {
+          it.print(CX, BAR_Y + 12, id(info), TextAlign::CENTER, "--%");
+        }
+
+        // Grille d'informations (style météo)
+        const int GRID_START_Y = 165;
+        const int ROW_HEIGHT = 22;
+        const int COL1_X = 15;
+        const int COL2_X = 125;
+        const int TEXT_OFFSET = 22;
+        
+        // Ligne 1: Temps restant | Heure de fin
+        it.image(COL1_X, GRID_START_Y, id(timer_small), id(blue));
+        if (id(time_remaining).has_state()) {
+          it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%s min", id(time_remaining).state.c_str());
+        } else {
+          it.print(COL1_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "-- min");
+        }
+        
+        it.image(COL2_X, GRID_START_Y, id(clock_end_small), id(blue));
+        if (id(end_time).has_state()) {
+          // Extraire seulement HH:MM du format complet
+          std::string end_str = id(end_time).state;
+          size_t space_pos = end_str.find(' ');
+          if (space_pos != std::string::npos && end_str.length() > space_pos + 5) {
+            std::string time_part = end_str.substr(space_pos + 1, 5); // HH:MM
+            it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%s", time_part.c_str());
+          } else {
+            it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%s", id(end_time).state.c_str());
+          }
+        } else {
+          it.print(COL2_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "--:--");
+        }
+        
+        // Ligne 2: Température buse | Température lit
+        it.image(COL1_X, GRID_START_Y + ROW_HEIGHT, id(nozzle_small), id(blue));
         if (id(nozzle_temp).has_state()) {
           if (id(nozzle_temp_set).has_state()) {
-            snprintf(buse_buf, sizeof(buse_buf), "%.0f/%.0f C", id(nozzle_temp).state, id(nozzle_temp_set).state);
+            it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f/%.0f°", id(nozzle_temp).state, id(nozzle_temp_set).state);
           } else {
-            snprintf(buse_buf, sizeof(buse_buf), "%.0f C", id(nozzle_temp).state);
+            it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f°", id(nozzle_temp).state);
           }
         } else {
-          strncpy(buse_buf, "--", sizeof(buse_buf));
+          it.print(COL1_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "--°");
         }
+        
+        it.image(COL2_X, GRID_START_Y + ROW_HEIGHT, id(bed_small), id(blue));
         if (id(bed_temp).has_state()) {
           if (id(bed_temp_set).has_state()) {
-            snprintf(lit_buf, sizeof(lit_buf), "%.0f/%.0f C", id(bed_temp).state, id(bed_temp_set).state);
+            it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f/%.0f°", id(bed_temp).state, id(bed_temp_set).state);
           } else {
-            snprintf(lit_buf, sizeof(lit_buf), "%.0f C", id(bed_temp).state);
+            it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f°", id(bed_temp).state);
           }
         } else {
-          strncpy(lit_buf, "--", sizeof(lit_buf));
+          it.print(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "--°");
         }
-        it.printf(CX, R3_Y, id(info), TextAlign::CENTER, "Buse: %s | Lit: %s", buse_buf, lit_buf);
       }
       // Indicateur de page (• • •) en bas
       const int DOTS = 3;

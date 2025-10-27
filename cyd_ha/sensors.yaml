@@ -42,6 +42,25 @@ sensor:
     entity_id: ${weather_entity}
     attribute: wind_speed
     internal: true
+  
+  # Weather - Additional attributes
+  - platform: homeassistant
+    id: humidity_ext
+    entity_id: ${weather_entity}
+    attribute: humidity
+    internal: true
+  
+  - platform: homeassistant
+    id: pressure
+    entity_id: ${weather_entity}
+    attribute: pressure
+    internal: true
+  
+  - platform: homeassistant
+    id: wind_bearing
+    entity_id: ${weather_entity}
+    attribute: wind_bearing
+    internal: true
 
   # BambuLab Printer (numeric sensors)
   - platform: homeassistant
@@ -126,6 +145,18 @@ text_sensor:
     id: alert_inondation
     entity_id: sensor.71_weather_alert
     attribute: Inondation
+    internal: true
+  
+  # Sun times
+  - platform: homeassistant
+    id: sunrise_time
+    entity_id: sun.sun
+    attribute: next_rising
+    internal: true
+  - platform: homeassistant
+    id: sunset_time
+    entity_id: sun.sun
+    attribute: next_setting
     internal: true
 
   # BambuLab Printer (text sensors)
