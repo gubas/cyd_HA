@@ -158,6 +158,59 @@ text_sensor:
     entity_id: sun.sun
     attribute: next_setting
     internal: true
+  
+  # Next rain forecast - Main sensor
+  - platform: homeassistant
+    id: next_rain
+    entity_id: sensor.macon_next_rain
+    internal: true
+  
+  # Next rain forecast - Intervals (text values)
+  - platform: homeassistant
+    id: rain_0min
+    entity_id: sensor.macon_next_rain
+    attribute: 0 min
+    internal: true
+  - platform: homeassistant
+    id: rain_5min
+    entity_id: sensor.macon_next_rain
+    attribute: 5 min
+    internal: true
+  - platform: homeassistant
+    id: rain_10min
+    entity_id: sensor.macon_next_rain
+    attribute: 10 min
+    internal: true
+  - platform: homeassistant
+    id: rain_15min
+    entity_id: sensor.macon_next_rain
+    attribute: 15 min
+    internal: true
+  - platform: homeassistant
+    id: rain_20min
+    entity_id: sensor.macon_next_rain
+    attribute: 20 min
+    internal: true
+  - platform: homeassistant
+    id: rain_25min
+    entity_id: sensor.macon_next_rain
+    attribute: 25 min
+    internal: true
+  - platform: homeassistant
+    id: rain_35min
+    entity_id: sensor.macon_next_rain
+    attribute: 35 min
+    internal: true
+  - platform: homeassistant
+    id: rain_45min
+    entity_id: sensor.macon_next_rain
+    attribute: 45 min
+    internal: true
+  - platform: homeassistant
+    id: rain_55min
+    entity_id: sensor.macon_next_rain
+    attribute: 55 min
+    internal: true
 
   # BambuLab Printer (text sensors)
   - platform: homeassistant

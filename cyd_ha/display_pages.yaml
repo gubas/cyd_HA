@@ -203,8 +203,109 @@ display:
           it.print(CX, ALERT_Y, id(info), TextAlign::CENTER, "Pas d'alerte");
         }
 
+        // Prévisions de pluie (rectangles)
+        const int RAIN_Y = ALERT_Y + 20;
+        const int RECT_W = 22;
+        const int RECT_H = 8;
+        const int RECT_SPACING = 3;
+        const int TOTAL_RAIN_W = 9 * RECT_W + 8 * RECT_SPACING;
+        const int RAIN_START_X = (W - TOTAL_RAIN_W) / 2;
+        
+        // Fonction pour déterminer la couleur selon l'intensité
+        auto get_rain_color = [&](const std::string& rain_type) -> Color {
+          if (rain_type == "Temps sec") return Color(255, 255, 255);  // Blanc
+          else if (rain_type == "Pluie faible") return Color(100, 150, 200);  // Bleu clair
+          else if (rain_type == "Pluie modérée") return Color(50, 100, 180);  // Bleu moyen
+          else if (rain_type == "Pluie forte") return Color(0, 50, 150);  // Bleu foncé
+          else return Color(255, 255, 255);  // Blanc par défaut
+        };
+        
+        // Dessiner chaque rectangle avec la couleur appropriée
+        int rect_x = RAIN_START_X;
+        
+        // 0 min
+        if (id(rain_0min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_0min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+        rect_x += RECT_W + RECT_SPACING;
+        
+        // 5 min
+        if (id(rain_5min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_5min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+        rect_x += RECT_W + RECT_SPACING;
+        
+        // 10 min
+        if (id(rain_10min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_10min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+        rect_x += RECT_W + RECT_SPACING;
+        
+        // 15 min
+        if (id(rain_15min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_15min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+        rect_x += RECT_W + RECT_SPACING;
+        
+        // 20 min
+        if (id(rain_20min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_20min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+        rect_x += RECT_W + RECT_SPACING;
+        
+        // 25 min
+        if (id(rain_25min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_25min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+        rect_x += RECT_W + RECT_SPACING;
+        
+        // 35 min
+        if (id(rain_35min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_35min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+        rect_x += RECT_W + RECT_SPACING;
+        
+        // 45 min
+        if (id(rain_45min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_45min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+        rect_x += RECT_W + RECT_SPACING;
+        
+        // 55 min
+        if (id(rain_55min).has_state()) {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, get_rain_color(id(rain_55min).state));
+        } else {
+          it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, Color(255, 255, 255));
+        }
+        it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+
+
         // Grille d'informations météo (6 données en 3x2)
-        const int GRID_START_Y = 165;
+        const int GRID_START_Y = 185;
         const int ROW_HEIGHT = 22;
         const int COL1_X = 20;
         const int COL2_X = 118; // décalé vers la gauche pour éviter les coupures
