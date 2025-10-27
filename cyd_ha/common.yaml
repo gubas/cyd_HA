@@ -46,6 +46,8 @@ color:
     hex: '16afd9'
   - id: grey
     hex: '464646'
+  - id: white
+    hex: 'FFFFFF'
 
 # Icon Library (Material Design Icons)
 image:
@@ -71,6 +73,22 @@ image:
     type: BINARY
   - file: mdi:thermometer-low
     id: freeze_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:water-percent
+    id: humidity_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:gauge
+    id: pressure_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:weather-sunset-up
+    id: sunrise_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:weather-sunset-down
+    id: sunset_small
     resize: 20x20
     type: BINARY
   - file: mdi:weather-partly-cloudy
@@ -148,4 +166,20 @@ image:
   - file: mdi:floor-lamp-outline
     id: lampadaire
     resize: 40x40
+    type: BINARY
+  - file: mdi:timer-outline
+    id: timer_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:clock-end
+    id: clock_end_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:printer-3d-nozzle
+    id: nozzle_small
+    resize: 20x20
+    type: BINARY
+  - file: mdi:radiator
+    id: bed_small
+    resize: 20x20
     type: BINARY
