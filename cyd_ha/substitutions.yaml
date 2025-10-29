@@ -47,18 +47,3 @@ button5_service: cover.close_cover
 button5_entity: cover.volets_du_bas
 button6_service: switch.toggle
 button6_entity: switch.powerprint
-
-
-# Menu button labels (customize per use-case)
-btn1_label: Shades Up
-btn2_label: Lights
-btn3_label: Shades Stop
-btn4_label: Lamp
-btn5_label: Shades Down
-btn6_label: 3D Print
-btn7_label: Habit
-btn8_label: Back
-
-# Room labels
-room1_label: Living/Kitchen
-room2_label: Office
