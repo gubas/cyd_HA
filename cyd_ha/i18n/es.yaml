@@ -1,0 +1,23 @@
+# Internacionalización - Español
+# Copia estas claves en substitutions.yaml, o combina usando YAML si es compatible.
+
+i18n_weather_title: Clima
+i18n_sensors_title: Sensores
+i18n_printer_title: Impresora
+i18n_no_alerts: Sin alertas
+i18n_next_rain_prefix: Próxima lluvia
+i18n_next_rain_none: Sin lluvia prevista
+
+# Etiquetas de botones
+btn1_label: Subir persianas
+btn2_label: Luces
+btn3_label: Parar persianas
+btn4_label: Lámpara
+btn5_label: Bajar persianas
+btn6_label: Impresión 3D
+btn7_label: Hábito
+btn8_label: Volver
+
+# Habitaciones
+room1_label: Salón/Cocina
+room2_label: Oficina

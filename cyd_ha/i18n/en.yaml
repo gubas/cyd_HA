@@ -1,0 +1,23 @@
+# Internationalization - English (default)
+# Copy these keys into substitutions, or merge using YAML if supported.
+
+i18n_weather_title: Weather
+i18n_sensors_title: Sensors
+i18n_printer_title: Printer
+i18n_no_alerts: No alerts
+i18n_next_rain_prefix: Next rain
+i18n_next_rain_none: No rain planned
+
+# Menu button labels
+btn1_label: Shades Up
+btn2_label: Lights
+btn3_label: Shades Stop
+btn4_label: Lamp
+btn5_label: Shades Down
+btn6_label: 3D Print
+btn7_label: Habit
+btn8_label: Back
+
+# Rooms
+room1_label: Living/Kitchen
+room2_label: Office

@@ -20,38 +20,8 @@
 # Date: October 2025
 # =============================================================================
 
-# Substitutions - Customize these for your Home Assistant entities
-substitutions:
-  # Device Identity
-  device_name: cyd_ha
-  device_friendly_name: CYD HA
-
-  # Home Assistant Sensor Entities (Temperature & Humidity)
-  internal_temp_sensor: sensor.living_room_temperature
-  internal_humidity_sensor: sensor.living_room_humidity
-  int2_temp_sensor: sensor.office_temperature
-  int2_humidity_sensor: sensor.office_humidity
-  outside_temp_sensor: sensor.outdoor_temperature
-
-  # Weather Entities
-  weather_entity: weather.home
-  freeze_chance: sensor.freeze_chance
-  snow_chance: sensor.snow_chance
-  rain_chance: sensor.rain_chance
-
-  # Button Configurations (Service & Entity Mappings)
-  button1_service: cover.open_cover
-  button1_entity: cover.living_room_shades
-  button2_service: light.toggle
-  button2_entity: light.living_room_lights
-  button3_service: cover.stop_cover
-  button3_entity: cover.living_room_shades
-  button4_service: light.toggle
-  button4_entity: light.floor_lamp
-  button5_service: cover.close_cover
-  button5_entity: cover.living_room_shades
-  button6_service: switch.toggle
-  button6_entity: switch.powerprint
+# Substitutions - centralized for easier sharing/localization
+substitutions: !include cyd_ha/substitutions.yaml
 
 # =============================================================================
 # Core ESPHome Configuration

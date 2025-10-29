@@ -144,6 +144,32 @@ image:
 
 Éditez `cyd_ha_refactored.yaml` (substitutions) et `cyd_ha/buttons.yaml` pour changer les services/entités.
 
+### 🌍 Localisation (i18n)
+
+L'interface est prête pour plusieurs langues via des substitutions centralisées.
+
+- Fichier des libellés par défaut (anglais) : `cyd_ha/substitutions.yaml`
+- Packs de langue : `cyd_ha/i18n/en.yaml`, `fr.yaml`, `es.yaml`
+
+Deux façons de changer la langue:
+
+1) Simple (éditer sur place)
+- Ouvrez `cyd_ha/substitutions.yaml`
+- Modifiez les clés `i18n_*`, `btn*_label`, `room*_label`
+
+2) Via include (basculer un pack complet)
+- Ouvrez `cyd_ha/substitutions.yaml`
+- En haut du fichier, décommentez UNE ligne:
+  - `<<: !include cyd_ha/i18n/en.yaml`
+  - `<<: !include cyd_ha/i18n/fr.yaml`
+  - `<<: !include cyd_ha/i18n/es.yaml`
+
+Note: certains environnements YAML ne supportent pas la clé de fusion `<<`. Si une erreur survient, copiez le contenu du fichier de langue choisi dans `substitutions.yaml`.
+
+Clés utiles pour la pluie:
+- `i18n_next_rain_prefix`: (ex: "Prochaine pluie")
+- `i18n_next_rain_none`: (ex: "Pas de pluie prévue")
+
 ## 🐛 Dépannage
 
 ### Erreur "Could not connect to WiFi"
