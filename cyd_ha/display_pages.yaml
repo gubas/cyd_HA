@@ -1,5 +1,5 @@
-# Version stable + pages défilantes (3 écrans) sur base menu classique
-# On garde la config d'affichage d'origine, on ajoute la gestion de pages
+# Stable version + auto-cycling pages (3 screens) on top of classic menu
+# Keep original display config, add simple page management + i18n labels
 
 display:
   - platform: ili9xxx
@@ -16,19 +16,19 @@ display:
     rotation: 90
     update_interval: 1s
     lambda: |-
-      // Utilise la global current_page au lieu d'une variable statique locale
+      // Use the global current_page instead of a static local variable
       int page = id(current_page);
       static unsigned long last_switch = 0;
       static bool initialized = false;
       const int PAGE_COUNT = 3;
       
-      // Initialisation au premier appel
+      // Initialize on first call
       if (!initialized) {
         last_switch = millis();
         initialized = true;
       }
       
-      // Cycle automatique toutes les 8s
+      // Auto-cycle every 8 seconds
       if (!id(show_return_page)) {
         if (millis() - last_switch > 8000) {
           id(current_page) = (id(current_page) + 1) % PAGE_COUNT;
@@ -36,11 +36,11 @@ display:
           last_switch = millis();
         }
       } else {
-        // Reset du timer quand on est dans le menu
+      // Reset timer while in menu
         last_switch = millis();
       }
       
-      // Menu classique si demandé
+      // Classic menu when requested
       if (id(show_return_page)) {
         it.fill(id(black));
         // Reset du timer quand on est dans le menu
@@ -57,14 +57,14 @@ display:
         const int x_padding = 10;
         const int y_padding = 10;
         const char* button_texts[] = {
-          "Volets du bas",
-          "LumiereS",
-          "Volets du bas",
-          "Lampadaire",
-          "Volets du bas",
-          "3D Print",
-          "Habbit",
-          "Retour"
+          "${btn1_label}",
+          "${btn2_label}",
+          "${btn3_label}",
+          "${btn4_label}",
+          "${btn5_label}",
+          "${btn6_label}",
+          "${btn7_label}",
+          "${btn8_label}"
         };
         for (int row = 0; row < 4; row++) {
           for (int col = 0; col < 2; col++) {
@@ -115,9 +115,9 @@ display:
         it.image(155, 245, id(back), id(grey));
         return;
       }
-      // Affichage des pages (3 écrans)
+      // Render pages (3 screens)
       it.fill(id(black));
-      // Dimensions portrait fixes (rotation 90 inverse W/H du driver)
+      // Portrait fixed dimensions (rotation 90 swaps driver W/H)
       const int W = 240;
       const int H = 320;
       const int CX = W / 2;
@@ -128,14 +128,14 @@ display:
       it.strftime(W - HEADER_MARGIN, HEADER_Y, id(info), TextAlign::TOP_RIGHT, "%d/%m %H:%M", id(esptime).now());
       const int TITLE_Y = 64;
       if (page == 0) {
-        // Page Météo - Style application
-        it.print(CX, TITLE_Y - 10, id(info), TextAlign::CENTER, "Météo — Mâcon");
+        // Page 1: Weather — App style
+        it.printf(CX, TITLE_Y - 10, id(info), TextAlign::CENTER, "%s — %s", "${i18n_weather_title}", "${location_name}");
         
-        // Section haute: Icône météo + Température + Humidité
+      // Top section: Weather icon + Temperature + Humidity
         const int ICON_Y = 90;
         const int ICON_SIZE_BIG = 60;
         
-        // Grande icône météo (à gauche)
+      // Big weather icon (left)
         if (id(weather_state).has_state()) {
           static std::map<std::string, std::string> weather_icon_map = {
             {"clear-night", "\U000F0594"}, {"cloudy", "\U000F0590"}, {"fog", "\U000F0591"},
@@ -152,7 +152,7 @@ display:
           it.printf(50, ICON_Y, id(fontmeteo), TextAlign::CENTER, "\U000F0599");
         }
         
-        // Température avec icône (droite)
+      // Temperature with icon (right)
         it.image(W - 100, ICON_Y - 10, id(temp_small), id(blue));
         if (id(temp_ext).has_state()) {
           it.printf(W - 70, ICON_Y, id(info), TextAlign::CENTER_LEFT, "%.1f°C", id(temp_ext).state);
@@ -160,13 +160,13 @@ display:
           it.print(W - 70, ICON_Y, id(info), TextAlign::CENTER_LEFT, "--°C");
         }
         
-        // Humidité (sous température)
+      // Humidity (below temperature)
         it.image(W - 100, ICON_Y + 15, id(humidity_small), id(blue));
         if (id(humidity_ext).has_state()) {
           it.printf(W - 70, ICON_Y + 25, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(humidity_ext).state);
         }
 
-        // Alerte météo (ligne sous l'icône)
+      // Weather alerts (line below the icon)
         const int ALERT_Y = 135;
         static char alert_buffer[100];
         alert_buffer[0] = '\0';
@@ -198,12 +198,12 @@ display:
         }
         
         if (has_alert) {
-          it.printf(CX, ALERT_Y, id(info), TextAlign::CENTER, "⚠ %s", alert_buffer);
+          it.printf(CX, ALERT_Y, id(info), TextAlign::CENTER, "%s", alert_buffer);
         } else {
-          it.print(CX, ALERT_Y, id(info), TextAlign::CENTER, "Pas d'alerte");
+          it.print(CX, ALERT_Y, id(info), TextAlign::CENTER, "${i18n_no_alerts}");
         }
 
-        // Prévisions de pluie (rectangles)
+      // Rain forecast (rectangles)
         const int RAIN_Y = ALERT_Y + 20;
         const int RECT_W = 22;
         const int RECT_H = 8;
@@ -211,7 +211,7 @@ display:
         const int TOTAL_RAIN_W = 9 * RECT_W + 8 * RECT_SPACING;
         const int RAIN_START_X = (W - TOTAL_RAIN_W) / 2;
         
-        // Fonction pour extraire valeur d'une clé dans le texte de l'attribut
+      // Extract value for a key inside the attribute raw text
         auto extract_forecast = [&](const std::string& data, const char* key) -> std::string {
           if (data.empty()) return "Temps sec";
           std::string search_key = std::string("'") + key + "'";
@@ -242,7 +242,7 @@ display:
           return data.substr(val_start, val_end - val_start);
         };
         
-        // Fonction pour déterminer la couleur selon l'intensité
+      // Map rain intensity to color
         auto get_rain_color = [&](const std::string& rain_type) -> Color {
           std::string lower_type;
           for (char c : rain_type) {
@@ -261,33 +261,33 @@ display:
           return Color(255, 255, 255);  // Blanc (temps sec)
         };
 
-        // Récupérer les données de prévision
+      // Get forecast raw data
         std::string forecast_data = id(next_rain_forecast_data).has_state() ? id(next_rain_forecast_data).state : "";
         
-        // Log de debug (une seule fois par cycle, pas à chaque frame)
+      // Debug log once (not every frame)
         static bool logged_once = false;
         if (!logged_once && !forecast_data.empty()) {
           ESP_LOGD("rain_forecast", "Data: %s", forecast_data.c_str());
           logged_once = true;
         }
         
-        // Extraire chaque intervalle et dessiner
+      // Extract each interval and draw
         const char* intervals[] = {"0 min", "5 min", "10 min", "15 min", "20 min", "25 min", "35 min", "45 min", "55 min"};
         int rect_x = RAIN_START_X;
         
         for (int i = 0; i < 9; i++) {
           std::string rain_value = extract_forecast(forecast_data, intervals[i]);
           
-          // Déterminer si on remplit ou pas
+          // Decide fill vs empty (dry => empty)
           std::string lower_val;
           for (char c : rain_value) lower_val += tolower(c);
           bool is_dry = (lower_val.find("sec") != std::string::npos);
           
           if (is_dry) {
-            // Temps sec : rectangle vide (juste le contour gris)
+            // Dry: empty rectangle (grey border)
             it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
           } else {
-            // Pluie : rectangle rempli avec la couleur correspondante
+            // Rain: filled rectangle with mapped color
             Color fill_color = get_rain_color(rain_value);
             it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, fill_color);
             it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
@@ -295,7 +295,7 @@ display:
           rect_x += RECT_W + RECT_SPACING;
         }
 
-        // Texte: prochaine pluie
+      // Text: next rain
         std::string next_label = "";
         for (int i = 0; i < 9; i++) {
           std::string val = extract_forecast(forecast_data, intervals[i]);
@@ -308,9 +308,9 @@ display:
         }
         const int NEXT_TEXT_Y = RAIN_Y + RECT_H + 10;
         if (!next_label.empty()) {
-          it.printf(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "Prochaine pluie: %s", next_label.c_str());
+          it.printf(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "%s: %s", "${i18n_next_rain_prefix}", next_label.c_str());
         } else {
-          it.print(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "Pas de pluie prévue");
+          it.print(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "${i18n_next_rain_none}");
         }
 
 
@@ -322,24 +322,24 @@ display:
         const int ICON_SIZE = 20;
         const int TEXT_OFFSET = 22;
         
-        // Ligne 1: Pluie | Vent (direction avec flèches)
+      // Row 1: Rain | Wind (direction + speed)
         it.image(COL1_X, GRID_START_Y, id(umbrella), id(blue));
         if (id(rainchance).has_state()) it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(rainchance).state);
         else it.print(COL1_X + TEXT_OFFSET, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "-- %");
         
-        // Vent: afficher la direction avec des lettres
+        // Wind: display cardinal direction letters
         if (id(wind_bearing).has_state() && id(wind_speed).has_state()) {
           float bearing = id(wind_bearing).state;
-          // Convertir bearing en direction cardinale
+          // Convert bearing to cardinal direction
           const char* direction;
           if (bearing >= 337.5 || bearing < 22.5) direction = "N";
           else if (bearing >= 22.5 && bearing < 67.5) direction = "NE";
           else if (bearing >= 67.5 && bearing < 112.5) direction = "E";
           else if (bearing >= 112.5 && bearing < 157.5) direction = "SE";
           else if (bearing >= 157.5 && bearing < 202.5) direction = "S";
-          else if (bearing >= 202.5 && bearing < 247.5) direction = "SO";
-          else if (bearing >= 247.5 && bearing < 292.5) direction = "O";
-          else direction = "NO";
+          else if (bearing >= 202.5 && bearing < 247.5) direction = "SW";
+          else if (bearing >= 247.5 && bearing < 292.5) direction = "W";
+          else direction = "NW";
           it.printf(COL2_X, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%s %.0f km/h", direction, id(wind_speed).state);
         } else if (id(wind_speed).has_state()) {
           it.printf(COL2_X, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "%.0f km/h", id(wind_speed).state);
@@ -347,7 +347,7 @@ display:
           it.print(COL2_X, GRID_START_Y + 10, id(info), TextAlign::CENTER_LEFT, "-- km/h");
         }
         
-        // Ligne 2: Neige | Pression
+      // Row 2: Snow | Pressure
         it.image(COL1_X, GRID_START_Y + ROW_HEIGHT, id(snow_small), id(blue));
         if (id(snowchance).has_state()) it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(snowchance).state);
         else it.print(COL1_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "-- %");
@@ -356,15 +356,15 @@ display:
         if (id(pressure).has_state()) it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f hPa", id(pressure).state);
         else it.print(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "-- hPa");
         
-        // Ligne 3: Gel
+      // Row 3: Freeze
         it.image(COL1_X, GRID_START_Y + 2*ROW_HEIGHT, id(freeze_small), id(blue));
         if (id(freezechance).has_state()) it.printf(COL1_X + TEXT_OFFSET, GRID_START_Y + 2*ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "%.0f %%", id(freezechance).state);
         else it.print(COL1_X + TEXT_OFFSET, GRID_START_Y + 2*ROW_HEIGHT + 10, id(info), TextAlign::CENTER_LEFT, "-- %");
         
-        // Ligne 4: Lever du soleil | Coucher du soleil
+      // Row 4: Sunrise | Sunset
         it.image(COL1_X, GRID_START_Y + 3*ROW_HEIGHT, id(sunrise_small), id(blue));
         if (id(sunrise_time).has_state()) {
-          // Parse ISO timestamp et extraire HH:MM
+          // Parse ISO timestamp and extract HH:MM
           std::string sunrise_str = id(sunrise_time).state;
           size_t time_pos = sunrise_str.find('T');
           if (time_pos != std::string::npos && sunrise_str.length() > time_pos + 5) {
@@ -383,27 +383,27 @@ display:
           }
         }
       } else if (page == 1) {
-        // Page 2 : Home sensors
-        it.print(CX, TITLE_Y, id(info), TextAlign::CENTER, "Capteurs — Maison");
+        // Page 2: Home sensors
+        it.printf(CX, TITLE_Y, id(info), TextAlign::CENTER, "%s — %s", "${i18n_sensors_title}", "${location_name}");
         const int CARD_W = 210, CARD_H = 60, CARD_X = (W - CARD_W) / 2;
         const int C1_Y = 92, C2_Y = C1_Y + CARD_H + 12;
         it.rectangle(CARD_X, C1_Y, CARD_W, CARD_H, id(grey));
         it.image(CARD_X + 8, C1_Y + 10, id(hometemperature), id(blue));
-        it.print(CARD_X + 50, C1_Y + 12, id(info), "Salon/Cuisine");
+      it.print(CARD_X + 50, C1_Y + 12, id(info), "${room1_label}");
         if (id(temp_int).has_state()) it.printf(CARD_X + 50, C1_Y + 35, id(info), "%.1f C", id(temp_int).state);
         else it.print(CARD_X + 50, C1_Y + 35, id(info), "-- C");
         if (id(hum_int).has_state()) it.printf(CARD_X + 140, C1_Y + 35, id(info), "%.0f %%", id(hum_int).state);
         else it.print(CARD_X + 140, C1_Y + 35, id(info), "-- %");
         it.rectangle(CARD_X, C2_Y, CARD_W, CARD_H, id(grey));
         it.image(CARD_X + 8, C2_Y + 10, id(deskroom), id(blue));
-        it.print(CARD_X + 50, C2_Y + 12, id(info), "Bureau");
+      it.print(CARD_X + 50, C2_Y + 12, id(info), "${room2_label}");
         if (id(int2_temp).has_state()) it.printf(CARD_X + 50, C2_Y + 35, id(info), "%.1f C", id(int2_temp).state);
         else it.print(CARD_X + 50, C2_Y + 35, id(info), "-- C");
         if (id(int2_hum).has_state()) it.printf(CARD_X + 140, C2_Y + 35, id(info), "%.0f %%", id(int2_hum).state);
         else it.print(CARD_X + 140, C2_Y + 35, id(info), "-- %");
       } else {
-        // Page 3 : BambuLab - Style application
-        it.print(CX, TITLE_Y - 10, id(info), TextAlign::CENTER, "Imprimante — BambuLab");
+        // Page 3: 3D Printer — App style
+        it.printf(CX, TITLE_Y - 10, id(info), TextAlign::CENTER, "%s — %s", "${i18n_printer_title}", "${printer_brand}");
         
         // Section haute: Icône imprimante + Nom de fichier
         const int ICON_Y = 90;

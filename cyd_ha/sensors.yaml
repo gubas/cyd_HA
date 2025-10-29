@@ -1,8 +1,11 @@
 # Home Assistant Sensors Integration
 # Imports sensor data from Home Assistant entities
 
-# Numeric Sensors (Temperature, Humidity, Weather Probabilities)
+# =============================
+# Numeric Sensors (measurements)
+# =============================
 sensor:
+  # ── Home (indoor sensors)
   - platform: homeassistant
     id: temp_int
     entity_id: $internal_temp_sensor
@@ -19,10 +22,13 @@ sensor:
     id: int2_hum
     entity_id: $int2_humidity_sensor
     internal: true
+  # ── Outdoor (dedicated sensors)
   - platform: homeassistant
     id: temp_ext
     entity_id: $outside_temp_sensor
     internal: true
+  
+  # ── Weather — Probabilities
   - platform: homeassistant
     id: rainchance
     entity_id: $rain_chance
@@ -36,7 +42,7 @@ sensor:
     entity_id: $freeze_chance
     internal: true
 
-  # Weather - Wind speed from weather entity attribute
+  # ── Weather — Attributes from weather entity
   - platform: homeassistant
     id: wind_speed
     entity_id: ${weather_entity}
@@ -62,7 +68,7 @@ sensor:
     attribute: wind_bearing
     internal: true
 
-  # BambuLab Printer (numeric sensors)
+  # ── 3D Printer (BambuLab) — Numeric
   - platform: homeassistant
     id: print_progress
     entity_id: sensor.p1s_01p09c482900380_progression_de_l_impression
@@ -84,8 +90,11 @@ sensor:
     entity_id: number.p1s_01p09c482900380_temperature_cible_de_la_buse
     internal: true
 
-# Text Sensors (Entity States)
+# =============================
+# Text Sensors (states/strings)
+# =============================
 text_sensor:
+  # ── Buttons (entity states)
   - platform: homeassistant
     id: button1_entity_color
     entity_id: $button1_entity
@@ -110,13 +119,14 @@ text_sensor:
     id: button6_entity_color
     entity_id: $button6_entity
     internal: true
+  # ── Weather — State
   - platform: homeassistant
     id: weather_state
     name: "Current Weather Icon"
     entity_id: $weather_entity
     internal: true
 
-  # Weather Alert
+  # ── Weather Alerts (Météo-France)
   - platform: homeassistant
     id: weather_alert
     entity_id: sensor.71_weather_alert
@@ -147,7 +157,7 @@ text_sensor:
     attribute: Inondation
     internal: true
   
-  # Sun times
+  # ── Sun times (rise/set)
   - platform: homeassistant
     id: sunrise_time
     entity_id: sun.sun
@@ -159,14 +169,15 @@ text_sensor:
     attribute: next_setting
     internal: true
   
-  # Next rain forecast - On récupère l'attribut 1_hour_forecast directement
+  # ── Rain forecast (Météo-France)
+  #     Raw attribute 1_hour_forecast parsed on the display lambda
   - platform: homeassistant
     id: next_rain_forecast_data
     entity_id: sensor.macon_next_rain
     attribute: 1_hour_forecast
     internal: true
 
-  # BambuLab Printer (text sensors)
+  # ── 3D Printer (BambuLab) — Text
   - platform: homeassistant
     id: print_status
     entity_id: sensor.p1s_01p09c482900380_etat_de_l_impression

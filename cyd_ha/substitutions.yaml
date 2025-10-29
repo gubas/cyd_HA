@@ -1,0 +1,64 @@
+##### Substitutions (centralized) ############################################
+# This file centralizes all user-tunable values (entities, labels, titles).
+# Localization options:
+#   Option A (simple): edit the i18n_* and labels below.
+#   Option B (advanced): uncomment ONE include below to load a language file
+#     NOTE: YAML merge key '<<' may not be supported in all environments.
+#     If errors occur, copy the file contents manually into this section.
+
+#   Language include hints:
+#   # <<: !include i18n/en.yaml
+<<: !include i18n/fr.yaml
+#   # <<: !include i18n/es.yaml
+#
+##############################################################################
+
+# Device Identity
+device_name: cyd_ha
+device_friendly_name: CYD HA
+
+# Location / Branding
+location_name: Macon
+printer_brand: BambuLab
+
+# Home Assistant Sensor Entities (Temperature & Humidity)
+internal_temp_sensor: sensor.0xb4e3f9fffe277666_temperature
+internal_humidity_sensor: sensor.0xb4e3f9fffe277666_humidity
+int2_temp_sensor: sensor.0xa4c138d73acf9da2_temperature
+int2_humidity_sensor: sensor.0xa4c138d73acf9da2_humidity
+outside_temp_sensor: sensor.out_meteofrance_temperature
+
+# Weather Entities
+weather_entity: weather.macon
+freeze_chance: sensor.macon_freeze_chance
+snow_chance: sensor.macon_snow_chance
+rain_chance: sensor.macon_rain_chance
+
+# Buttons (Service & Entity)
+button1_service: cover.open_cover
+button1_entity: cover.volets_du_bas
+button2_service: light.toggle
+button2_entity: light.lumieres_salon_cuisine
+button3_service: cover.stop_cover
+button3_entity: cover.volets_du_bas
+button4_service: light.toggle
+button4_entity: light.0x842e14fffe2fb774
+button5_service: cover.close_cover
+button5_entity: cover.volets_du_bas
+button6_service: switch.toggle
+button6_entity: switch.powerprint
+
+
+# Menu button labels (customize per use-case)
+btn1_label: Shades Up
+btn2_label: Lights
+btn3_label: Shades Stop
+btn4_label: Lamp
+btn5_label: Shades Down
+btn6_label: 3D Print
+btn7_label: Habit
+btn8_label: Back
+
+# Room labels
+room1_label: Living/Kitchen
+room2_label: Office
