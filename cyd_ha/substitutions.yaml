@@ -1,12 +1,9 @@
 ##### Substitutions (centralized) ############################################
 # This file centralizes all user-tunable values (entities, labels, titles).
-# Localization options:
-#   Option A (simple): edit the i18n_* and labels below.
-#   Option B (advanced): uncomment ONE include below to load a language file
-#     NOTE: YAML merge key '<<' may not be supported in all environments.
-#     If errors occur, copy the file contents manually into this section.
+# Localization policy: ALWAYS use language include files; do not override
+# i18n_* keys locally. Enable EXACTLY ONE include below.
 
-#   Language include hints:
+#   Language include (choose one):
 #   # <<: !include i18n/en.yaml
 <<: !include i18n/fr.yaml
 #   # <<: !include i18n/es.yaml
@@ -18,8 +15,8 @@ device_name: cyd_ha
 device_friendly_name: CYD HA
 
 # Location / Branding
-location_name: Macon
-printer_brand: BambuLab
+location_name: Mâcon
+printer_brand: P1S
 
 # Home Assistant Sensor Entities (Temperature & Humidity)
 internal_temp_sensor: sensor.0xb4e3f9fffe277666_temperature

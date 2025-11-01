@@ -65,14 +65,14 @@ display:
         const int x_padding = 10;
         const int y_padding = 10;
         const char* button_texts[] = {
-          "Volets du bas",
-          "LumiereS",
-          "Volets du bas",
-          "Lampadaire",
-          "Volets du bas",
-          "3D Print",
-          "Habbit",
-          "Retour"
+          "${btn1_label}",
+          "${btn2_label}",
+          "${btn3_label}",
+          "${btn4_label}",
+          "${btn5_label}",
+          "${btn6_label}",
+          "${btn7_label}",
+          "${btn8_label}"
         };
         for (int row = 0; row < 4; row++) {
           for (int col = 0; col < 2; col++) {
@@ -94,12 +94,12 @@ display:
         } else {
           it.image(45, 20, id(up), id(grey));
         }
-        if (id(button2_entity_color).has_state() && id(button2_entity_color).state != "off") {
+        if (id(button2_entity_color).has_state() && id(button2_entity_color).state == "on") {
           it.image(155, 20, id(meeting), id(blue));
         } else {
           it.image(155, 20, id(meeting), id(grey));
         }
-        if (id(button3_entity_color).has_state() && id(button3_entity_color).state == "docked") {
+        if (id(button3_entity_color).has_state() && id(button3_entity_color).state == "on") {
           it.image(45, 95, id(stop), id(blue));
         } else {
           it.image(45, 95, id(stop), id(grey));
@@ -137,7 +137,7 @@ display:
       // PAGE 0 : MÉTÉO
       // ============================================
       if (page == 0) {
-        it.print(CX, TITLE_Y - 10, id(info), TextAlign::CENTER, "Météo — Mâcon");
+  it.printf(CX, TITLE_Y - 10, id(info), TextAlign::CENTER, "%s — %s", "${i18n_weather_title}", "${location_name}");
         
         // Section haute: Icône météo + Température + Humidité
         const int ICON_Y = 90;
@@ -208,7 +208,7 @@ display:
         if (has_alert) {
           it.printf(CX, ALERT_Y, id(info), TextAlign::CENTER, "⚠ %s", alert_buffer);
         } else {
-          it.print(CX, ALERT_Y, id(info), TextAlign::CENTER, "Pas d'alerte");
+          it.print(CX, ALERT_Y, id(info), TextAlign::CENTER, "${i18n_no_alerts}");
         }
 
         // Prévisions de pluie (rectangles)
@@ -316,9 +316,9 @@ display:
         }
         const int NEXT_TEXT_Y = RAIN_Y + RECT_H + 10;
         if (!next_label.empty()) {
-          it.printf(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "Prochaine pluie: %s", next_label.c_str());
+          it.printf(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "%s: %s", "${i18n_next_rain_prefix}", next_label.c_str());
         } else {
-          it.print(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "Pas de pluie prévue");
+          it.print(CX, NEXT_TEXT_Y, id(info), TextAlign::CENTER, "${i18n_next_rain_none}");
         }
 
         // Grille d'informations météo (6 données en 3x2)
