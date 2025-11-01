@@ -146,25 +146,13 @@ image:
 
 ### 🌍 Localisation (i18n)
 
-L'interface est prête pour plusieurs langues via des substitutions centralisées.
+L'interface utilise des packs de langue dédiés — toujours via include, sans surcharge locale.
 
-- Fichier des libellés par défaut (anglais) : `cyd_ha/substitutions.yaml`
-- Packs de langue : `cyd_ha/i18n/en.yaml`, `fr.yaml`, `es.yaml`
-
-Deux façons de changer la langue:
-
-1) Simple (éditer sur place)
-- Ouvrez `cyd_ha/substitutions.yaml`
-- Modifiez les clés `i18n_*`, `btn*_label`, `room*_label`
-
-2) Via include (basculer un pack complet)
-- Ouvrez `cyd_ha/substitutions.yaml`
-- En haut du fichier, décommentez UNE ligne:
-  - `<<: !include cyd_ha/i18n/en.yaml`
-  - `<<: !include cyd_ha/i18n/fr.yaml`
-  - `<<: !include cyd_ha/i18n/es.yaml`
-
-Note: certains environnements YAML ne supportent pas la clé de fusion `<<`. Si une erreur survient, copiez le contenu du fichier de langue choisi dans `substitutions.yaml`.
+- Packs: `cyd_ha/i18n/en.yaml`, `cyd_ha/i18n/fr.yaml`, `cyd_ha/i18n/es.yaml`
+- Activez EXACTEMENT un pack en haut de `cyd_ha/substitutions.yaml`:
+  - `<<: !include i18n/en.yaml`
+  - `<<: !include i18n/fr.yaml`
+  - `<<: !include i18n/es.yaml`
 
 Clés utiles pour la pluie:
 - `i18n_next_rain_prefix`: (ex: "Prochaine pluie")

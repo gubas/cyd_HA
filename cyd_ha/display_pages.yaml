@@ -48,8 +48,6 @@ display:
         const int MENU_W = 240;
         const int HEADER_MARGIN = 10;
         const int HEADER_Y = 10;
-        it.print(HEADER_MARGIN, HEADER_Y, id(info), TextAlign::TOP_LEFT, "${device_friendly_name}");
-        it.strftime(MENU_W - HEADER_MARGIN, HEADER_Y, id(info), TextAlign::TOP_RIGHT, "%d/%m %H:%M", id(esptime).now());
         const int button_width = 100;
         const int button_height = 65;
         const int x_start = 15;
@@ -86,12 +84,12 @@ display:
         } else {
           it.image(45, 20, id(up), id(grey));
         }
-        if (id(button2_entity_color).has_state() && id(button2_entity_color).state != "off") {
+        if (id(button2_entity_color).has_state() && id(button2_entity_color).state == "on") {
           it.image(155, 20, id(meeting), id(blue));
         } else {
           it.image(155, 20, id(meeting), id(grey));
         }
-        if (id(button3_entity_color).has_state() && id(button3_entity_color).state == "docked") {
+        if (id(button3_entity_color).has_state() && id(button3_entity_color).state == "on") {
           it.image(45, 95, id(stop), id(blue));
         } else {
           it.image(45, 95, id(stop), id(grey));
