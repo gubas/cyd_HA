@@ -119,6 +119,10 @@ text_sensor:
     id: button6_entity_color
     entity_id: $button6_entity
     internal: true
+  - platform: homeassistant
+    id: button7_entity_color
+    entity_id: $button7_entity
+    internal: true
   # ── Weather — State
   - platform: homeassistant
     id: weather_state

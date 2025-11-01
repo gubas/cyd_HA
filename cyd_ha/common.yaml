@@ -131,6 +131,10 @@ image:
     id: printer3d
     resize: 40x40
     type: BINARY
+  - file: mdi:lightbulb
+    id: bulb
+    resize: 40x40
+    type: BINARY
   - file: mdi:arrow-up-bold-outline
     id: up
     resize: 40x40
