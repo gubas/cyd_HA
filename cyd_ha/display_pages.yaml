@@ -109,7 +109,11 @@ display:
         } else {
           it.image(155, 170, id(printer3d), id(grey));
         }
-        it.image(45, 245, id(habbit), id(grey));
+        if (id(button7_entity_color).has_state() && id(button7_entity_color).state == "on") {
+          it.image(45, 245, id(bulb), id(blue));
+        } else {
+          it.image(45, 245, id(bulb), id(grey));
+        }
         it.image(155, 245, id(back), id(grey));
         return;
       }

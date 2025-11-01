@@ -197,6 +197,11 @@
             - globals.set:
                 id: menu_display_time
                 value: !lambda "return millis();"
+          else:
+            - homeassistant.service:
+                service: $button7_service
+                data:
+                  entity_id: $button7_entity
 
 # Button 8: Lower Right (Return/Back)
 - platform: touchscreen
