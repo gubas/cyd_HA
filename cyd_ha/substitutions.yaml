@@ -43,6 +43,6 @@ button4_entity: light.0x842e14fffe2fb774
 button5_service: cover.close_cover
 button5_entity: cover.volets_du_bas
 button6_service: switch.toggle
-button6_entity: switch.powerprint
+button6_entity: switch.0xa4c138724adb8456
 button7_service: light.toggle
 button7_entity: light.0x588e81fffefa2472
