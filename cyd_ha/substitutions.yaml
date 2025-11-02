@@ -43,6 +43,6 @@ button4_entity: light.floor_lamp
 button5_service: cover.close_cover
 button5_entity: cover.living_room_shades
 button6_service: switch.toggle
-button6_entity: switch.powerprint
+button6_entity: switch.3d_printer_power
 button7_service: light.toggle
 button7_entity: light.kitchen_light
