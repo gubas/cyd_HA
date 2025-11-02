@@ -13,7 +13,10 @@ Un panneau tactile intelligent pour contrôler Home Assistant à l'aide d'un ESP
   - **Page Capteurs** : Températures et humidité de 2 zones (Salon/Cuisine et Bureau)
   - **Page Imprimante** : État BambuLab en temps réel (fichier, progression, températures buse/lit, temps restant)
 - **Menu de contrôle** : Accessible au toucher, 8 boutons tactiles configurables pour contrôler des entités Home Assistant (volets, lumières, imprimante 3D)
-- **En-tête global** : Nom du device et date/heure (JJ/MM HH:MM) sur toutes les pages
+  - Interface épurée sans en-tête pour maximiser l'espace des boutons
+  - Retour visuel avec icônes colorées (bleu = actif, gris = inactif)
+  - Internationalisation complète (FR/EN/ES) via fichiers dédiés
+- **En-tête global** : Nom du device et date/heure (JJ/MM HH:MM) sur les pages de données (météo, capteurs, imprimante)
 - **Interface tactile responsive** : Détection précise avec calibration XPT2046
 - **Connexion sécurisée** : API chiffrée, OTA protégé par mot de passe
 - **Architecture modulaire** : Configuration organisée en fichiers séparés pour faciliter la maintenance
@@ -146,17 +149,24 @@ image:
 
 ### 🌍 Localisation (i18n)
 
-L'interface utilise des packs de langue dédiés — toujours via include, sans surcharge locale.
+L'interface utilise des packs de langue dédiés — **toujours via include, sans surcharge locale**.
 
-- Packs: `cyd_ha/i18n/en.yaml`, `cyd_ha/i18n/fr.yaml`, `cyd_ha/i18n/es.yaml`
-- Activez EXACTEMENT un pack en haut de `cyd_ha/substitutions.yaml`:
-  - `<<: !include i18n/en.yaml`
-  - `<<: !include i18n/fr.yaml`
-  - `<<: !include i18n/es.yaml`
+**Politique stricte** : Ne jamais éditer les clés i18n directement dans `substitutions.yaml`. Tous les changements linguistiques se font dans les fichiers de langue.
 
-Clés utiles pour la pluie:
-- `i18n_next_rain_prefix`: (ex: "Prochaine pluie")
-- `i18n_next_rain_none`: (ex: "Pas de pluie prévue")
+- **Packs disponibles** : `cyd_ha/i18n/en.yaml`, `cyd_ha/i18n/fr.yaml`, `cyd_ha/i18n/es.yaml`
+- **Activation** : Décommentez EXACTEMENT une ligne en haut de `cyd_ha/substitutions.yaml`:
+  ```yaml
+  # <<: !include i18n/en.yaml
+  <<: !include i18n/fr.yaml    # ← Actif
+  # <<: !include i18n/es.yaml
+  ```
+
+**Clés traduites** :
+- Titres des pages : `i18n_weather_title`, `i18n_sensors_title`, `i18n_printer_title`
+- Boutons du menu : `btn1_label` à `btn8_label`
+- Pièces : `room1_label`, `room2_label`
+- Messages pluie : `i18n_next_rain_prefix`, `i18n_next_rain_none`
+- Alertes : `i18n_no_alerts`
 
 ## 🐛 Dépannage
 
@@ -248,11 +258,14 @@ Touch XPT2046
 - Timer display basé sur `millis()` (précis à 5s)
 - Fallback météo avec lookup sécurisé (`.find()` au lieu de `[]`)
 - Vérifications `has_state()` avant affichage des capteurs
+- Logique d'icônes uniformisée : bleu = actif ("on"), gris = inactif
 
 ✅ **Maintenabilité**
 - Configuration modulaire (7 fichiers séparés)
 - Commentaires détaillés
 - Architecture claire et documentée
+- Internationalisation stricte via fichiers d'inclusion (pas de surcharge locale)
+- Guide AI pour contributeurs (`.github/copilot-instructions.md`)
 
 ✅ **Performance**
 - `fast_connect: true` pour WiFi rapide
@@ -260,6 +273,21 @@ Touch XPT2046
 - `update_interval: 1s` pour affichage fluide
 
 ## 📝 Changelog
+
+### v3.1 (Novembre 2025) - Internationalisation et UX du menu
+
+- 🌍 **Internationalisation complète** :
+  - Architecture i18n stricte : toutes les traductions via fichiers d'inclusion (`cyd_ha/i18n/*.yaml`)
+  - Packs de langue : FR, EN, ES complets (titres pages, boutons, alertes, messages)
+  - Politique "include-only" : pas de surcharge locale des clés i18n dans `substitutions.yaml`
+- 🎨 **Menu amélioré** :
+  - Suppression de l'en-tête (nom device + heure) pour maximiser l'espace des boutons
+  - Interface épurée et focalisée sur les contrôles
+  - Icônes uniformisées : bleu = actif ("on"), gris = inactif
+  - Bouton 7 activé : contrôle d'une lumière avec icône ampoule
+- 📚 **Documentation** :
+  - Guide AI (`.github/copilot-instructions.md`) pour faciliter les contributions
+  - Explications d'architecture et conventions du projet
 
 ### v3.0 (Octobre 2025) - Prévisions de pluie Météo-France
 
