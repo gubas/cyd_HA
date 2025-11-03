@@ -38,16 +38,21 @@ font:
       - "\U000F059D" # windy
       - "\U000F059E" # windy-variant
 
-# Color Palette
+# Color Palette - Home Assistant Dark Theme
+# Note: Les couleurs sont en BGR pour cet écran, pas RGB
 color:
   - id: black
-    hex: '000000'
+    hex: '111111'  # HA dark background
   - id: blue
-    hex: '16afd9'
+    hex: 'F39621'  # Bleu (BGR inversé de 2196F3)
   - id: grey
-    hex: '464646'
+    hex: '9E9E9E'  # HA secondary grey (inactive)
   - id: white
-    hex: 'FFFFFF'
+    hex: 'FAFAFA'  # HA text color
+  - id: card_bg
+    hex: '1C1C1C'  # HA card background
+  - id: divider
+    hex: '2E2E2E'  # HA divider/border
 
 # Icon Library (Material Design Icons)
 image:
