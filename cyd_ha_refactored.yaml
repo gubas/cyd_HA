@@ -39,10 +39,6 @@ esp32:
 
 # Logging Configuration
 logger:
-  level: INFO  # Options: NONE, ERROR, WARN, INFO, DEBUG, VERBOSE
-  logs:
-    sensor: WARN
-    text_sensor: WARN
 
 # Home Assistant API (encrypted connection)
 api:
