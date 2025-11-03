@@ -14,7 +14,7 @@ display:
       width: 320
       height: 240
     rotation: 90
-    update_interval: 1s
+    update_interval: 500ms
     lambda: |-
       // Use the global current_page instead of a static local variable
       int page = id(current_page);
@@ -139,7 +139,7 @@ display:
         const int ICON_Y = 90;
         const int ICON_SIZE_BIG = 60;
         
-      // Big weather icon (left)
+      // Big weather icon (left) with lightweight animation (Option A)
         if (id(weather_state).has_state()) {
           static std::map<std::string, std::string> weather_icon_map = {
             {"clear-night", "\U000F0594"}, {"cloudy", "\U000F0590"}, {"fog", "\U000F0591"},
@@ -151,7 +151,31 @@ display:
           const std::string& ws = id(weather_state).state;
           auto itw = weather_icon_map.find(ws);
           const char* icon = (itw != weather_icon_map.end()) ? itw->second.c_str() : "\U000F0599";
-          it.printf(50, ICON_Y, id(fontmeteo), id(blue), TextAlign::CENTER, icon);
+
+          // Simple 2-frame toggle every 500ms + 1px bounce for dynamic conditions
+          unsigned long t = millis();
+          bool phase = ((t / 500) % 2) == 0;
+          bool is_dynamic = (
+            ws == "rainy" || ws == "pouring" ||
+            ws == "lightning" || ws == "lightning-rainy" ||
+            ws == "windy" || ws == "windy-variant" ||
+            ws == "snowy" || ws == "snowy-rainy" ||
+            ws == "hail"
+          );
+
+          if (phase) {
+            if (ws == "rainy") icon = "\U000F0596";            // rainy ↔ pouring
+            else if (ws == "pouring") icon = "\U000F0597";
+            else if (ws == "lightning") icon = "\U000F067E";  // lightning ↔ lightning-rainy
+            else if (ws == "lightning-rainy") icon = "\U000F0593";
+            else if (ws == "windy") icon = "\U000F059E";      // windy ↔ windy-variant
+            else if (ws == "windy-variant") icon = "\U000F059D";
+            else if (ws == "snowy") icon = "\U000F067F";      // snowy ↔ snowy-rainy
+            else if (ws == "snowy-rainy") icon = "\U000F0598";
+          }
+
+          int icon_y = ICON_Y + (is_dynamic && phase ? 1 : 0);
+          it.printf(50, icon_y, id(fontmeteo), id(blue), TextAlign::CENTER, icon);
         } else {
           it.printf(50, ICON_Y, id(fontmeteo), id(blue), TextAlign::CENTER, "\U000F0599");
         }
@@ -209,10 +233,11 @@ display:
 
       // Rain forecast (rectangles)
         const int RAIN_Y = ALERT_Y + 20;
-        const int RECT_W = 22;
+        const int RECT_W_5 = 16;   // 6 premiers (5 min)
+        const int RECT_W_10 = 32;  // 3 derniers (10 min)
         const int RECT_H = 8;
         const int RECT_SPACING = 3;
-        const int TOTAL_RAIN_W = 9 * RECT_W + 8 * RECT_SPACING;
+        const int TOTAL_RAIN_W = 6 * RECT_W_5 + 3 * RECT_W_10 + 8 * RECT_SPACING;
         const int RAIN_START_X = (W - TOTAL_RAIN_W) / 2;
         
       // Extract value for a key inside the attribute raw text
@@ -286,17 +311,34 @@ display:
           std::string lower_val;
           for (char c : rain_value) lower_val += tolower(c);
           bool is_dry = (lower_val.find("sec") != std::string::npos);
+          const int rect_w = (i < 6) ? RECT_W_5 : RECT_W_10;
           
           if (is_dry) {
             // Dry: empty rectangle (grey border)
-            it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+            it.rectangle(rect_x, RAIN_Y, rect_w, RECT_H, id(grey));
           } else {
             // Rain: filled rectangle with mapped color
             Color fill_color = get_rain_color(rain_value);
-            it.filled_rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, fill_color);
-            it.rectangle(rect_x, RAIN_Y, RECT_W, RECT_H, id(grey));
+            it.filled_rectangle(rect_x, RAIN_Y, rect_w, RECT_H, fill_color);
+            it.rectangle(rect_x, RAIN_Y, rect_w, RECT_H, id(grey));
           }
-          rect_x += RECT_W + RECT_SPACING;
+          rect_x += rect_w + RECT_SPACING;
+        }
+
+      // Time labels under bars
+        int label_x = RAIN_START_X;
+        for (int i = 0; i < 9; i++) {
+          const int rect_w = (i < 6) ? RECT_W_5 : RECT_W_10;
+          int cx = label_x + rect_w / 2;
+          const char* lab = intervals[i];
+          char num[4]; int j = 0;
+          for (const char* p = lab; *p && j < 3; ++p) {
+            if (*p >= '0' && *p <= '9') num[j++] = *p;
+            else break;
+          }
+          num[j] = 0;
+          it.printf(cx, RAIN_Y + RECT_H + 1, id(info), id(grey), TextAlign::TOP_CENTER, "%s", num);
+          label_x += rect_w + RECT_SPACING;
         }
 
       // Text: next rain
@@ -310,7 +352,7 @@ display:
             break;
           }
         }
-        const int NEXT_TEXT_Y = RAIN_Y + RECT_H + 10;
+        const int NEXT_TEXT_Y = RAIN_Y + RECT_H + 30;
         if (!next_label.empty()) {
           it.printf(CX, NEXT_TEXT_Y, id(info), id(white), TextAlign::CENTER, "%s: %s", "${i18n_next_rain_prefix}", next_label.c_str());
         } else {
@@ -319,7 +361,7 @@ display:
 
 
         // Grille d'informations météo (6 données en 3x2)
-        const int GRID_START_Y = 185;
+        const int GRID_START_Y = 200;
         const int ROW_HEIGHT = 22;
         const int COL1_X = 20;
         const int COL2_X = 118; // décalé vers la gauche pour éviter les coupures

@@ -1,5 +1,7 @@
 # ESP32 CYD Home Assistant Touch Panel
 
+> Version actuelle: **v3.2**
+
 <img src="https://img.shields.io/badge/ESPHome-000000?style=for-the-badge&logo=esphome&logoColor=white" alt="ESPHome" /> <img src="https://img.shields.io/badge/Home_Assistant-41BDF5?style=for-the-badge&logo=home-assistant&logoColor=white" alt="Home Assistant" />
 
 Un panneau tactile intelligent pour contrôler Home Assistant à l'aide d'un ESP32-2432S028R (CYD - Cheap Yellow Display).
@@ -8,7 +10,7 @@ Un panneau tactile intelligent pour contrôler Home Assistant à l'aide d'un ESP
 
 - **Affichage multi-pages** : 3 écrans défilant automatiquement toutes les 8 secondes
   - **Page Météo** : Conditions météo actuelles avec grande icône animée, température extérieure, pluie, vent, neige, gel et alertes Météo-France en temps réel (vigilance jaune/orange/rouge)
-    - 🌧️ **Prévisions de pluie** : 9 rectangles colorés représentant les prévisions minute par minute (0-55 min) avec code couleur intuitif (vide=sec, bleu clair/moyen/foncé=pluie faible/modérée/forte)
+  - 🌧️ **Prévisions de pluie** : 9 rectangles colorés représentant les prévisions minute par minute (0–55 min) avec code couleur intuitif (vide=sec, bleu clair/moyen/foncé=pluie faible/modérée/forte), avec indicateurs de minutes sous chaque barre et largeurs différenciées (5 min vs 10 min)
     - 📍 **Texte "Prochaine pluie"** : Annonce automatique de la prochaine pluie ou "Pas de pluie prévue"
   - **Page Capteurs** : Températures et humidité de 2 zones (Salon/Cuisine et Bureau)
   - **Page Imprimante** : État BambuLab en temps réel (fichier, progression, températures buse/lit, temps restant)
@@ -111,7 +113,7 @@ substitutions:
 
 #### c) Télécharger la font Material Design Icons
 
-Ou téléchargez manuellement : [MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf)
+[MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf)
 
 
 ## 🎨 Personnalisation
@@ -167,6 +169,7 @@ L'interface utilise des packs de langue dédiés — **toujours via include, san
 - Pièces : `room1_label`, `room2_label`
 - Messages pluie : `i18n_next_rain_prefix`, `i18n_next_rain_none`
 - Alertes : `i18n_no_alerts`
+
 
 ## 🐛 Dépannage
 
@@ -248,31 +251,16 @@ Touch XPT2046
     Home Assistant Service Calls
 ```
 
-### Amélirations appliquées (refactorisation)
-
-✅ **Sécurité**
-- Tous les credentials déplacés dans `secrets.yaml`
-- API et OTA sécurisés par références `!secret`
-
-✅ **Robustesse**
-- Timer display basé sur `millis()` (précis à 5s)
-- Fallback météo avec lookup sécurisé (`.find()` au lieu de `[]`)
-- Vérifications `has_state()` avant affichage des capteurs
-- Logique d'icônes uniformisée : bleu = actif ("on"), gris = inactif
-
-✅ **Maintenabilité**
-- Configuration modulaire (7 fichiers séparés)
-- Commentaires détaillés
-- Architecture claire et documentée
-- Internationalisation stricte via fichiers d'inclusion (pas de surcharge locale)
-- Guide AI pour contributeurs (`.github/copilot-instructions.md`)
-
-✅ **Performance**
-- `fast_connect: true` pour WiFi rapide
-- `power_save_mode: none` pour touch réactif
-- `update_interval: 1s` pour affichage fluide
-
 ## 📝 Changelog
+
+### v3.2 (Novembre 2025) - Pluie: tailles + labels
+
+- 📏 **Rectangles de pluie dimensionnés par intervalle** :
+  - 6 premier intervalles (5 min) plus étroits pour une meilleure densité visuelle
+  - 3 derniers intervalles (10 min) plus larges pour souligner l’échelle de temps
+- 🏷️ **Indicateurs de minutes** sous chaque barre (0, 5, 10, 15, 20, 25, 35, 45, 55)
+- 🧭 **Espacements ajustés** pour éviter tout chevauchement entre les labels et le texte « Prochaine pluie »
+- ✨ Aucun changement côté Home Assistant requis; rendu géré entièrement côté ESPHome
 
 ### v3.1 (Novembre 2025) - Internationalisation et UX du menu
 
