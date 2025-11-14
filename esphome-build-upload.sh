@@ -18,6 +18,11 @@ if ! command -v esphome >/dev/null 2>&1; then
   exit 127
 fi
 
+# Update ESPHome to latest version
+echo "Checking for ESPHome updates..."
+pip install --upgrade esphome --quiet
+echo "ESPHome version: $(esphome version)"
+
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 cd "$SCRIPT_DIR"
 
