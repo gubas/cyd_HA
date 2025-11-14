@@ -11,8 +11,8 @@
 ##############################################################################
 
 # Device Identity
-device_name: cyd_ha
-device_friendly_name: CYD HA
+device_name: cydhapanel
+device_friendly_name: CYD HA Panel
 
 # Location / Branding
 location_name: Mâcon
