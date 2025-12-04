@@ -53,7 +53,7 @@ jobs:
           cat > secrets.yaml << 'EOF'
           wifi_ssid: "test_ssid"
           wifi_password: "test_password"
-          cyd_ha_api_encryption_key: "dGVzdGtleXRlc3RrZXl0ZXN0a2V5dGVzdGtleXRlcw=="
+          cyd_ha_api_encryption_key: "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY="
           cyd_ha_ota_password: "test_ota_password"
           cyd_ha_ap_ssid: "Test Fallback AP"
           cyd_ha_ap_password: "test_ap_password"
