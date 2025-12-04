@@ -71,23 +71,23 @@ sensor:
   # ── 3D Printer (BambuLab) — Numeric
   - platform: homeassistant
     id: print_progress
-    entity_id: sensor.p1s_01p09c482900380_progression_de_l_impression
+    entity_id: $printer_progress
     internal: true
   - platform: homeassistant
     id: bed_temp
-    entity_id: sensor.p1s_01p09c482900380_temperature_du_lit
+    entity_id: $printer_bed_temp
     internal: true
   - platform: homeassistant
     id: bed_temp_set
-    entity_id: number.p1s_01p09c482900380_temperature_cible_du_lit
+    entity_id: $printer_bed_temp_target
     internal: true
   - platform: homeassistant
     id: nozzle_temp
-    entity_id: sensor.p1s_01p09c482900380_temperature_de_la_buse
+    entity_id: $printer_nozzle_temp
     internal: true
   - platform: homeassistant
     id: nozzle_temp_set
-    entity_id: number.p1s_01p09c482900380_temperature_cible_de_la_buse
+    entity_id: $printer_nozzle_temp_target
     internal: true
 
 # =============================
@@ -184,17 +184,17 @@ text_sensor:
   # ── 3D Printer (BambuLab) — Text
   - platform: homeassistant
     id: print_status
-    entity_id: sensor.p1s_01p09c482900380_etat_de_l_impression
+    entity_id: $printer_status
     internal: true
   - platform: homeassistant
     id: time_remaining
-    entity_id: sensor.p1s_01p09c482900380_temps_restant
+    entity_id: $printer_time_remaining
     internal: true
   - platform: homeassistant
     id: end_time
-    entity_id: sensor.datefin_print
+    entity_id: $printer_end_time
     internal: true
   - platform: homeassistant
     id: current_file
-    entity_id: sensor.p1s_01p09c482900380_ficher_g_code
+    entity_id: $printer_gcode_file
     internal: true

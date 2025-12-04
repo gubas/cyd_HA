@@ -46,3 +46,14 @@ button6_service: switch.toggle
 button6_entity: switch.0xa4c138724adb8456
 button7_service: light.toggle
 button7_entity: light.0x588e81fffefa2472
+
+# 3D Printer (BambuLab) Entities
+printer_progress: sensor.p1s_01p09c482900380_progression_de_l_impression
+printer_bed_temp: sensor.p1s_01p09c482900380_temperature_du_lit
+printer_bed_temp_target: number.p1s_01p09c482900380_temperature_cible_du_lit
+printer_nozzle_temp: sensor.p1s_01p09c482900380_temperature_de_la_buse
+printer_nozzle_temp_target: number.p1s_01p09c482900380_temperature_cible_de_la_buse
+printer_status: sensor.p1s_01p09c482900380_etat_de_l_impression
+printer_time_remaining: sensor.p1s_01p09c482900380_temps_restant
+printer_end_time: sensor.datefin_print
+printer_gcode_file: sensor.p1s_01p09c482900380_ficher_g_code
