@@ -36,7 +36,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      # 2. Crée un fichier secrets.yaml factice pour la compilation
+      # 2. Configure Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      # 3. Installe ESPHome
+      - name: Install ESPHome
+        run: pip install esphome
+      
+      # 4. Crée un fichier secrets.yaml factice pour la compilation
       #    (les vrais secrets ne sont jamais dans le repo)
       - name: Create dummy secrets
         run: |
@@ -49,9 +59,7 @@ jobs:
           cyd_ha_ap_password: "test_ap_password"
           EOF
       
-      # 3. Compile la configuration ESPHome (sans flasher)
-      - name: Build ESPHome firmware
-        uses: esphome/build-action@v4
-        with:
-          yaml-file: cyd_ha_refactored.yaml
-          version: latest
+      # 5. Compile la configuration ESPHome (sans flasher)
+      - name: Compile ESPHome firmware
+        run: esphome compile cyd_ha_refactored.yaml
+
