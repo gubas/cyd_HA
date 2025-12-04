@@ -271,7 +271,7 @@ display:
           return data.substr(val_start, val_end - val_start);
         };
         
-      // Map rain intensity to color
+      // Map rain intensity to color (BGR order for this display)
         auto get_rain_color = [&](const std::string& rain_type) -> Color {
           std::string lower_type;
           for (char c : rain_type) {
@@ -279,13 +279,13 @@ display:
           }
           
           if (lower_type.find("forte") != std::string::npos || lower_type.find("fort") != std::string::npos) {
-            return Color(0, 50, 150);  // Bleu foncé
+            return Color(150, 50, 0);  // Bleu foncé (BGR)
           }
           if (lower_type.find("mod") != std::string::npos) {
-            return Color(50, 100, 180);  // Bleu moyen
+            return Color(180, 100, 50);  // Bleu moyen (BGR)
           }
           if (lower_type.find("faible") != std::string::npos) {
-            return Color(100, 150, 200);  // Bleu clair
+            return Color(200, 150, 100);  // Bleu clair (BGR)
           }
           return Color(255, 255, 255);  // Blanc (temps sec)
         };

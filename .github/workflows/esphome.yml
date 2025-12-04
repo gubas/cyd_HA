@@ -1,0 +1,57 @@
+# =============================================================================
+# ESPHome CI/CD Pipeline
+# =============================================================================
+# Ce workflow vérifie automatiquement que la configuration ESPHome compile
+# sans erreur à chaque push ou pull request.
+#
+# Avantages:
+#   - Détecte les erreurs de syntaxe YAML avant déploiement
+#   - Valide les références aux substitutions
+#   - Vérifie la compatibilité des composants ESPHome
+#   - Badge de statut pour le README
+# =============================================================================
+
+name: ESPHome Build
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - '**.yaml'
+      - '**.yml'
+      - '**.ttf'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - '**.yaml'
+      - '**.yml'
+
+jobs:
+  build:
+    name: Compile ESPHome Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Récupère le code source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # 2. Crée un fichier secrets.yaml factice pour la compilation
+      #    (les vrais secrets ne sont jamais dans le repo)
+      - name: Create dummy secrets
+        run: |
+          cat > secrets.yaml << 'EOF'
+          wifi_ssid: "test_ssid"
+          wifi_password: "test_password"
+          cyd_ha_api_encryption_key: "dGVzdGtleXRlc3RrZXl0ZXN0a2V5dGVzdGtleXRlcw=="
+          cyd_ha_ota_password: "test_ota_password"
+          cyd_ha_ap_ssid: "Test Fallback AP"
+          cyd_ha_ap_password: "test_ap_password"
+          EOF
+      
+      # 3. Compile la configuration ESPHome (sans flasher)
+      - name: Build ESPHome firmware
+        uses: esphome/build-action@v4
+        with:
+          yaml-file: cyd_ha_refactored.yaml
+          version: latest

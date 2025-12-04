@@ -1,6 +1,8 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Version actuelle: **v3.2**
+> Version actuelle: **v3.3**
+
+[![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 
 <img src="https://img.shields.io/badge/ESPHome-000000?style=for-the-badge&logo=esphome&logoColor=white" alt="ESPHome" /> <img src="https://img.shields.io/badge/Home_Assistant-41BDF5?style=for-the-badge&logo=home-assistant&logoColor=white" alt="Home Assistant" />
 
@@ -252,6 +254,18 @@ Touch XPT2046
 ```
 
 ## 📝 Changelog
+
+### v3.3 (Décembre 2025) - CI/CD et refactoring
+
+- 🔧 **Configuration centralisée imprimante 3D** :
+  - Migration des 9 entity IDs BambuLab vers `substitutions.yaml`
+  - Changement d'imprimante en modifiant un seul fichier
+- 🧹 **Nettoyage** :
+  - Suppression du fichier obsolète `display_main.yaml`
+- 🚀 **Intégration continue (CI)** :
+  - Workflow GitHub Actions pour validation automatique de la compilation ESPHome
+  - Détection des erreurs de syntaxe YAML avant déploiement
+  - Badge de statut dans le README
 
 ### v3.2 (Novembre 2025) - Pluie: tailles + labels
 
