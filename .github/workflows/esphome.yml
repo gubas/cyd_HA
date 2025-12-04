@@ -46,7 +46,13 @@ jobs:
       - name: Install ESPHome
         run: pip install esphome
       
-      # 4. Crée un fichier secrets.yaml factice pour la compilation
+      # 4. Télécharge la font Material Design Icons
+      - name: Download Material Design Icons font
+        run: |
+          curl -L -o materialdesignicons-webfont.ttf \
+            "https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf"
+      
+      # 5. Crée un fichier secrets.yaml factice pour la compilation
       #    (les vrais secrets ne sont jamais dans le repo)
       - name: Create dummy secrets
         run: |
@@ -59,7 +65,7 @@ jobs:
           cyd_ha_ap_password: "test_ap_password"
           EOF
       
-      # 5. Compile la configuration ESPHome (sans flasher)
+      # 6. Compile la configuration ESPHome (sans flasher)
       - name: Compile ESPHome firmware
         run: esphome compile cyd_ha_refactored.yaml
 
