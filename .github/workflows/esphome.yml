@@ -49,6 +49,7 @@ jobs:
       # 4. Crée un fichier secrets.yaml factice pour la compilation
       #    (les vrais secrets ne sont jamais dans le repo)
       - name: Create dummy secrets
+        working-directory: cyd_HA
         run: |
           cat > secrets.yaml << 'EOF'
           wifi_ssid: "test_ssid"
@@ -61,5 +62,6 @@ jobs:
       
       # 5. Compile la configuration ESPHome (sans flasher)
       - name: Compile ESPHome firmware
+        working-directory: cyd_HA
         run: esphome compile cyd_ha_refactored.yaml
 
