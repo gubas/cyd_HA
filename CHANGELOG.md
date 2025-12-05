@@ -7,7 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [3.5.0] - 2025-12-05
 
 ### Added
-- **Media Page**: New conditional page showing Artist/Title (only when playing/paused)
+- **Media Page Improvements**:
+  - Text wrapping for Artist and Title (automatically adjusts to screen width)
+  - Dynamic pagination dots: now shows 2, 3, or 4 dots depending on available pages (skips inactive Media/Printer pages)
+  - New layout: Clean look without header title, larger fonts, centered status
 - **Media Configuration**: `media_player_entity` variable in `substitutions.yaml`
 - **Dynamic Cycling**: Pages are now skipped if their corresponding entity is inactive (Media or Printer)
 

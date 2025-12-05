@@ -1,6 +1,6 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Current version: **v3.4**
+> Current version: **v3.5**
 
 [![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 
@@ -14,7 +14,8 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
   - **Weather Page**: Current conditions with animated weather icon, outdoor temperature, rain, wind, snow, frost, and real-time Météo-France alerts (yellow/orange/red vigilance)
   - 🌧️ **Rain forecast**: 9 colored rectangles showing minute-by-minute forecast (0–55 min) with intuitive color coding (empty=dry, light/medium/dark blue = light/moderate/heavy rain)
   - **Sensors Page**: Temperature and humidity from up to 4 zones in a 2x2 grid layout
-  - **Media Page**: Now Playing (Artist & Title) when music is active
+  - **Media Page**: Now Playing (Artist & Title) with automatic text wrapping and dynamic layout
+  - **Dynamic Pagination**: Dots indicator adjusts automatically (2/3/4 dots) based on active pages (Media/Printer hidden when unused)
   - **Printer Page**: Real-time BambuLab status (file, progress, nozzle/bed temps, remaining time)
 - **Control menu**: Touch-activated, 8 configurable buttons to control Home Assistant entities (covers, lights, 3D printer)
   - Clean interface without header to maximize button space

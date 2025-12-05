@@ -1,6 +1,18 @@
 # Stable version + auto-cycling pages (3 screens) on top of classic menu
 # Keep original display config, add simple page management + i18n labels
 
+# Online Image Component for Album Art
+# online_image:
+#   - url: "http://placeholder"
+#     id: album_art
+#     format: jpg
+#     type: RGB565
+#     resize: 80x80
+#     update_interval: 1s
+#     on_error:
+#       then:
+#         - logger.log: "Failed to download image"
+
 display:
   - platform: ili9xxx
     id: esp_display
@@ -505,27 +517,63 @@ display:
         }
       } else if (page == 2) {
         // Page 3: Media Player
-        it.printf(CX, TITLE_Y - 10, id(info), id(white), TextAlign::CENTER, "%s", "${i18n_media_title}");
+        // Title "Média" removed as requested
         
-        // Large Media Icon
-        it.image(CX - 25, 100, id(media_icon), id(blue));
+        // Large Media Icon (Moved up)
+        const int ICON_Y = 50;
+        it.image(CX - 25, ICON_Y, id(media_icon), id(blue));
         
-        // Artist & Title
-        const int TEXT_START_Y = 160;
-        
+        // Artist & Title (Bigger font, below icon, with wrapping)
+        int current_y = 120;
+        int max_width = 230;
+        int line_height = id(date)->get_height() + 2;
+
+        auto print_wrap = [&](std::string text, Color color) {
+          std::string remainder = text;
+          while (remainder.length() > 0) {
+            std::string line = remainder;
+            // Trim to fit width using get_text_bounds
+            int w, h, x_off, y_off;
+            it.get_text_bounds(0, 0, line.c_str(), id(date), TextAlign::TOP_LEFT, &x_off, &y_off, &w, &h);
+            
+            while (line.length() > 0 && w > max_width) {
+              // Try to find last space
+              size_t last_space = line.rfind(' ');
+              if (last_space != std::string::npos) {
+                line = line.substr(0, last_space);
+              } else {
+                 line = line.substr(0, line.length() - 1);
+              }
+              // Re-measure
+              it.get_text_bounds(0, 0, line.c_str(), id(date), TextAlign::TOP_LEFT, &x_off, &y_off, &w, &h);
+            }
+            it.print(CX, current_y, id(date), color, TextAlign::TOP_CENTER, line.c_str());
+            current_y += line_height;
+            if (line.length() < remainder.length()) {
+              remainder = remainder.substr(line.length());
+              // Trim leading space of remainder
+              if (remainder.length() > 0 && remainder[0] == ' ') remainder = remainder.substr(1);
+            } else {
+              remainder = "";
+            }
+          }
+        };
+
         if (id(media_artist).has_state() && id(media_artist).state != "") {
-          it.printf(CX, TEXT_START_Y, id(info), id(grey), TextAlign::CENTER, "%s", id(media_artist).state.c_str());
-          it.printf(CX, TEXT_START_Y + 25, id(info), id(white), TextAlign::CENTER, "%s", id(media_title).state.c_str());
-        } else {
-           it.printf(CX, TEXT_START_Y + 10, id(info), id(white), TextAlign::CENTER, "%s", id(media_title).state.c_str());
+          print_wrap(id(media_artist).state, id(grey));
         }
         
-        // Status State
+        // Gap between Artist and Title
+        current_y += 5;
+
+        if (id(media_title).has_state() && id(media_title).state != "") {
+          print_wrap(id(media_title).state, id(white));
+        }
+
+        // Status State (Below text)
+        current_y += 10; // Extra gap before status
         if (id(media_state).has_state()) {
-           const char* state_icon = (id(media_state).state == "playing") ? "\U000F040A" : "\U000F03E4"; // Play or Pause icon
-           // Using text status for now if font doesn't support those glyphs, or just text.
-           // Let's use text state.
-           it.printf(CX, 210, id(info), id(blue), TextAlign::CENTER, "[ %s ]", id(media_state).state.c_str());
+           it.printf(CX, current_y, id(info), id(blue), TextAlign::TOP_CENTER, "[ %s ]", id(media_state).state.c_str());
         }
 
       } else if (page == 3) {
@@ -647,13 +695,26 @@ display:
         }
       }
       // Indicateur de page (• • •) en bas - nombre dynamique selon état imprimante
-      const int DOTS = PAGE_COUNT;
+      // Indicateur de page (• • •) en bas - nombre dynamique
+      int total_dots = 2; // Home + Sensors always present
+      if (media_active) total_dots++;
+      if (printer_on) total_dots++;
+
+      int current_dot = page;
+      // Remap page index (0,1,2,3) to visual dot index (0..N-1)
+      if (page == 3) {
+        if (!media_active) current_dot = 2; // Shift left if media missing
+        // If media active(2) present, printer(3) stays at 3
+      }
+      // If page is 2, it stays 2 (since 0,1 always present)
+      
+      const int DOTS = total_dots;
       const int DOT_RADIUS = 3;
       const int DOT_SPACING = 18;
       const int DOT_Y = H - M - 8;
       const int DOT_START_X = CX - ((DOTS - 1) * DOT_SPACING) / 2;
       for (int i = 0; i < DOTS; i++) {
         int dx = DOT_START_X + i * DOT_SPACING;
-        auto col = (i == page) ? id(blue) : id(grey);
+        auto col = (i == current_dot) ? id(blue) : id(grey);
         it.filled_circle(dx, DOT_Y, DOT_RADIUS, col);
       }
