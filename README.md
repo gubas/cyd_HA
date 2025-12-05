@@ -254,6 +254,11 @@ To improve this project:
 This project is provided "as is" without warranty.
 Use it, modify it, share it freely.
 
+## 🙏 Acknowledgments
+
+This project was inspired by the excellent tutorial from **Aguacatec**:
+- [Integrar la Cheap Yellow Display en Home Assistant](https://aguacatec.es/integrar-la-cheap-yellow-display-en-ha/)
+
 ## 🔗 Resources
 
 - [ESPHome Documentation](https://esphome.io/)
