@@ -1,6 +1,11 @@
-# Touchscreen Button Definitions (list format for inclusion under `binary_sensor:`)
+# =============================================================================
+# Touchscreen Button Definitions
+# =============================================================================
+# List format for inclusion under `binary_sensor:`
+# All services/entities are configured in substitutions.yaml.
+# =============================================================================
 
-# Button 1: Top Left (e.g., Open Cover)
+# Button 1: Top Left
 - platform: touchscreen
   name: Button 1
   x_min: 15
@@ -25,11 +30,14 @@
                 value: !lambda "return millis();"
           else:
             - homeassistant.service:
-                service: $button1_service
+                service: $btn1_service
                 data:
-                  entity_id: $button1_entity
+                  entity_id: $btn1_entity
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
 
-# Button 2: Top Right (e.g., Toggle Light)
+# Button 2: Top Right
 - platform: touchscreen
   name: Button 2
   x_min: 125
@@ -54,11 +62,14 @@
                 value: !lambda "return millis();"
           else:
             - homeassistant.service:
-                service: $button2_service
+                service: $btn2_service
                 data:
-                  entity_id: $button2_entity
+                  entity_id: $btn2_entity
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
 
-# Button 3: Middle Left (e.g., Stop Cover)
+# Button 3: Middle Left
 - platform: touchscreen
   name: Button 3
   x_min: 15
@@ -83,11 +94,14 @@
                 value: !lambda "return millis();"
           else:
             - homeassistant.service:
-                service: $button3_service
+                service: $btn3_service
                 data:
-                  entity_id: $button3_entity
+                  entity_id: $btn3_entity
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
 
-# Button 4: Middle Right (e.g., Toggle Lamp)
+# Button 4: Middle Right
 - platform: touchscreen
   name: Button 4
   x_min: 125
@@ -112,11 +126,14 @@
                 value: !lambda "return millis();"
           else:
             - homeassistant.service:
-                service: $button4_service
+                service: $btn4_service
                 data:
-                  entity_id: $button4_entity
+                  entity_id: $btn4_entity
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
 
-# Button 5: Bottom Left (e.g., Close Cover)
+# Button 5: Bottom Left
 - platform: touchscreen
   name: Button 5
   x_min: 15
@@ -141,11 +158,14 @@
                 value: !lambda "return millis();"
           else:
             - homeassistant.service:
-                service: $button5_service
+                service: $btn5_service
                 data:
-                  entity_id: $button5_entity
+                  entity_id: $btn5_entity
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
 
-# Button 6: Bottom Middle (e.g., Toggle Switch)
+# Button 6: Bottom Middle
 - platform: touchscreen
   name: Button 6
   x_min: 125
@@ -170,11 +190,14 @@
                 value: !lambda "return millis();"
           else:
             - homeassistant.service:
-                service: $button6_service
+                service: $btn6_service
                 data:
-                  entity_id: $button6_entity
+                  entity_id: $btn6_entity
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
 
-# Button 7: Lower Left (Navigation)
+# Button 7: Lower Left
 - platform: touchscreen
   name: Button 7
   x_min: 15
@@ -199,9 +222,12 @@
                 value: !lambda "return millis();"
           else:
             - homeassistant.service:
-                service: $button7_service
+                service: $btn7_service
                 data:
-                  entity_id: $button7_entity
+                  entity_id: $btn7_entity
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
 
 # Button 8: Lower Right (Return/Back)
 - platform: touchscreen
@@ -216,6 +242,14 @@
           level: INFO
           tag: touch
           format: "Button 8 pressed"
+      - if:
+          condition:
+            lambda: 'return !id(show_return_page);'
+          then:
+            # Opening menu - set timestamp for timeout
+            - globals.set:
+                id: menu_display_time
+                value: !lambda "return millis();"
       - globals.set:
           id: show_return_page
           value: !lambda "return !id(show_return_page);"
