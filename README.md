@@ -251,8 +251,8 @@ To improve this project:
 
 ## 📄 License
 
-This project is provided "as is" without warranty.
-Use it, modify it, share it freely.
+This project is licensed under the [GNU General Public License v2.0](LICENSE).
+You are free to use, modify, and distribute this software under the terms of the GPL v2.
 
 ## 🙏 Acknowledgments
 
