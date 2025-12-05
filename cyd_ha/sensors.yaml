@@ -1,45 +1,72 @@
+# =============================================================================
 # Home Assistant Sensors Integration
-# Imports sensor data from Home Assistant entities
+# =============================================================================
+# Imports sensor data from Home Assistant entities.
+# All entity IDs are configured in substitutions.yaml.
+# =============================================================================
 
-# =============================
+# ─────────────────────────────────────────────────────────────────────────────
 # Numeric Sensors (measurements)
-# =============================
+# ─────────────────────────────────────────────────────────────────────────────
 sensor:
-  # ── Home (indoor sensors)
+  # ── Sensor Bloc 1 (Indoor)
   - platform: homeassistant
-    id: temp_int
-    entity_id: $internal_temp_sensor
+    id: sensor_bloc1_temp
+    entity_id: $sensor_bloc1_temp_entity
     internal: true
   - platform: homeassistant
-    id: hum_int
-    entity_id: $internal_humidity_sensor
+    id: sensor_bloc1_hum
+    entity_id: $sensor_bloc1_hum_entity
+    internal: true
+
+  # ── Sensor Bloc 2 (Indoor)
+  - platform: homeassistant
+    id: sensor_bloc2_temp
+    entity_id: $sensor_bloc2_temp_entity
     internal: true
   - platform: homeassistant
-    id: int2_temp
-    entity_id: $int2_temp_sensor
+    id: sensor_bloc2_hum
+    entity_id: $sensor_bloc2_hum_entity
+    internal: true
+
+  # ── Sensor Bloc 3 (Optional - leave entity empty to disable)
+  - platform: homeassistant
+    id: sensor_bloc3_temp
+    entity_id: $sensor_bloc3_temp_entity
     internal: true
   - platform: homeassistant
-    id: int2_hum
-    entity_id: $int2_humidity_sensor
+    id: sensor_bloc3_hum
+    entity_id: $sensor_bloc3_hum_entity
     internal: true
-  # ── Outdoor (dedicated sensors)
+
+  # ── Sensor Bloc 4 (Optional - leave entity empty to disable)
+  - platform: homeassistant
+    id: sensor_bloc4_temp
+    entity_id: $sensor_bloc4_temp_entity
+    internal: true
+  - platform: homeassistant
+    id: sensor_bloc4_hum
+    entity_id: $sensor_bloc4_hum_entity
+    internal: true
+
+  # ── Outdoor Temperature
   - platform: homeassistant
     id: temp_ext
-    entity_id: $outside_temp_sensor
+    entity_id: $outside_temp_entity
     internal: true
-  
+
   # ── Weather — Probabilities
   - platform: homeassistant
     id: rainchance
-    entity_id: $rain_chance
+    entity_id: $rain_chance_entity
     internal: true
   - platform: homeassistant
     id: snowchance
-    entity_id: $snow_chance
+    entity_id: $snow_chance_entity
     internal: true
   - platform: homeassistant
     id: freezechance
-    entity_id: $freeze_chance
+    entity_id: $freeze_chance_entity
     internal: true
 
   # ── Weather — Attributes from weather entity
@@ -48,81 +75,78 @@ sensor:
     entity_id: ${weather_entity}
     attribute: wind_speed
     internal: true
-  
-  # Weather - Additional attributes
   - platform: homeassistant
     id: humidity_ext
     entity_id: ${weather_entity}
     attribute: humidity
     internal: true
-  
   - platform: homeassistant
     id: pressure
     entity_id: ${weather_entity}
     attribute: pressure
     internal: true
-  
   - platform: homeassistant
     id: wind_bearing
     entity_id: ${weather_entity}
     attribute: wind_bearing
     internal: true
 
-  # ── 3D Printer (BambuLab) — Numeric
+  # ── 3D Printer — Numeric
   - platform: homeassistant
     id: print_progress
-    entity_id: $printer_progress
+    entity_id: $printer_progress_entity
     internal: true
   - platform: homeassistant
     id: bed_temp
-    entity_id: $printer_bed_temp
+    entity_id: $printer_bed_temp_entity
     internal: true
   - platform: homeassistant
     id: bed_temp_set
-    entity_id: $printer_bed_temp_target
+    entity_id: $printer_bed_target_entity
     internal: true
   - platform: homeassistant
     id: nozzle_temp
-    entity_id: $printer_nozzle_temp
+    entity_id: $printer_nozzle_temp_entity
     internal: true
   - platform: homeassistant
     id: nozzle_temp_set
-    entity_id: $printer_nozzle_temp_target
+    entity_id: $printer_nozzle_target_entity
     internal: true
 
-# =============================
+# ─────────────────────────────────────────────────────────────────────────────
 # Text Sensors (states/strings)
-# =============================
+# ─────────────────────────────────────────────────────────────────────────────
 text_sensor:
-  # ── Buttons (entity states)
+  # ── Button States (for icon colors)
   - platform: homeassistant
-    id: button1_entity_color
-    entity_id: $button1_entity
+    id: btn1_state
+    entity_id: $btn1_entity
     internal: true
   - platform: homeassistant
-    id: button2_entity_color
-    entity_id: $button2_entity
+    id: btn2_state
+    entity_id: $btn2_entity
     internal: true
   - platform: homeassistant
-    id: button3_entity_color
-    entity_id: $button3_entity
+    id: btn3_state
+    entity_id: $btn3_entity
     internal: true
   - platform: homeassistant
-    id: button4_entity_color
-    entity_id: $button4_entity
+    id: btn4_state
+    entity_id: $btn4_entity
     internal: true
   - platform: homeassistant
-    id: button5_entity_color
-    entity_id: $button5_entity
+    id: btn5_state
+    entity_id: $btn5_entity
     internal: true
   - platform: homeassistant
-    id: button6_entity_color
-    entity_id: $button6_entity
+    id: btn6_state
+    entity_id: $btn6_entity
     internal: true
   - platform: homeassistant
-    id: button7_entity_color
-    entity_id: $button7_entity
+    id: btn7_state
+    entity_id: $btn7_entity
     internal: true
+
   # ── Weather — State
   - platform: homeassistant
     id: weather_state
@@ -133,34 +157,34 @@ text_sensor:
   # ── Weather Alerts (Météo-France)
   - platform: homeassistant
     id: weather_alert
-    entity_id: sensor.71_weather_alert
+    entity_id: $weather_alert_entity
     internal: true
   - platform: homeassistant
     id: alert_vent
-    entity_id: sensor.71_weather_alert
+    entity_id: $weather_alert_entity
     attribute: Vent violent
     internal: true
   - platform: homeassistant
     id: alert_pluie
-    entity_id: sensor.71_weather_alert
+    entity_id: $weather_alert_entity
     attribute: Pluie-inondation
     internal: true
   - platform: homeassistant
     id: alert_orages
-    entity_id: sensor.71_weather_alert
+    entity_id: $weather_alert_entity
     attribute: Orages
     internal: true
   - platform: homeassistant
     id: alert_neige
-    entity_id: sensor.71_weather_alert
+    entity_id: $weather_alert_entity
     attribute: Neige-verglas
     internal: true
   - platform: homeassistant
     id: alert_inondation
-    entity_id: sensor.71_weather_alert
+    entity_id: $weather_alert_entity
     attribute: Inondation
     internal: true
-  
+
   # ── Sun times (rise/set)
   - platform: homeassistant
     id: sunrise_time
@@ -172,29 +196,32 @@ text_sensor:
     entity_id: sun.sun
     attribute: next_setting
     internal: true
-  
+
   # ── Rain forecast (Météo-France)
-  #     Raw attribute 1_hour_forecast parsed on the display lambda
   - platform: homeassistant
     id: next_rain_forecast_data
-    entity_id: sensor.macon_next_rain
+    entity_id: $rain_forecast_entity
     attribute: 1_hour_forecast
     internal: true
 
-  # ── 3D Printer (BambuLab) — Text
+  # ── 3D Printer — Text
   - platform: homeassistant
     id: print_status
-    entity_id: $printer_status
+    entity_id: $printer_status_entity
     internal: true
   - platform: homeassistant
     id: time_remaining
-    entity_id: $printer_time_remaining
+    entity_id: $printer_time_remaining_entity
     internal: true
   - platform: homeassistant
     id: end_time
-    entity_id: $printer_end_time
+    entity_id: $printer_end_time_entity
     internal: true
   - platform: homeassistant
     id: current_file
-    entity_id: $printer_gcode_file
+    entity_id: $printer_gcode_entity
+    internal: true
+  - platform: homeassistant
+    id: printer_switch_state
+    entity_id: $printer_switch_entity
     internal: true

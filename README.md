@@ -1,399 +1,260 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Version actuelle: **v3.3**
+> Current version: **v3.4**
 
 [![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 
 <img src="https://img.shields.io/badge/ESPHome-000000?style=for-the-badge&logo=esphome&logoColor=white" alt="ESPHome" /> <img src="https://img.shields.io/badge/Home_Assistant-41BDF5?style=for-the-badge&logo=home-assistant&logoColor=white" alt="Home Assistant" />
 
-Un panneau tactile intelligent pour contrôler Home Assistant à l'aide d'un ESP32-2432S028R (CYD - Cheap Yellow Display).
+A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Cheap Yellow Display).
 
-## 📋 Fonctionnalités
+## 📋 Features
 
-- **Affichage multi-pages** : 3 écrans défilant automatiquement toutes les 8 secondes
-  - **Page Météo** : Conditions météo actuelles avec grande icône animée, température extérieure, pluie, vent, neige, gel et alertes Météo-France en temps réel (vigilance jaune/orange/rouge)
-  - 🌧️ **Prévisions de pluie** : 9 rectangles colorés représentant les prévisions minute par minute (0–55 min) avec code couleur intuitif (vide=sec, bleu clair/moyen/foncé=pluie faible/modérée/forte), avec indicateurs de minutes sous chaque barre et largeurs différenciées (5 min vs 10 min)
-    - 📍 **Texte "Prochaine pluie"** : Annonce automatique de la prochaine pluie ou "Pas de pluie prévue"
-  - **Page Capteurs** : Températures et humidité de 2 zones (Salon/Cuisine et Bureau)
-  - **Page Imprimante** : État BambuLab en temps réel (fichier, progression, températures buse/lit, temps restant)
-- **Menu de contrôle** : Accessible au toucher, 8 boutons tactiles configurables pour contrôler des entités Home Assistant (volets, lumières, imprimante 3D)
-  - Interface épurée sans en-tête pour maximiser l'espace des boutons
-  - Retour visuel avec icônes colorées (bleu = actif, gris = inactif)
-  - Internationalisation complète (FR/EN/ES) via fichiers dédiés
-- **En-tête global** : Nom du device et date/heure (JJ/MM HH:MM) sur les pages de données (météo, capteurs, imprimante)
-- **Interface tactile responsive** : Détection précise avec calibration XPT2046
-- **Connexion sécurisée** : API chiffrée, OTA protégé par mot de passe
-- **Architecture modulaire** : Configuration organisée en fichiers séparés pour faciliter la maintenance
-- **Auto-retour** : Retour automatique au cycle d'affichage après 30s d'inactivité dans le menu
+- **Multi-page display**: 3 screens with 8-second auto-cycling
+  - **Weather Page**: Current conditions with animated weather icon, outdoor temperature, rain, wind, snow, frost, and real-time Météo-France alerts (yellow/orange/red vigilance)
+  - 🌧️ **Rain forecast**: 9 colored rectangles showing minute-by-minute forecast (0–55 min) with intuitive color coding (empty=dry, light/medium/dark blue = light/moderate/heavy rain)
+  - **Sensors Page**: Temperature and humidity from up to 4 zones in a 2x2 grid layout
+  - **Printer Page**: Real-time BambuLab status (file, progress, nozzle/bed temps, remaining time)
+- **Control menu**: Touch-activated, 8 configurable buttons to control Home Assistant entities (covers, lights, 3D printer)
+  - Clean interface without header to maximize button space
+  - Visual feedback with colored icons (blue = active, grey = inactive)
+  - Full internationalization (EN/FR/ES) via dedicated language files
+- **Global header**: Device name and date/time (DD/MM HH:MM) on data pages
+- **Responsive touch interface**: Precise detection with XPT2046 calibration
+- **Secure connection**: Encrypted API, password-protected OTA
+- **Modular architecture**: Configuration split into separate files for easy maintenance
+- **Auto-return**: Automatic return to display cycle after 10s menu inactivity
 
-## 🛠️ Matériel requis
+## 🛠️ Required Hardware
 
 - **ESP32-2432S028R** (Cheap Yellow Display)
   - ESP32 (240 MHz dual-core)
-  - Écran ILI9342 320x240 TFT
-  - Contrôleur tactile XPT2046
-  - LED RVB intégrée
-  - Rétroéclairage PWM
+  - ILI9342 320x240 TFT display
+  - XPT2046 touch controller
+  - Built-in RGB LED
+  - PWM backlight
 
-## 📁 Structure du projet
+## 📁 Project Structure
 
 ```
 cyd_HA/
-├── cyd_ha_refactored.yaml   # ✅ Fichier principal (UTILISEZ CELUI-CI)
-├── cyd_ha/                  # 📂 Sous-dossier modules
-│   ├── common.yaml          # 🎨 Ressources UI (fonts, colors, icons)
-│   ├── hardware.yaml        # ⚙️ Configuration matérielle (SPI, touch, outputs)
-│   ├── sensors.yaml         # 📊 Intégration capteurs Home Assistant
-│   ├── buttons.yaml         # 🔘 Définitions des zones tactiles
-│   └── display_pages.yaml   # 🖥️ Logique de rendu UI multi-pages
-├── secrets.yaml             # 🔐 Credentials (partagé entre projets ESPHome)
-├── secrets.yaml.example     # 📄 Template de secrets
-├── materialdesignicons-webfont.ttf  # � Police d'icônes météo
-└── README.md                # 📖 Documentation
+├── cyd_ha_refactored.yaml     # ✅ Main file (USE THIS)
+├── cyd_ha/                    # 📂 Module subfolder
+│   ├── substitutions.yaml     # ⚙️ All user configuration
+│   ├── common.yaml            # 🎨 UI resources (fonts, colors, icons)
+│   ├── hardware.yaml          # 🔧 Hardware config (SPI, touch, outputs)
+│   ├── sensors.yaml           # 📊 Home Assistant sensor integration
+│   ├── buttons.yaml           # 🔘 Touch zone definitions
+│   ├── display_pages.yaml     # 🖥️ UI rendering logic
+│   └── i18n/                  # 🌍 Language packs
+│       ├── en.yaml
+│       ├── fr.yaml
+│       └── es.yaml
+├── secrets.yaml               # 🔐 Credentials (shared across ESPHome projects)
+├── secrets.yaml.example       # 📄 Secrets template
+├── materialdesignicons-webfont.ttf  # 🎨 Weather icon font
+├── CHANGELOG.md               # 📝 Version history
+└── README.md                  # 📖 This file
 ```
 
-**💡 Note importante** : `secrets.yaml` peut être **partagé entre tous vos projets ESPHome**. Les secrets sont préfixés par le nom du device (ex: `cyd_ha_api_encryption_key`). Voir `SECRETS_GUIDE.md` pour plus de détails.
+## 🚀 Quick Start
 
-## 🚀 Installation rapide
+### 1. Prerequisites
 
-### 1. Prérequis
-
-- [ESPHome](https://esphome.io/) installé
-- Home Assistant fonctionnel avec API activée
-- Connexion USB vers l'ESP32
+- [ESPHome](https://esphome.io/) installed
+- Working Home Assistant with API enabled
+- USB connection to ESP32
 
 ### 2. Configuration
 
-#### a) Créer `secrets.yaml`
+#### a) Create `secrets.yaml`
 
-Créez le fichier `secrets.yaml` (peut être partagé avec tous vos projets ESPHome) :
+Create `secrets.yaml` (can be shared across all ESPHome projects):
 
 ```yaml
-# WiFi global (partagé)
-wifi_ssid: "VOTRE_SSID"
-wifi_password: "VOTRE_MOT_DE_PASSE_WIFI"
+# Global WiFi (shared)
+wifi_ssid: "YOUR_SSID"
+wifi_password: "YOUR_WIFI_PASSWORD"
 
-# Secrets spécifiques au projet "cyd_ha"
-cyd_ha_api_encryption_key: "VOTRE_CLE_API"
-cyd_ha_ota_password: "VOTRE_MOT_DE_PASSE_OTA"
+# Project-specific secrets (prefixed with "cyd_ha")
+cyd_ha_api_encryption_key: "YOUR_API_KEY"
+cyd_ha_ota_password: "YOUR_OTA_PASSWORD"
 cyd_ha_ap_ssid: "CYD HA Fallback Hotspot"
-cyd_ha_ap_password: "CHANGEZ_MOI_12345"
-
-# Pour d'autres projets, ajoutez des secrets préfixés :
-# salon_api_encryption_key: "..."
-# cuisine_ota_password: "..."
+cyd_ha_ap_password: "CHANGE_ME_12345"
 ```
 
-**Note** : Les secrets sont préfixés par le nom du device (`cyd_ha_*`) pour permettre un fichier `secrets.yaml` partagé entre tous vos projets ESPHome.
+#### b) Download Material Design Icons font
 
-#### b) Personnaliser les entités
+[Download MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf)
 
-Éditez `cyd_ha_refactored.yaml` dans la section `substitutions` :
+#### c) Customize entities in `cyd_ha/substitutions.yaml`
+
+All configuration is centralized in this file:
 
 ```yaml
-substitutions:
-  # Capteurs de température/humidité
-  internal_temp_sensor: sensor.votre_capteur_temp_salon
-  internal_humidity_sensor: sensor.votre_capteur_humidity_salon
-  int2_temp_sensor: sensor.votre_capteur_temp_bureau
-  int2_humidity_sensor: sensor.votre_capteur_humidity_bureau
-  outside_temp_sensor: sensor.votre_capteur_temp_exterieur
-  
-  # Météo
-  weather_entity: weather.votre_ville
-  freeze_chance: sensor.votre_ville_freeze_chance
-  snow_chance: sensor.votre_ville_snow_chance
-  rain_chance: sensor.votre_ville_rain_chance
-  
-  # Entités contrôlées par les boutons
-  button1_service: cover.open_cover
-  button1_entity: cover.votre_volet
-  # ... etc
+# ─── Device ──────────────────────────────────────────────────
+device_name: cydhapanel
+device_friendly_name: CYD HA Panel
+
+# ─── Location ────────────────────────────────────────────────
+location_name: Paris
+
+# ─── Weather ─────────────────────────────────────────────────
+weather_entity: weather.paris
+rain_chance_entity: sensor.paris_rain_chance
+# ... more entities
+
+# ─── Sensor Blocks (up to 4) ─────────────────────────────────
+sensor_bloc1_temp_entity: sensor.living_room_temperature
+sensor_bloc1_hum_entity: sensor.living_room_humidity
+sensor_bloc1_icon: hometemperature
+# ... repeat for bloc2, bloc3, bloc4 (use sensor.none to disable)
+
+# ─── Menu Buttons ────────────────────────────────────────────
+btn1_service: cover.open_cover
+btn1_entity: cover.living_room_blinds
+# ... configure all 7 buttons
 ```
 
-**Note sur les prévisions de pluie** : Le capteur `sensor.macon_next_rain` doit avoir un attribut `1_hour_forecast` contenant un dictionnaire avec les clés `'0 min'`, `'5 min'`, etc. (format API Météo-France). Aucune configuration supplémentaire dans Home Assistant n'est requise - tout est parsé côté ESPHome.
+### 3. Flash
 
-#### c) Télécharger la font Material Design Icons
+```bash
+# Compile and upload
+esphome run cyd_ha_refactored.yaml
+```
 
-[MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf)
+Or use the helper script:
+```bash
+./esphome-build-upload.sh        # OTA upload
+./esphome-build-upload.sh -u     # USB upload
+```
 
+## 🎨 Customization
 
-## 🎨 Personnalisation
+### Change colors
 
-### Modifier les couleurs
-
-Éditez `cyd_ha/common.yaml` :
+Edit `cyd_ha/common.yaml`:
 
 ```yaml
 color:
-  - id: black
-    hex: '000000'
   - id: blue
-    hex: '16afd9'  # Changez cette valeur
-  - id: grey
-    hex: '464646'
+    hex: 'F39621'  # Change this value (BGR format)
 ```
 
-### Ajouter des icônes
+### Add icons
 
-1. Trouvez l'icône sur [Material Design Icons](https://pictogrammers.com/library/mdi/)
-2. Ajoutez dans `cyd_ha/common.yaml` :
+1. Find icon on [Material Design Icons](https://pictogrammers.com/library/mdi/)
+2. Add to `cyd_ha/common.yaml`:
 
 ```yaml
 image:
-  - file: mdi:VOTRE_ICONE
-    id: mon_icone
+  - file: mdi:YOUR_ICON
+    id: my_icon
     resize: 40x40
     type: BINARY
 ```
 
-### Modifier les boutons
+### 🌍 Localization (i18n)
 
-Éditez `cyd_ha_refactored.yaml` (substitutions) et `cyd_ha/buttons.yaml` pour changer les services/entités.
+The UI uses dedicated language packs.
 
-### 🌍 Localisation (i18n)
+**Available packs**: `en.yaml`, `fr.yaml`, `es.yaml`
 
-L'interface utilise des packs de langue dédiés — **toujours via include, sans surcharge locale**.
+**Activate** by uncommenting ONE line at the top of `cyd_ha/substitutions.yaml`:
 
-**Politique stricte** : Ne jamais éditer les clés i18n directement dans `substitutions.yaml`. Tous les changements linguistiques se font dans les fichiers de langue.
+```yaml
+<<: !include i18n/en.yaml     # ← English
+# <<: !include i18n/fr.yaml
+# <<: !include i18n/es.yaml
+```
 
-- **Packs disponibles** : `cyd_ha/i18n/en.yaml`, `cyd_ha/i18n/fr.yaml`, `cyd_ha/i18n/es.yaml`
-- **Activation** : Décommentez EXACTEMENT une ligne en haut de `cyd_ha/substitutions.yaml`:
-  ```yaml
-  # <<: !include i18n/en.yaml
-  <<: !include i18n/fr.yaml    # ← Actif
-  # <<: !include i18n/es.yaml
-  ```
+**Translated keys**:
+- Page titles: `i18n_weather_title`, `i18n_sensors_title`, `i18n_printer_title`
+- Menu buttons: `btn1_label` to `btn8_label`
+- Sensor blocks: `sensor_bloc1_label` to `sensor_bloc4_label`
+- Rain messages: `i18n_next_rain_prefix`, `i18n_next_rain_none`
 
-**Clés traduites** :
-- Titres des pages : `i18n_weather_title`, `i18n_sensors_title`, `i18n_printer_title`
-- Boutons du menu : `btn1_label` à `btn8_label`
-- Pièces : `room1_label`, `room2_label`
-- Messages pluie : `i18n_next_rain_prefix`, `i18n_next_rain_none`
-- Alertes : `i18n_no_alerts`
+## 🐛 Troubleshooting
 
+### "Could not connect to WiFi"
+- Check `secrets.yaml` (correct SSID/password)
+- 5GHz WiFi is not supported (use 2.4GHz)
 
-## 🐛 Dépannage
-
-### Erreur "Could not connect to WiFi"
-
-- Vérifiez `secrets.yaml` (SSID/password corrects)
-- Le WiFi 5GHz n'est pas supporté (utilisez 2.4GHz)
-
-### Écran tactile ne répond pas
-
-- Ajustez la calibration dans `cyd_ha/hardware.yaml` :
+### Touchscreen not responding
+- Adjust calibration in `cyd_ha/hardware.yaml`:
 
 ```yaml
 touchscreen:
   calibration:
-    x_min: 280  # Modifiez ces valeurs
+    x_min: 280
     x_max: 3860
     y_min: 280
     y_max: 3860
 ```
 
-### Capteurs affichent "--"
+### Sensors show "--"
+- Verify `entity_id` in `substitutions.yaml` matches Home Assistant entities
+- Check API connection in Home Assistant
 
-- Vérifiez que les `entity_id` dans `substitutions` correspondent aux entités Home Assistant
-- Vérifiez la connexion API dans Home Assistant
+## 📊 Technical Architecture
 
-## 📊 Architecture technique
-
-### Flux de données
+### Data Flow
 
 ```
 Home Assistant API
         ↓
-  cyd_ha/sensors.yaml (import entités: météo, capteurs, imprimante, alertes)
+  cyd_ha/sensors.yaml (import entities)
         ↓
-  cyd_ha/display_pages.yaml (logique rendering multi-pages avec auto-cycle 8s)
+  cyd_ha/display_pages.yaml (rendering with 8s auto-cycle)
         ↓
-    ESP32 Display (ILI9342 - 320x240, rotation 90°)
+    ESP32 Display (ILI9342 - 320x240, 90° rotation)
 ```
 
-### Pages et navigation
+### Pages & Navigation
 
 ```
-3 Pages en cycle automatique (8s):
+3 Pages with auto-cycling (8s):
 ┌─────────────────────────────────────┐
-│ Page 0: Météo                       │
-│  - Grande icône météo (MDI)         │
-│  - Alertes Météo-France (🔴🟠🟡)    │
-│  - Prévisions pluie: 9 rectangles   │
-│    colorés (0-55min) + texte        │
-│    "Prochaine pluie: X min"         │
-│  - Temp/Pluie/Vent/Neige/Gel        │
-│  - Icônes 20x20 alignées            │
+│ Page 0: Weather                     │
+│  - Large animated weather icon      │
+│  - Météo-France alerts (🔴🟠🟡)     │
+│  - Rain forecast: 9 colored bars    │
+│  - "Next rain: X min" text          │
+│  - Temp/Rain/Wind/Snow/Frost grid   │
 ├─────────────────────────────────────┤
-│ Page 1: Capteurs Maison             │
-│  - Salon/Cuisine (temp + humidité)  │
-│  - Bureau (temp + humidité)         │
-│  - Cartes avec icônes               │
+│ Page 1: Home Sensors                │
+│  - 4 blocks in 2x2 grid             │
+│  - Each: icon + label + temp + hum  │
 ├─────────────────────────────────────┤
-│ Page 2: Imprimante BambuLab         │
-│  - Nom fichier (tronqué si > 26c)   │
-│  - Barre progression (sans %)       │
-│  - État / Temps restant / Fin       │
-│  - Températures buse/lit            │
+│ Page 2: BambuLab Printer            │
+│  - Scrolling filename               │
+│  - Progress bar with percentage     │
+│  - Status / Time remaining / End    │
+│  - Nozzle/Bed temperatures          │
 └─────────────────────────────────────┘
 
-Touch écran → Menu 8 boutons (30s timeout)
-```
-
-### Gestion tactile
-
-```
-Touch XPT2046
-        ↓
-  cyd_ha/buttons.yaml (zones tactiles)
-        ↓
-    Lambda conditionnels
-        ↓
-    Home Assistant Service Calls
+Touch anywhere → 8-button menu (10s timeout)
 ```
 
 ## 📝 Changelog
 
-### v3.3 (Décembre 2025) - CI/CD et refactoring
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
-- 🔧 **Configuration centralisée imprimante 3D** :
-  - Migration des 9 entity IDs BambuLab vers `substitutions.yaml`
-  - Changement d'imprimante en modifiant un seul fichier
-- 🧹 **Nettoyage** :
-  - Suppression du fichier obsolète `display_main.yaml`
-- 🚀 **Intégration continue (CI)** :
-  - Workflow GitHub Actions pour validation automatique de la compilation ESPHome
-  - Détection des erreurs de syntaxe YAML avant déploiement
-  - Badge de statut dans le README
+## 🤝 Contributing
 
-### v3.2 (Novembre 2025) - Pluie: tailles + labels
+To improve this project:
 
-- 📏 **Rectangles de pluie dimensionnés par intervalle** :
-  - 6 premier intervalles (5 min) plus étroits pour une meilleure densité visuelle
-  - 3 derniers intervalles (10 min) plus larges pour souligner l’échelle de temps
-- 🏷️ **Indicateurs de minutes** sous chaque barre (0, 5, 10, 15, 20, 25, 35, 45, 55)
-- 🧭 **Espacements ajustés** pour éviter tout chevauchement entre les labels et le texte « Prochaine pluie »
-- ✨ Aucun changement côté Home Assistant requis; rendu géré entièrement côté ESPHome
+1. Test on your hardware
+2. Report bugs via issues
+3. Suggest improvements
+4. Share your custom configurations
 
-### v3.1 (Novembre 2025) - Internationalisation et UX du menu
+## 📄 License
 
-- 🌍 **Internationalisation complète** :
-  - Architecture i18n stricte : toutes les traductions via fichiers d'inclusion (`cyd_ha/i18n/*.yaml`)
-  - Packs de langue : FR, EN, ES complets (titres pages, boutons, alertes, messages)
-  - Politique "include-only" : pas de surcharge locale des clés i18n dans `substitutions.yaml`
-- 🎨 **Menu amélioré** :
-  - Suppression de l'en-tête (nom device + heure) pour maximiser l'espace des boutons
-  - Interface épurée et focalisée sur les contrôles
-  - Icônes uniformisées : bleu = actif ("on"), gris = inactif
-  - Bouton 7 activé : contrôle d'une lumière avec icône ampoule
-- 📚 **Documentation** :
-  - Guide AI (`.github/copilot-instructions.md`) pour faciliter les contributions
-  - Explications d'architecture et conventions du projet
+This project is provided "as is" without warranty.
+Use it, modify it, share it freely.
 
-### v3.0 (Octobre 2025) - Prévisions de pluie Météo-France
-
-- 🌧️ **Visualisation radar de pluie** :
-  - **9 rectangles** (22x8px) représentant les prévisions de pluie à 0, 5, 10, 15, 20, 25, 35, 45, 55 minutes
-  - Intégration directe de l'API Météo-France via attribut `1_hour_forecast` du capteur `sensor.macon_next_rain`
-  - **Code couleur intuitif** :
-    - Rectangle **vide** (contour gris) : Temps sec
-    - **Bleu clair** (100, 150, 200) : Pluie faible
-    - **Bleu moyen** (50, 100, 180) : Pluie modérée
-    - **Bleu foncé** (0, 50, 150) : Pluie forte
-  - **Parsing intelligent** côté ESPHome (aucune configuration Home Assistant requise)
-  - Support des formats JSON avec guillemets simples ou doubles
-- 📍 **Texte "Prochaine pluie"** :
-  - Affiché juste sous les rectangles
-  - "Prochaine pluie: X min" si pluie détectée dans l'heure
-  - "Pas de pluie prévue" si toutes les cases sont "temps sec"
-  - Centré et espacé pour ne pas chevaucher la grille météo
-- 🔍 **Debug dans les logs** :
-  - Logging ESPHome (tag `rain_forecast`) pour diagnostiquer le format de données reçu
-  - Pas d'affichage debug à l'écran (interface propre)
-- ⚡ **Performance optimisée** :
-  - Un seul `text_sensor` pour récupérer l'attribut complet
-  - Parsing avec lambdas C++ efficaces (recherche de sous-chaînes)
-  - Normalisation insensible à la casse pour robustesse
-
-### v2.2 (Octobre 2025) - Style HA et page imprimante redessinée
-
-- 🌤️ **Page météo style Home Assistant** :
-  - Grande icône météo à gauche (70px Material Design Icons)
-  - Bloc température + humidité à droite avec petites icônes
-  - Ligne alertes météo centrée sous l'icône avec agrégation multi-sources
-  - Grille 4x2 compacte : Pluie, Vent (direction cardinale N/NE/E/etc + vitesse), Neige, Pression atmosphérique, Gel, Lever/Coucher soleil (HH:MM)
-  - Icônes 20x20 avec valeurs alignées
-- 🖨️ **Page imprimante BambuLab redesignée** :
-  - Icône imprimante 3D grande à gauche (40x40)
-  - Nom de fichier à droite avec **défilement automatique** si > 28 caractères (vitesse 150ms/caractère)
-  - État de l'impression sous le nom
-  - **Barre de progression agrandie** (24px de hauteur) avec pourcentage centré
-  - Grille style météo avec icônes :
-    - Ligne 1: ⏱️ Temps restant (min) | 🕐 Heure de fin (HH:MM)
-    - Ligne 2: 🔧 Température buse (actuelle/cible°) | 🔥 Température lit (actuelle/cible°)
-  - Format compact sans "C" (ex: "220/210°")
-  - Espacements optimisés pour éviter les chevauchements
-- 📐 **Alignements parfaits** :
-  - Tous les textes avec icônes utilisent `CENTER_LEFT` avec offset +2px
-  - Colonne gauche COL1_X=15, colonne droite COL2_X=125
-  - Grilles centrées et symétriques
-- 🎨 **Palette étendue** : Ajout couleur `white` pour futures utilisations
-- 🆕 **Nouvelles icônes** (20x20) :
-  - timer_small (mdi:timer-outline), clock_end_small (mdi:clock-end)
-  - nozzle_small (mdi:printer-3d-nozzle), bed_small (mdi:radiator)
-  - temp_small (mdi:thermometer), humidity_small (mdi:water-percent)
-  - pressure_small (mdi:gauge), sunrise_small/sunset_small
-- 🛠️ **Optimisations** : Simplification du code (pas de buffers statiques inutiles pour températures)
-
-### v2.1 (Octobre 2025) - Interface multi-pages et alertes météo
-
-- 🔄 **3 pages auto-cycliques** (8s) : Météo / Capteurs / Imprimante 3D
-- 🌤️ **Page météo améliorée** :
-  - Grande icône météo avec 14 conditions (Material Design Icons)
-  - Alertes Météo-France en temps réel (Vent/Pluie/Orages/Neige/Inondation) avec niveaux (Jaune/Orange/Rouge)
-  - Affichage compact avec icônes 20x20 alignées : température ext., pluie, vent, neige, gel
-  - Capteur vitesse du vent depuis attribut weather entity
-- 🏠 **Page capteurs** : 2 zones (Salon/Cuisine + Bureau) avec température et humidité
-- 🖨️ **Page imprimante BambuLab** :
-  - Nom fichier avec troncature intelligente
-  - Barre de progression sans texte (clean)
-  - État, temps restant, heure de fin
-  - Températures buse/lit (actuelle/cible)
-- 📱 **En-tête global** : Device name + date/heure (JJ/MM HH:MM) sur toutes les pages
-- 🎯 **Indicateur de page** : 3 points en bas (• • •) avec mise en évidence page active
-- ⏱️ **Auto-retour menu** : 30s timeout vers cycle automatique
-- 🎨 **Alignement parfait** : Icônes et textes centrés verticalement avec `TextAlign::CENTER_LEFT`
-- 🛠️ **Optimisations** : Buffers statiques, pas d'allocation dynamique dans lambda
-
-### v2.0 (Octobre 2025) - Refactorisation complète
-
-- ♻️ Architecture modulaire (7 fichiers)
-- 🔐 Sécurisation des credentials
-- 🐛 Correction timer display (millis)
-- 🛡️ Fallback robuste pour météo
-- 📚 Documentation complète
-- ⚡ Optimisations performance
-
-### v1.0 (Original)
-
-- ✨ Version initiale monolithique
-
-## 🤝 Contribution
-
-Pour améliorer ce projet :
-
-1. Testez sur votre matériel
-2. Signalez les bugs via issues
-3. Proposez des améliorations
-4. Partagez vos configurations personnalisées
-
-## 📄 Licence
-
-Ce projet est fourni "tel quel" sans garantie.
-Utilisez-le, modifiez-le, partagez-le librement.
-
-## 🔗 Ressources
+## 🔗 Resources
 
 - [ESPHome Documentation](https://esphome.io/)
 - [Home Assistant](https://www.home-assistant.io/)
@@ -402,4 +263,4 @@ Utilisez-le, modifiez-le, partagez-le librement.
 
 ---
 
-**Made with ❤️ for Home Assistant community**
+**Made with ❤️ for the Home Assistant community**

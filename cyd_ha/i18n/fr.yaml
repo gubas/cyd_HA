@@ -1,14 +1,18 @@
+# =============================================================================
 # Internationalisation - Français
-# Copiez ces clés dans substitutions.yaml, ou fusionnez via YAML si supporté.
+# =============================================================================
 
+# ─── Pages ───────────────────────────────────────────────────────────────────
 i18n_weather_title: Météo
 i18n_sensors_title: Capteurs
 i18n_printer_title: Imprimante
+
+# ─── Météo ───────────────────────────────────────────────────────────────────
 i18n_no_alerts: Pas d'alerte
 i18n_next_rain_prefix: Prochaine pluie
 i18n_next_rain_none: Pas de pluie prévue
 
-# Libellés des boutons
+# ─── Boutons du Menu ─────────────────────────────────────────────────────────
 btn1_label: Volets haut
 btn2_label: Lumières
 btn3_label: Stop volets
@@ -18,6 +22,8 @@ btn6_label: Impression 3D
 btn7_label: Lumière
 btn8_label: Retour
 
-# Pièces
-room1_label: Salon/Cuisine
-room2_label: Bureau
+# ─── Blocs Capteurs (Page Capteurs) ──────────────────────────────────────────
+sensor_bloc1_label: Salon/Cuisine
+sensor_bloc2_label: Bureau
+sensor_bloc3_label: Chambre
+sensor_bloc4_label: Extérieur

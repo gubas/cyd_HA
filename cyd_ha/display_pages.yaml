@@ -20,7 +20,10 @@ display:
       int page = id(current_page);
       static unsigned long last_switch = 0;
       static bool initialized = false;
-      const int PAGE_COUNT = 3;
+      
+      // Check if printer is on (switch state is "on")
+      bool printer_on = id(printer_switch_state).has_state() && id(printer_switch_state).state == "on";
+      const int PAGE_COUNT = printer_on ? 3 : 2;  // 3 pages if printer on, 2 otherwise
       
       // Initialize on first call
       if (!initialized) {
@@ -28,7 +31,13 @@ display:
         initialized = true;
       }
       
-      // Auto-cycle every 8 seconds
+      // Ensure current_page is within valid range (in case printer was turned off while on page 2)
+      if (id(current_page) >= PAGE_COUNT) {
+        id(current_page) = 0;
+        page = 0;
+      }
+      
+      // Auto-cycle every 8 seconds (only when NOT in menu)
       if (!id(show_return_page)) {
         if (millis() - last_switch > 8000) {
           id(current_page) = (id(current_page) + 1) % PAGE_COUNT;
@@ -81,37 +90,37 @@ display:
           }
         }
         // Icons
-        if (id(button1_entity_color).has_state() && id(button1_entity_color).state == "on") {
+        if (id(btn1_state).has_state() && id(btn1_state).state == "on") {
           it.image(45, 20, id(up), id(blue));
         } else {
           it.image(45, 20, id(up), id(grey));
         }
-        if (id(button2_entity_color).has_state() && id(button2_entity_color).state == "on") {
+        if (id(btn2_state).has_state() && id(btn2_state).state == "on") {
           it.image(155, 20, id(meeting), id(blue));
         } else {
           it.image(155, 20, id(meeting), id(grey));
         }
-        if (id(button3_entity_color).has_state() && id(button3_entity_color).state == "on") {
+        if (id(btn3_state).has_state() && id(btn3_state).state == "on") {
           it.image(45, 95, id(stop), id(blue));
         } else {
           it.image(45, 95, id(stop), id(grey));
         }
-        if (id(button4_entity_color).has_state() && id(button4_entity_color).state == "on") {
+        if (id(btn4_state).has_state() && id(btn4_state).state == "on") {
           it.image(155, 95, id(lampadaire), id(blue));
         } else {
           it.image(155, 95, id(lampadaire), id(grey));
         }
-        if (id(button5_entity_color).has_state() && id(button5_entity_color).state == "on") {
+        if (id(btn5_state).has_state() && id(btn5_state).state == "on") {
           it.image(45, 170, id(down), id(blue));
         } else {
           it.image(45, 170, id(down), id(grey));
         }
-        if (id(button6_entity_color).has_state() && id(button6_entity_color).state == "on") {
+        if (id(btn6_state).has_state() && id(btn6_state).state == "on") {
           it.image(155, 170, id(printer3d), id(blue));
         } else {
           it.image(155, 170, id(printer3d), id(grey));
         }
-        if (id(button7_entity_color).has_state() && id(button7_entity_color).state == "on") {
+        if (id(btn7_state).has_state() && id(btn7_state).state == "on") {
           it.image(45, 245, id(bulb), id(blue));
         } else {
           it.image(45, 245, id(bulb), id(grey));
@@ -429,26 +438,63 @@ display:
           }
         }
       } else if (page == 1) {
-        // Page 2: Home sensors
-        it.printf(CX, TITLE_Y, id(info), id(white), TextAlign::CENTER, "%s — %s", "${i18n_sensors_title}", "${location_name}");
-        const int CARD_W = 210, CARD_H = 60, CARD_X = (W - CARD_W) / 2;
-        const int C1_Y = 92, C2_Y = C1_Y + CARD_H + 12;
-        it.filled_rectangle(CARD_X, C1_Y, CARD_W, CARD_H, id(card_bg));
-        it.rectangle(CARD_X, C1_Y, CARD_W, CARD_H, id(divider));
-        it.image(CARD_X + 8, C1_Y + 10, id(hometemperature), id(blue));
-      it.print(CARD_X + 50, C1_Y + 12, id(info), id(white), "${room1_label}");
-        if (id(temp_int).has_state()) it.printf(CARD_X + 50, C1_Y + 35, id(info), id(white), "%.1f C", id(temp_int).state);
-        else it.print(CARD_X + 50, C1_Y + 35, id(info), id(white), "-- C");
-        if (id(hum_int).has_state()) it.printf(CARD_X + 140, C1_Y + 35, id(info), id(white), "%.0f %%", id(hum_int).state);
-        else it.print(CARD_X + 140, C1_Y + 35, id(info), id(white), "-- %");
-        it.filled_rectangle(CARD_X, C2_Y, CARD_W, CARD_H, id(card_bg));
-        it.rectangle(CARD_X, C2_Y, CARD_W, CARD_H, id(divider));
-        it.image(CARD_X + 8, C2_Y + 10, id(deskroom), id(blue));
-      it.print(CARD_X + 50, C2_Y + 12, id(info), id(white), "${room2_label}");
-        if (id(int2_temp).has_state()) it.printf(CARD_X + 50, C2_Y + 35, id(info), id(white), "%.1f C", id(int2_temp).state);
-        else it.print(CARD_X + 50, C2_Y + 35, id(info), id(white), "-- C");
-        if (id(int2_hum).has_state()) it.printf(CARD_X + 140, C2_Y + 35, id(info), id(white), "%.0f %%", id(int2_hum).state);
-        else it.print(CARD_X + 140, C2_Y + 35, id(info), id(white), "-- %");
+        // Page 2: Home sensors - 4 blocs in 2x2 grid (no title)
+        const int CARD_W = 105, CARD_H = 68;
+        const int GAP = 8;
+        const int GRID_X = (W - 2*CARD_W - GAP) / 2;
+        const int GRID_Y = 50;
+        
+        // Bloc 1 (top-left)
+        if (id(sensor_bloc1_temp).has_state()) {
+          int x1 = GRID_X, y1 = GRID_Y;
+          it.filled_rectangle(x1, y1, CARD_W, CARD_H, id(card_bg));
+          it.rectangle(x1, y1, CARD_W, CARD_H, id(divider));
+          it.image(x1 + 6, y1 + 8, id(${sensor_bloc1_icon}), id(blue));
+          it.print(x1 + 6, y1 + 50, id(info), id(white), "${sensor_bloc1_label}");
+          it.printf(x1 + 48, y1 + 12, id(info), id(white), "%.1f C", id(sensor_bloc1_temp).state);
+          if (id(sensor_bloc1_hum).has_state()) {
+            it.printf(x1 + 48, y1 + 30, id(info), id(white), "%.0f %%", id(sensor_bloc1_hum).state);
+          }
+        }
+        
+        // Bloc 2 (top-right)
+        if (id(sensor_bloc2_temp).has_state()) {
+          int x2 = GRID_X + CARD_W + GAP, y2 = GRID_Y;
+          it.filled_rectangle(x2, y2, CARD_W, CARD_H, id(card_bg));
+          it.rectangle(x2, y2, CARD_W, CARD_H, id(divider));
+          it.image(x2 + 6, y2 + 8, id(${sensor_bloc2_icon}), id(blue));
+          it.print(x2 + 6, y2 + 50, id(info), id(white), "${sensor_bloc2_label}");
+          it.printf(x2 + 48, y2 + 12, id(info), id(white), "%.1f C", id(sensor_bloc2_temp).state);
+          if (id(sensor_bloc2_hum).has_state()) {
+            it.printf(x2 + 48, y2 + 30, id(info), id(white), "%.0f %%", id(sensor_bloc2_hum).state);
+          }
+        }
+        
+        // Bloc 3 (bottom-left) - optional, skipped if entity is empty
+        if (id(sensor_bloc3_temp).has_state()) {
+          int x3 = GRID_X, y3 = GRID_Y + CARD_H + GAP;
+          it.filled_rectangle(x3, y3, CARD_W, CARD_H, id(card_bg));
+          it.rectangle(x3, y3, CARD_W, CARD_H, id(divider));
+          it.image(x3 + 6, y3 + 8, id(${sensor_bloc3_icon}), id(blue));
+          it.print(x3 + 6, y3 + 50, id(info), id(white), "${sensor_bloc3_label}");
+          it.printf(x3 + 48, y3 + 12, id(info), id(white), "%.1f C", id(sensor_bloc3_temp).state);
+          if (id(sensor_bloc3_hum).has_state()) {
+            it.printf(x3 + 48, y3 + 30, id(info), id(white), "%.0f %%", id(sensor_bloc3_hum).state);
+          }
+        }
+        
+        // Bloc 4 (bottom-right) - optional, skipped if entity is empty
+        if (id(sensor_bloc4_temp).has_state()) {
+          int x4 = GRID_X + CARD_W + GAP, y4 = GRID_Y + CARD_H + GAP;
+          it.filled_rectangle(x4, y4, CARD_W, CARD_H, id(card_bg));
+          it.rectangle(x4, y4, CARD_W, CARD_H, id(divider));
+          it.image(x4 + 6, y4 + 8, id(${sensor_bloc4_icon}), id(blue));
+          it.print(x4 + 6, y4 + 50, id(info), id(white), "${sensor_bloc4_label}");
+          it.printf(x4 + 48, y4 + 12, id(info), id(white), "%.1f C", id(sensor_bloc4_temp).state);
+          if (id(sensor_bloc4_hum).has_state()) {
+            it.printf(x4 + 48, y4 + 30, id(info), id(white), "%.0f %%", id(sensor_bloc4_hum).state);
+          }
+        }
       } else {
         // Page 3: 3D Printer — App style
         it.printf(CX, TITLE_Y - 10, id(info), id(white), TextAlign::CENTER, "%s — %s", "${i18n_printer_title}", "${printer_brand}");
@@ -567,12 +613,12 @@ display:
           it.print(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), id(white), TextAlign::CENTER_LEFT, "--°");
         }
       }
-      // Indicateur de page (• • •) en bas
-      const int DOTS = 3;
+      // Indicateur de page (• • •) en bas - nombre dynamique selon état imprimante
+      const int DOTS = PAGE_COUNT;
       const int DOT_RADIUS = 3;
       const int DOT_SPACING = 18;
       const int DOT_Y = H - M - 8;
-      const int DOT_START_X = CX - DOT_SPACING;
+      const int DOT_START_X = CX - ((DOTS - 1) * DOT_SPACING) / 2;
       for (int i = 0; i < DOTS; i++) {
         int dx = DOT_START_X + i * DOT_SPACING;
         auto col = (i == page) ? id(blue) : id(grey);

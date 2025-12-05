@@ -1,59 +1,88 @@
-##### Substitutions (centralized) ############################################
-# This file centralizes all user-tunable values (entities, labels, titles).
-# Localization policy: ALWAYS use language include files; do not override
-# i18n_* keys locally. Enable EXACTLY ONE include below.
-
-#   Language include (choose one):
-#   # <<: !include i18n/en.yaml
-<<: !include i18n/fr.yaml
-#   # <<: !include i18n/es.yaml
+# =============================================================================
+# CYD HA Panel - Configuration
+# =============================================================================
+# This file centralizes ALL user configuration.
+# Labels (text) are defined in language files (i18n/).
 #
-##############################################################################
+# Language (uncomment ONE line only):
+<<: !include i18n/fr.yaml
+#<<: !include i18n/en.yaml
+# <<: !include i18n/es.yaml
+# =============================================================================
 
-# Device Identity
+# ─── Device ──────────────────────────────────────────────────────────────────
 device_name: cydhapanel
 device_friendly_name: CYD HA Panel
 
-# Location / Branding
+# ─── Location ────────────────────────────────────────────────────────────────
 location_name: Mâcon
-printer_brand: P1S
 
-# Home Assistant Sensor Entities (Temperature & Humidity)
-internal_temp_sensor: sensor.0xb4e3f9fffe277666_temperature
-internal_humidity_sensor: sensor.0xb4e3f9fffe277666_humidity
-int2_temp_sensor: sensor.0xa4c138d73acf9da2_temperature
-int2_humidity_sensor: sensor.0xa4c138d73acf9da2_humidity
-outside_temp_sensor: sensor.out_meteofrance_temperature
+# ─── Interface ───────────────────────────────────────────────────────────────
+menu_timeout_ms: "10000"  # Menu timeout in ms (10s default)
 
-# Weather Entities
+# ─── Weather ─────────────────────────────────────────────────────────────────
 weather_entity: weather.macon
-freeze_chance: sensor.macon_freeze_chance
-snow_chance: sensor.macon_snow_chance
-rain_chance: sensor.macon_rain_chance
+weather_alert_entity: sensor.71_weather_alert
+rain_forecast_entity: sensor.macon_next_rain
+rain_chance_entity: sensor.macon_rain_chance
+snow_chance_entity: sensor.macon_snow_chance
+freeze_chance_entity: sensor.macon_freeze_chance
+outside_temp_entity: sensor.out_meteofrance_temperature
 
-# Buttons (Service & Entity)
-button1_service: cover.open_cover
-button1_entity: cover.volets_du_bas
-button2_service: light.toggle
-button2_entity: light.lumieres_salon_cuisine
-button3_service: cover.stop_cover
-button3_entity: cover.volets_du_bas
-button4_service: light.toggle
-button4_entity: light.0x842e14fffe2fb774
-button5_service: cover.close_cover
-button5_entity: cover.volets_du_bas
-button6_service: switch.toggle
-button6_entity: switch.0xa4c138724adb8456
-button7_service: light.toggle
-button7_entity: light.0x588e81fffefa2472
+# ─── Indoor Sensors (Sensors Page - 4 blocks max) ────────────────────────────
+# Labels defined in i18n/*.yaml (sensor_bloc1_label, sensor_bloc2_label, etc.)
+# Use sensor.none to disable a block.
 
-# 3D Printer (BambuLab) Entities
-printer_progress: sensor.p1s_01p09c482900380_progression_de_l_impression
-printer_bed_temp: sensor.p1s_01p09c482900380_temperature_du_lit
-printer_bed_temp_target: number.p1s_01p09c482900380_temperature_cible_du_lit
-printer_nozzle_temp: sensor.p1s_01p09c482900380_temperature_de_la_buse
-printer_nozzle_temp_target: number.p1s_01p09c482900380_temperature_cible_de_la_buse
-printer_status: sensor.p1s_01p09c482900380_etat_de_l_impression
-printer_time_remaining: sensor.p1s_01p09c482900380_temps_restant
-printer_end_time: sensor.datefin_print
-printer_gcode_file: sensor.p1s_01p09c482900380_ficher_g_code
+sensor_bloc1_temp_entity: sensor.0xb4e3f9fffe277666_temperature
+sensor_bloc1_hum_entity: sensor.0xb4e3f9fffe277666_humidity
+sensor_bloc1_icon: hometemperature
+
+sensor_bloc2_temp_entity: sensor.0xa4c138d73acf9da2_temperature
+sensor_bloc2_hum_entity: sensor.0xa4c138d73acf9da2_humidity
+sensor_bloc2_icon: deskroom
+
+sensor_bloc3_temp_entity: sensor.none
+sensor_bloc3_hum_entity: sensor.none
+sensor_bloc3_icon: kitchenroom
+
+sensor_bloc4_temp_entity: sensor.none
+sensor_bloc4_hum_entity: sensor.none
+sensor_bloc4_icon: thermostat
+
+# ─── 3D Printer ──────────────────────────────────────────────────────────────
+printer_brand: P1S
+printer_switch_entity: switch.0xa4c138724adb8456
+printer_progress_entity: sensor.p1s_01p09c482900380_progression_de_l_impression
+printer_status_entity: sensor.p1s_01p09c482900380_etat_de_l_impression
+printer_gcode_entity: sensor.p1s_01p09c482900380_ficher_g_code
+printer_time_remaining_entity: sensor.p1s_01p09c482900380_temps_restant
+printer_end_time_entity: sensor.datefin_print
+printer_bed_temp_entity: sensor.p1s_01p09c482900380_temperature_du_lit
+printer_bed_target_entity: number.p1s_01p09c482900380_temperature_cible_du_lit
+printer_nozzle_temp_entity: sensor.p1s_01p09c482900380_temperature_de_la_buse
+printer_nozzle_target_entity: number.p1s_01p09c482900380_temperature_cible_de_la_buse
+
+# ─── Menu Buttons (8 buttons) ────────────────────────────────────────────────
+# Labels defined in i18n/*.yaml (btn1_label, btn2_label, etc.)
+# btn8 = Back (no service/entity)
+
+btn1_service: cover.open_cover
+btn1_entity: cover.volets_du_bas
+
+btn2_service: light.toggle
+btn2_entity: light.lumieres_salon_cuisine
+
+btn3_service: cover.stop_cover
+btn3_entity: cover.volets_du_bas
+
+btn4_service: light.toggle
+btn4_entity: light.0x842e14fffe2fb774
+
+btn5_service: cover.close_cover
+btn5_entity: cover.volets_du_bas
+
+btn6_service: switch.toggle
+btn6_entity: switch.0xa4c138724adb8456
+
+btn7_service: light.toggle
+btn7_entity: light.0x588e81fffefa2472

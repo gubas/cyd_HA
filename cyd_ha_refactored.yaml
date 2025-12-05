@@ -99,7 +99,7 @@ time:
     timezone: Europe/Paris
 
 # =============================================================================
-# Auto-return to main screen after 30 seconds
+# Auto-return to main screen after timeout (configurable via menu_timeout_ms)
 # =============================================================================
 
 interval:
@@ -107,9 +107,12 @@ interval:
     then:
       - lambda: |-
           if (id(show_return_page)) {
-            // Check if 30 seconds have passed since menu was displayed
-            if (millis() - id(menu_display_time) >= 30000) {
-              id(show_return_page) = false;
+            // Only check timeout if menu_display_time was actually set
+            if (id(menu_display_time) > 0) {
+              // Check if timeout has passed since menu was displayed
+              if (millis() - id(menu_display_time) >= ${menu_timeout_ms}) {
+                id(show_return_page) = false;
+              }
             }
           }
 
