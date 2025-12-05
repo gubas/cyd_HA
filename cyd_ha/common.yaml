@@ -1,6 +1,7 @@
 # Common UI Resources: Fonts, Colors, Images
 # This file contains all visual assets used by the display
 
+
 # Font Definitions
 font:
   - file: "gfonts://Verdana"
