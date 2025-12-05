@@ -62,6 +62,9 @@ printer_bed_target_entity: number.p1s_01p09c482900380_temperature_cible_du_lit
 printer_nozzle_temp_entity: sensor.p1s_01p09c482900380_temperature_de_la_buse
 printer_nozzle_target_entity: number.p1s_01p09c482900380_temperature_cible_de_la_buse
 
+# ─── Media Player ────────────────────────────────────────────────────────────
+media_player_entity: media_player.home_escalier
+
 # ─── Menu Buttons (8 buttons) ────────────────────────────────────────────────
 # Labels defined in i18n/*.yaml (btn1_label, btn2_label, etc.)
 # btn8 = Back (no service/entity)

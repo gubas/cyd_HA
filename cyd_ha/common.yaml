@@ -192,3 +192,7 @@ image:
     id: bed_small
     resize: 20x20
     type: BINARY
+  - file: mdi:music
+    id: media_icon
+    resize: 40x40
+    type: BINARY

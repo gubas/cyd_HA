@@ -14,6 +14,7 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
   - **Weather Page**: Current conditions with animated weather icon, outdoor temperature, rain, wind, snow, frost, and real-time Météo-France alerts (yellow/orange/red vigilance)
   - 🌧️ **Rain forecast**: 9 colored rectangles showing minute-by-minute forecast (0–55 min) with intuitive color coding (empty=dry, light/medium/dark blue = light/moderate/heavy rain)
   - **Sensors Page**: Temperature and humidity from up to 4 zones in a 2x2 grid layout
+  - **Media Page**: Now Playing (Artist & Title) when music is active
   - **Printer Page**: Real-time BambuLab status (file, progress, nozzle/bed temps, remaining time)
 - **Control menu**: Touch-activated, 8 configurable buttons to control Home Assistant entities (covers, lights, 3D printer)
   - Clean interface without header to maximize button space
@@ -103,6 +104,9 @@ location_name: Paris
 weather_entity: weather.paris
 rain_chance_entity: sensor.paris_rain_chance
 # ... more entities
+
+# ─── Media Player ────────────────────────────────────────────────────────────
+media_player_entity: media_player.example
 
 # ─── Sensor Blocks (up to 4) ─────────────────────────────────
 sensor_bloc1_temp_entity: sensor.living_room_temperature
@@ -213,7 +217,7 @@ Home Assistant API
 ### Pages & Navigation
 
 ```
-3 Pages with auto-cycling (8s):
+Dynamic Pages with auto-cycling (8s):
 ┌─────────────────────────────────────┐
 │ Page 0: Weather                     │
 │  - Large animated weather icon      │

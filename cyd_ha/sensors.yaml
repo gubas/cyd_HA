@@ -225,3 +225,20 @@ text_sensor:
     id: printer_switch_state
     entity_id: $printer_switch_entity
     internal: true
+
+  # ── Media Player ───────────────────────────────────────────────────────────
+  - platform: homeassistant
+    id: media_title
+    entity_id: $media_player_entity
+    attribute: media_title
+    internal: true
+  - platform: homeassistant
+    id: media_artist
+    entity_id: $media_player_entity
+    attribute: media_artist
+    internal: true
+  - platform: homeassistant
+    id: media_state
+    entity_id: $media_player_entity
+    internal: true
+

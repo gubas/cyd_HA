@@ -27,3 +27,5 @@ sensor_bloc1_label: Living/Kitchen
 sensor_bloc2_label: Office
 sensor_bloc3_label: Bedroom
 sensor_bloc4_label: Outdoor
+
+i18n_media_title: "Media"

@@ -21,9 +21,10 @@ display:
       static unsigned long last_switch = 0;
       static bool initialized = false;
       
-      // Check if printer is on (switch state is "on")
+      // Check states
       bool printer_on = id(printer_switch_state).has_state() && id(printer_switch_state).state == "on";
-      const int PAGE_COUNT = printer_on ? 3 : 2;  // 3 pages if printer on, 2 otherwise
+      // Media active if playing or paused (ignore idle/off)
+      bool media_active = id(media_state).has_state() && (id(media_state).state == "playing" || id(media_state).state == "paused");
       
       // Initialize on first call
       if (!initialized) {
@@ -31,21 +32,28 @@ display:
         initialized = true;
       }
       
-      // Ensure current_page is within valid range (in case printer was turned off while on page 2)
-      if (id(current_page) >= PAGE_COUNT) {
-        id(current_page) = 0;
-        page = 0;
-      }
+      // Ensure current_page is valid based on active states
+      if (page == 2 && !media_active) { id(current_page) = 0; page = 0; }
+      if (page == 3 && !printer_on) { id(current_page) = 0; page = 0; }
+      if (page > 3) { id(current_page) = 0; page = 0; }
       
       // Auto-cycle every 8 seconds (only when NOT in menu)
       if (!id(show_return_page)) {
         if (millis() - last_switch > 8000) {
-          id(current_page) = (id(current_page) + 1) % PAGE_COUNT;
-          page = id(current_page);
+          int next = page + 1;
+          // Skip Media (2) if inactive
+          if (next == 2 && !media_active) next++;
+          // Skip Printer (3) if inactive
+          if (next == 3 && !printer_on) next++;
+          // Loop back
+          if (next > 3) next = 0;
+          
+          id(current_page) = next;
+          page = next;
           last_switch = millis();
         }
       } else {
-      // Reset timer while in menu
+        // Reset timer while in menu
         last_switch = millis();
       }
       
@@ -495,8 +503,33 @@ display:
             it.printf(x4 + 48, y4 + 30, id(info), id(white), "%.0f %%", id(sensor_bloc4_hum).state);
           }
         }
-      } else {
-        // Page 3: 3D Printer — App style
+      } else if (page == 2) {
+        // Page 3: Media Player
+        it.printf(CX, TITLE_Y - 10, id(info), id(white), TextAlign::CENTER, "%s", "${i18n_media_title}");
+        
+        // Large Media Icon
+        it.image(CX - 25, 100, id(media_icon), id(blue));
+        
+        // Artist & Title
+        const int TEXT_START_Y = 160;
+        
+        if (id(media_artist).has_state() && id(media_artist).state != "") {
+          it.printf(CX, TEXT_START_Y, id(info), id(grey), TextAlign::CENTER, "%s", id(media_artist).state.c_str());
+          it.printf(CX, TEXT_START_Y + 25, id(info), id(white), TextAlign::CENTER, "%s", id(media_title).state.c_str());
+        } else {
+           it.printf(CX, TEXT_START_Y + 10, id(info), id(white), TextAlign::CENTER, "%s", id(media_title).state.c_str());
+        }
+        
+        // Status State
+        if (id(media_state).has_state()) {
+           const char* state_icon = (id(media_state).state == "playing") ? "\U000F040A" : "\U000F03E4"; // Play or Pause icon
+           // Using text status for now if font doesn't support those glyphs, or just text.
+           // Let's use text state.
+           it.printf(CX, 210, id(info), id(blue), TextAlign::CENTER, "[ %s ]", id(media_state).state.c_str());
+        }
+
+      } else if (page == 3) {
+        // Page 4: 3D Printer — App style
         it.printf(CX, TITLE_Y - 10, id(info), id(white), TextAlign::CENTER, "%s — %s", "${i18n_printer_title}", "${printer_brand}");
         
         // Section haute: Icône imprimante + Nom de fichier
