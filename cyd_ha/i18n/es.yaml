@@ -25,5 +25,7 @@ btn8_label: Volver
 # ─── Bloques de Sensores (Página Sensores) ───────────────────────────────────
 sensor_bloc1_label: Salón/Cocina
 sensor_bloc2_label: Oficina
-sensor_bloc3_label: Dormitorio
-sensor_bloc4_label: Exterior
+sensor_bloc3_label: "Dormitorio"
+sensor_bloc4_label: "Exterior"
+
+i18n_media_title: "Multimedia"
