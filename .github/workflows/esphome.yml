@@ -30,6 +30,8 @@ jobs:
   build:
     name: Compile ESPHome Configuration
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       # 1. Récupère le code source
