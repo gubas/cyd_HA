@@ -169,6 +169,10 @@ image:
     id: deskroom
     resize: 40x40
     type: BINARY
+  - file: mdi:bed
+    id: bedroom
+    resize: 40x40
+    type: BINARY
   - file: mdi:countertop-outline    
     id: kitchenroom
     resize: 40x40

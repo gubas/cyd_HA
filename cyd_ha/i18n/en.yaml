@@ -25,7 +25,7 @@ btn8_label: Back
 # ─── Sensor Blocks (Sensors Page) ────────────────────────────────────────────
 sensor_bloc1_label: Living/Kitchen
 sensor_bloc2_label: Office
-sensor_bloc3_label: Bedroom
-sensor_bloc4_label: Outdoor
+sensor_bloc3_label: Bedrooms
+sensor_bloc4_label: "Bedroom P"
 
 i18n_media_title: "Media"

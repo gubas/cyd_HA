@@ -15,7 +15,7 @@ secrets.yaml
 *.log
 
 # Fonts (can be re-downloaded)
-materialdesignicons-webfont.ttf
+*.ttf
 
 # IDE
 .vscode/

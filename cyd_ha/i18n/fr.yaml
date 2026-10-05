@@ -25,7 +25,7 @@ btn8_label: Retour
 # ─── Blocs Capteurs (Page Capteurs) ──────────────────────────────────────────
 sensor_bloc1_label: Salon/Cuisine
 sensor_bloc2_label: Bureau
-sensor_bloc3_label: "Cuisine"
-sensor_bloc4_label: "Thermostat"
+sensor_bloc3_label: "Chambres"
+sensor_bloc4_label: "Chambre P"
 
 i18n_media_title: "Média"
