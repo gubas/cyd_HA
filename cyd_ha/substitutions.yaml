@@ -41,13 +41,13 @@ sensor_bloc2_temp_entity: sensor.0xa4c138d73acf9da2_temperature
 sensor_bloc2_hum_entity: sensor.0xa4c138d73acf9da2_humidity
 sensor_bloc2_icon: deskroom
 
-sensor_bloc3_temp_entity: sensor.none
-sensor_bloc3_hum_entity: sensor.none
-sensor_bloc3_icon: kitchenroom
+sensor_bloc3_temp_entity: sensor.0xa4c1380ad28cffff_temperature
+sensor_bloc3_hum_entity: sensor.0xa4c1380ad28cffff_humidity
+sensor_bloc3_icon: bedroom
 
-sensor_bloc4_temp_entity: sensor.none
-sensor_bloc4_hum_entity: sensor.none
-sensor_bloc4_icon: thermostat
+sensor_bloc4_temp_entity: sensor.0xa4c1380ab395ffff_temperature
+sensor_bloc4_hum_entity: sensor.0xa4c1380ab395ffff_humidity
+sensor_bloc4_icon: bedroom
 
 # ─── 3D Printer ──────────────────────────────────────────────────────────────
 printer_brand: P1S
