@@ -14,18 +14,17 @@
 #         - logger.log: "Failed to download image"
 
 display:
-  - platform: ili9xxx
+  - platform: mipi_spi
     id: esp_display
-    model: ili9342
+    model: ESP32-2432S028-9342
     spi_id: tft
     cs_pin: GPIO15
     dc_pin: GPIO2
-    invert_colors: false
-    color_palette: 8BIT
     dimensions:
       width: 320
       height: 240
-    rotation: 90
+    rotation: 270
+    color_depth: 8bit
     update_interval: 500ms
     lambda: |-
       // Use the global current_page instead of a static local variable
