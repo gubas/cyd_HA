@@ -1,0 +1,66 @@
+# =============================================================================
+# GitHub Release Automation Pipeline
+# =============================================================================
+# Automatically creates a GitHub Release whenever a new version tag (v*) is pushed.
+# Extracts release notes from CHANGELOG.md corresponding to the tagged version,
+# with fallback to automatic GitHub release notes.
+# =============================================================================
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Extract Release Notes from CHANGELOG
+        run: |
+          python -c "
+          import re, os
+          tag = os.environ.get('GITHUB_REF_NAME', '').lstrip('v')
+          notes = ''
+          if os.path.exists('CHANGELOG.md'):
+              content = open('CHANGELOG.md', 'r', encoding='utf-8').read()
+              pattern = rf'## \[{re.escape(tag)}\][^\n]*\n(.*?)(?=\n## \[|\Z)'
+              match = re.search(pattern, content, re.DOTALL)
+              if match:
+                  notes = match.group(1).strip()
+          with open('release_notes.md', 'w', encoding='utf-8') as f:
+              f.write(notes)
+          "
+
+      - name: Create or Update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -s release_notes.md ]; then
+            gh release create "${{ github.ref_name }}" \
+              --title "${{ github.ref_name }}" \
+              --notes-file release_notes.md || \
+            gh release edit "${{ github.ref_name }}" \
+              --title "${{ github.ref_name }}" \
+              --notes-file release_notes.md
+          else
+            gh release create "${{ github.ref_name }}" \
+              --title "${{ github.ref_name }}" \
+              --generate-notes || \
+            gh release edit "${{ github.ref_name }}" \
+              --title "${{ github.ref_name }}" \
+              --generate-notes
+          fi
