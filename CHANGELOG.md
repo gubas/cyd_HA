@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [4.0.0] - 2026-10-05
+
+### Added
+- **Windows Build & Upload Script**: Added `esphome-build-upload.bat` helper for local compilation and flashing on Windows.
+- **Bedroom Sensor Blocks**: Configured blocks 3 & 4 with dedicated bedroom climate sensors and icons.
+
+### Changed
+- **Display Driver Migration**: Migrated display platform from deprecated `ili9xxx` to modern `mipi_spi` using model `ESP32-2432S028-9342` and `rotation: 270`.
+- **Git Ignore**: Updated `.gitignore` to ignore all `.ttf` font files.
+
+### Fixed
+- **i18n Cleanup**: Removed duplicate button definitions in `cyd_ha/i18n/en.yaml`.
+
 ## [3.5.0] - 2025-12-05
 
 ### Added

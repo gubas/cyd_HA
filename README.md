@@ -1,6 +1,6 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Current version: **v3.5**
+> Current version: **v4.0**
 
 [![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 
@@ -31,7 +31,7 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
 
 - **ESP32-2432S028R** (Cheap Yellow Display)
   - ESP32 (240 MHz dual-core)
-  - ILI9342 320x240 TFT display
+  - ILI9342 320x240 TFT display (mipi_spi driver)
   - XPT2046 touch controller
   - Built-in RGB LED
   - PWM backlight
@@ -54,6 +54,8 @@ cyd_HA/
 │       └── es.yaml
 ├── secrets.yaml               # 🔐 Credentials (shared across ESPHome projects)
 ├── secrets.yaml.example       # 📄 Secrets template
+├── esphome-build-upload.bat   # 🪟 Windows build & flash script
+├── esphome-build-upload.sh    # 🐧 Linux/macOS build & flash script
 ├── materialdesignicons-webfont.ttf  # 🎨 Weather icon font
 ├── CHANGELOG.md               # 📝 Version history
 └── README.md                  # 📖 This file
@@ -128,7 +130,14 @@ btn1_entity: cover.living_room_blinds
 esphome run cyd_ha_refactored.yaml
 ```
 
-Or use the helper script:
+Or use the helper scripts:
+
+**Windows**:
+```cmd
+esphome-build-upload.bat
+```
+
+**Linux / macOS**:
 ```bash
 ./esphome-build-upload.sh        # OTA upload
 ./esphome-build-upload.sh -u     # USB upload
@@ -212,7 +221,7 @@ Home Assistant API
         ↓
   cyd_ha/display_pages.yaml (rendering with 8s auto-cycle)
         ↓
-    ESP32 Display (ILI9342 - 320x240, 90° rotation)
+    ESP32 Display (mipi_spi - ESP32-2432S028-9342, 270° rotation)
 ```
 
 ### Pages & Navigation
