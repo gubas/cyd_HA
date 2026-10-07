@@ -41,12 +41,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      # 2. Configure Python & Cache Pip
+      # 2. Configure Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
 
       # 3. Cache PlatformIO packages
       - name: Cache PlatformIO
