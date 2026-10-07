@@ -1,6 +1,6 @@
 {
   "name": "CYD HA Panel",
-  "version": "4.2.0",
+  "version": "4.5.0",
   "home_assistant_domain": "esphome",
   "funding_url": "https://esphome.io",
   "new_install_prompt_erase": false,
@@ -8,7 +8,7 @@
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "cyd_ha_v4.2.0_factory.bin", "offset": 0 }
+        { "path": "cyd_ha_v4.5.0_factory.bin", "offset": 0 }
       ]
     }
   ]
