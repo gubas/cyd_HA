@@ -19,7 +19,7 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
   - **Printer Page**: Real-time BambuLab status (file, progress, nozzle/bed temps, remaining time)
   - **Dynamic Pagination**: Dots indicator adjusts automatically (3/4/5 dots) based on active pages (Media/Printer hidden when unused)
 - **Live Web Simulator & Screen Mirror**:
-  - 🖥️ **Interactive Simulator (`/screen`)**: Realistic CYD device enclosure mockup with live auto-refresh (1s), touchscreen click simulation, quick navigation pills (Accueil, Capteurs, Énergie, Média, 3D), menu toggle, and latency telemetry.
+  - 🖥️ **Interactive Simulator (`/screen`)**: Realistic CYD device enclosure mockup with live auto-refresh (1s), touchscreen click simulation, quick navigation pills (Home, Sensors, Energy, Media, 3D), menu toggle, and latency telemetry.
   - 📷 **Zero-RAM Framebuffer Stream (`/screenshot.bmp`)**: Pixel-perfect 8-bit indexed BMP directly streamed over HTTP chunk by chunk from the display buffer. Ideal for Home Assistant picture entities or remote viewing without requiring PSRAM!
   - 🕹️ **Control API (`/api/screen/page`)**: Remote HTTP endpoints to switch pages (`?page=N`) or toggle the configuration menu (`?action=toggle_menu`).
 - **Embedded Web Server**: Modern ESPHome v3 responsive web dashboard accessible via browser (port 80)
@@ -33,20 +33,20 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
 - **Modular architecture**: Configuration split into separate files for easy maintenance
 - **Auto-return**: Automatic return to display cycle after 10s menu inactivity
 
-## 📸 Galerie d'écrans / UI Gallery
+## 📸 UI Gallery
 
-### Écrans physiques & Menu tactile
+### Physical Display Screens & Touch Menu
 
-| ☀️ Météo & Vigilance | 🌡️ Capteurs Intérieurs | ⚡ Énergie & Climat | 🔘 Menu Tactile 8 Touches |
+| ☀️ Weather & Alerts | 🌡️ Indoor Sensors | ⚡ Energy & Climate | 🔘 8-Button Touch Menu |
 | :---: | :---: | :---: | :---: |
-| <img src="docs/images/screen_weather.png" width="175" alt="Page Météo" /> | <img src="docs/images/screen_sensors.png" width="175" alt="Page Capteurs" /> | <img src="docs/images/screen_energy.png" width="175" alt="Page Énergie & Climat" /> | <img src="docs/images/screen_menu.png" width="175" alt="Menu Tactile" /> |
+| <img src="docs/images/screen_weather.png" width="175" alt="Weather Screen" /> | <img src="docs/images/screen_sensors.png" width="175" alt="Indoor Sensors Screen" /> | <img src="docs/images/screen_energy.png" width="175" alt="Energy & Climate Screen" /> | <img src="docs/images/screen_menu.png" width="175" alt="8-Button Touch Menu" /> |
 
-### 🖥️ Simulateur Web Interactif (`/screen`)
+### 🖥️ Interactive Web Simulator (`/screen`)
 
-Un jumeau numérique en direct accessible directement via `http://<IP_DU_CYD>/screen` ou via le bandeau du tableau de bord ESPHome :
+A real-time digital twin accessible directly at `http://<CYD_IP_ADDRESS>/screen` or through the navigation banner on the ESPHome dashboard:
 
 <p align="center">
-  <img src="docs/images/web_simulator.png" width="680" alt="Simulateur Web CYD Live" />
+  <img src="docs/images/web_simulator.png" width="680" alt="Interactive Live CYD Web Simulator" />
 </p>
 
 ## 🛠️ Required Hardware
