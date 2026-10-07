@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYD HA Panel - Web Flasher</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      text-align: center;
+      padding: 40px 20px;
+      margin: 0;
+    }
+    .card {
+      max-width: 540px;
+      margin: 40px auto;
+      background: #1e293b;
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid #334155;
+    }
+    h1 { color: #38bdf8; font-size: 1.6rem; margin-top: 10px; margin-bottom: 8px; }
+    p { color: #94a3b8; line-height: 1.6; font-size: 0.95rem; }
+    .badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .btn-container {
+      margin: 35px 0 25px;
+      min-height: 50px;
+    }
+    code {
+      background: #0b1120;
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+    }
+    .footer-note {
+      font-size: 0.85rem;
+      color: #64748b;
+      border-top: 1px solid #334155;
+      padding-top: 16px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">ESP32-2432S028R</span>
+    <h1>CYD Home Assistant Panel</h1>
+    <p>Connect your Cheap Yellow Display to your computer via USB (Chrome, Edge, or Opera required), then click Install to flash the firmware directly from your browser.</p>
+    
+    <div class="btn-container">
+      <esp-web-install-button manifest="manifest.json"></esp-web-install-button>
+    </div>
+
+    <div class="footer-note">
+      After flashing, connect to the fallback Wi-Fi hotspot <code>CYD-HA-Fallback</code> (password: <code>cyd_ha_password</code>) to enter your local Wi-Fi credentials via the Captive Portal.
+    </div>
+  </div>
+</body>
+</html>

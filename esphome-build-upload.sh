@@ -65,11 +65,17 @@ echo "ESPHome version: $(esphome version)"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 cd "$SCRIPT_DIR"
 
-CONFIG_FILE="${1:-cyd_ha_refactored.yaml}"
+CONFIG_FILE="${1:-cyd_ha.yaml}"
 
 if [[ ! -f "$CONFIG_FILE" ]]; then
   echo "Error: Config file not found: $CONFIG_FILE" >&2
   exit 1
+fi
+
+# Auto-download Material Design Icons font if not present
+if [[ ! -f "materialdesignicons-webfont.ttf" ]]; then
+  echo "Downloading Material Design Icons font..."
+  curl -L -s -o materialdesignicons-webfont.ttf "https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf"
 fi
 
 echo "Validating $CONFIG_FILE..."

@@ -28,6 +28,45 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-platformio-${{ hashFiles('cyd_ha.yaml', 'cyd_ha/*.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-platformio-
+
+      - name: Install ESPHome
+        run: pip install esphome
+
+      - name: Download Material Design Icons font
+        run: |
+          curl -L -s -o materialdesignicons-webfont.ttf \
+            "https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf"
+
+      - name: Create factory secrets
+        run: |
+          cat > secrets.yaml << 'EOF'
+          wifi_ssid: ""
+          wifi_password: ""
+          cyd_ha_api_encryption_key: "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY="
+          cyd_ha_ota_password: "esphome_factory"
+          cyd_ha_ap_ssid: "CYD-HA-Fallback"
+          cyd_ha_ap_password: "cyd_ha_password"
+          EOF
+
+      - name: Compile factory firmware
+        run: |
+          esphome compile cyd_ha.yaml
+          mkdir -p release_assets
+          if [ -f .esphome/build/cydhapanel/.pioenvs/cydhapanel/firmware.factory.bin ]; then
+            cp .esphome/build/cydhapanel/.pioenvs/cydhapanel/firmware.factory.bin release_assets/cyd_ha_${{ github.ref_name }}_factory.bin
+          fi
+          if [ -f .esphome/build/cydhapanel/.pioenvs/cydhapanel/firmware.ota.bin ]; then
+            cp .esphome/build/cydhapanel/.pioenvs/cydhapanel/firmware.ota.bin release_assets/cyd_ha_${{ github.ref_name }}_ota.bin
+          fi
 
       - name: Extract Release Notes from CHANGELOG
         run: |
@@ -49,18 +88,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          ASSETS=(release_assets/*)
           if [ -s release_notes.md ]; then
-            gh release create "${{ github.ref_name }}" \
+            gh release create "${{ github.ref_name }}" "${ASSETS[@]}" \
               --title "${{ github.ref_name }}" \
-              --notes-file release_notes.md || \
-            gh release edit "${{ github.ref_name }}" \
-              --title "${{ github.ref_name }}" \
-              --notes-file release_notes.md
+              --notes-file release_notes.md || {
+                gh release edit "${{ github.ref_name }}" --title "${{ github.ref_name }}" --notes-file release_notes.md
+                gh release upload "${{ github.ref_name }}" "${ASSETS[@]}" --clobber
+              }
           else
-            gh release create "${{ github.ref_name }}" \
+            gh release create "${{ github.ref_name }}" "${ASSETS[@]}" \
               --title "${{ github.ref_name }}" \
-              --generate-notes || \
-            gh release edit "${{ github.ref_name }}" \
-              --title "${{ github.ref_name }}" \
-              --generate-notes
+              --generate-notes || {
+                gh release edit "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes
+                gh release upload "${{ github.ref_name }}" "${ASSETS[@]}" --clobber
+              }
           fi

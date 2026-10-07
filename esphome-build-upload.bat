@@ -25,12 +25,23 @@ if %ERRORLEVEL% neq 0 (
 )
 
 set "CONFIG_FILE=%~1"
-if "%CONFIG_FILE%"=="" set "CONFIG_FILE=cyd_ha_refactored.yaml"
+if "%CONFIG_FILE%"=="" set "CONFIG_FILE=cyd_ha.yaml"
 
 if not exist "%CONFIG_FILE%" (
     echo Error: Config file not found: %CONFIG_FILE%
     pause
     exit /b 1
+)
+
+:: Auto-download Material Design Icons font if not present
+if not exist "materialdesignicons-webfont.ttf" (
+    echo Downloading Material Design Icons font...
+    curl.exe -L -s -o materialdesignicons-webfont.ttf "https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf"
+    if exist "materialdesignicons-webfont.ttf" (
+        echo Font downloaded successfully.
+    ) else (
+        echo Warning: Failed to auto-download font. Please download manually.
+    )
 )
 
 echo Validating %CONFIG_FILE%...

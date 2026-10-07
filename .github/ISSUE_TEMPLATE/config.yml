@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ESPHome Official Documentation
+    url: https://esphome.io/
+    about: Please check ESPHome official docs for component configuration.
+  - name: Home Assistant Community Forum
+    url: https://community.home-assistant.io/
+    about: Ask questions and discuss general Home Assistant topics.
