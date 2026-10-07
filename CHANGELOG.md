@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [4.2.0] - 2026-10-07
+
+### Added
+- **Live Screen Mirror & Streaming (`/screenshot.bmp`)**: Direct zero-RAM HTTP chunked framebuffer streaming of the CYD display in pixel-perfect 8-bit indexed BMP format (RGB332 palette). Works without requiring PSRAM!
+- **Interactive Web Simulator (`/screen`)**: Beautiful embedded web interface simulating the CYD hardware enclosure, real-time screen mirror (1s auto-refresh), virtual touch interactions, and telemetry.
+- **Remote Display API (`/api/screen/page`)**: HTTP endpoints to dynamically switch pages (`?page=0..4`), toggle the configuration menu (`?menu=1` / `?action=toggle_menu`), and cycle forward/backward.
+
 ## [4.1.0] - 2026-10-07
 
 ### Added
