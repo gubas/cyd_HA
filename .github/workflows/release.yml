@@ -48,8 +48,8 @@ jobs:
       - name: Create factory secrets
         run: |
           cat > secrets.yaml << 'EOF'
-          wifi_ssid: ""
-          wifi_password: ""
+          wifi_ssid: "SetupWiFi"
+          wifi_password: "SetupPassword"
           cyd_ha_api_encryption_key: "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY="
           cyd_ha_ota_password: "esphome_factory"
           cyd_ha_ap_ssid: "CYD-HA-Fallback"
