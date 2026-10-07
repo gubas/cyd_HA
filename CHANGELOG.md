@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [4.5.0] - 2026-10-07
+
+### Added
+- **On-Screen Wi-Fi QR Code Setup**: Automatically displays an interactive Wi-Fi configuration screen with a scannable QR code whenever the device is disconnected or enters fallback Access Point mode (`CYD-HA-Fallback`).
+- **Captive Portal & Web Setup**: Connect instantly with your smartphone to enter your local Wi-Fi credentials without touching code.
+- **Improv Serial USB Provisioning**: Full support for ESP Web Tools USB provisioning via browser ([web.esphome.io](https://web.esphome.io)).
+- **Network Diagnostics & IP Indicator**:
+  - Transient IP address notification on boot.
+  - Persistent IP address indicator displayed in the Classic Menu footer.
+- **Web Flasher Integration**: Browser-based flashing using ESP Web Tools located in `web_flasher/`.
+- **Hardware UI Gallery**: Added physical display captures and English documentation to README.
+
+### Changed
+- **Config Standardization**: Standardized main config to `cyd_ha.yaml` with backward-compatible `cyd_ha_refactored.yaml` shim.
+- **CI/CD Acceleration**: Added PlatformIO build cache to GitHub Actions workflows and automated binary release publishing.
+
 ## [4.2.0] - 2026-10-07
 
 ### Added
