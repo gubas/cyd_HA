@@ -29,3 +29,10 @@ sensor_bloc3_label: Bedrooms
 sensor_bloc4_label: "Bedroom P"
 
 i18n_media_title: "Media"
+i18n_energy_title: "Energy"
+
+# ─── Energy Blocks (Energy Page) ─────────────────────────────────────────────
+energy_bloc1_label: "Home"
+energy_bloc2_label: "Cost / day"
+energy_bloc3_label: "AC Power"
+energy_bloc4_label: "AC / day"

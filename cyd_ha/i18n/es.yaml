@@ -29,3 +29,10 @@ sensor_bloc3_label: "Dormitorio"
 sensor_bloc4_label: "Exterior"
 
 i18n_media_title: "Multimedia"
+i18n_energy_title: "Energía"
+
+# ─── Bloques de Energía (Página Energía) ─────────────────────────────────────
+energy_bloc1_label: "Casa"
+energy_bloc2_label: "Coste / día"
+energy_bloc3_label: "Aire acond."
+energy_bloc4_label: "Clima / día"

@@ -49,6 +49,24 @@ sensor:
     entity_id: $sensor_bloc4_hum_entity
     internal: true
 
+  # ── Energy & Climate (Energy Page)
+  - platform: homeassistant
+    id: energy_power
+    entity_id: $energy_power_entity
+    internal: true
+  - platform: homeassistant
+    id: energy_cost
+    entity_id: $energy_cost_entity
+    internal: true
+  - platform: homeassistant
+    id: ac_power
+    entity_id: $ac_power_entity
+    internal: true
+  - platform: homeassistant
+    id: ac_energy
+    entity_id: $ac_energy_entity
+    internal: true
+
   # ── Outdoor Temperature
   - platform: homeassistant
     id: temp_ext

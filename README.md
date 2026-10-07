@@ -1,6 +1,6 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Current version: **v4.0**
+> Current version: **v4.1**
 
 [![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 
@@ -10,13 +10,15 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
 
 ## 📋 Features
 
-- **Multi-page display**: 3 screens with 8-second auto-cycling
+- **Multi-page display**: Dynamic screens with 8-second auto-cycling
   - **Weather Page**: Current conditions with animated weather icon, outdoor temperature, rain, wind, snow, frost, and real-time Météo-France alerts (yellow/orange/red vigilance)
   - 🌧️ **Rain forecast**: 9 colored rectangles showing minute-by-minute forecast (0–55 min) with intuitive color coding (empty=dry, light/medium/dark blue = light/moderate/heavy rain)
   - **Sensors Page**: Temperature and humidity from up to 4 zones in a 2x2 grid layout
+  - **Energy & Climate Page**: Home power (W/kW), electricity cost today (€), air conditioning power (W/kW), and AC energy consumption (kWh)
   - **Media Page**: Now Playing (Artist & Title) with automatic text wrapping and dynamic layout
-  - **Dynamic Pagination**: Dots indicator adjusts automatically (2/3/4 dots) based on active pages (Media/Printer hidden when unused)
   - **Printer Page**: Real-time BambuLab status (file, progress, nozzle/bed temps, remaining time)
+  - **Dynamic Pagination**: Dots indicator adjusts automatically (3/4/5 dots) based on active pages (Media/Printer hidden when unused)
+- **Embedded Web Server**: Modern ESPHome v3 responsive web dashboard accessible via browser (port 80)
 - **Control menu**: Touch-activated, 8 configurable buttons to control Home Assistant entities (covers, lights, 3D printer)
   - Clean interface without header to maximize button space
   - Visual feedback with colored icons (blue = active, grey = inactive)
@@ -116,6 +118,12 @@ sensor_bloc1_temp_entity: sensor.living_room_temperature
 sensor_bloc1_hum_entity: sensor.living_room_humidity
 sensor_bloc1_icon: hometemperature
 # ... repeat for bloc2, bloc3, bloc4 (use sensor.none to disable)
+
+# ─── Energy & Climate (up to 4 blocks) ───────────────────────
+energy_power_entity: sensor.home_power_w
+energy_cost_entity: sensor.electricity_cost_today_eur
+ac_power_entity: sensor.ac_power_w
+ac_energy_entity: sensor.ac_energy_today_kwh
 
 # ─── Menu Buttons ────────────────────────────────────────────
 btn1_service: cover.open_cover
@@ -240,7 +248,16 @@ Dynamic Pages with auto-cycling (8s):
 │  - 4 blocks in 2x2 grid             │
 │  - Each: icon + label + temp + hum  │
 ├─────────────────────────────────────┤
-│ Page 2: BambuLab Printer            │
+│ Page 2: Energy & Climate            │
+│  - 4 blocks in 2x2 grid             │
+│  - Home power (W/kW), cost (€)      │
+│  - AC power (W/kW), AC energy (kWh) │
+├─────────────────────────────────────┤
+│ Page 3: Media Player (conditional)  │
+│  - Artist & Title text wrap         │
+│  - Playing / Paused status          │
+├─────────────────────────────────────┤
+│ Page 4: BambuLab Printer (cond.)    │
 │  - Scrolling filename               │
 │  - Progress bar with percentage     │
 │  - Status / Time remaining / End    │

@@ -25,6 +25,8 @@ display:
       height: 240
     rotation: 270
     color_depth: 8bit
+    buffer_size: 1.0
+    data_rate: 40MHz
     update_interval: 500ms
     lambda: |-
       // Use the global current_page instead of a static local variable
@@ -44,20 +46,20 @@ display:
       }
       
       // Ensure current_page is valid based on active states
-      if (page == 2 && !media_active) { id(current_page) = 0; page = 0; }
-      if (page == 3 && !printer_on) { id(current_page) = 0; page = 0; }
-      if (page > 3) { id(current_page) = 0; page = 0; }
+      if (page == 3 && !media_active) { id(current_page) = 0; page = 0; }
+      if (page == 4 && !printer_on) { id(current_page) = 0; page = 0; }
+      if (page > 4) { id(current_page) = 0; page = 0; }
       
       // Auto-cycle every 8 seconds (only when NOT in menu)
       if (!id(show_return_page)) {
         if (millis() - last_switch > 8000) {
           int next = page + 1;
-          // Skip Media (2) if inactive
-          if (next == 2 && !media_active) next++;
-          // Skip Printer (3) if inactive
-          if (next == 3 && !printer_on) next++;
+          // Skip Media (3) if inactive
+          if (next == 3 && !media_active) next++;
+          // Skip Printer (4) if inactive
+          if (next == 4 && !printer_on) next++;
           // Loop back
-          if (next > 3) next = 0;
+          if (next > 4) next = 0;
           
           id(current_page) = next;
           page = next;
@@ -515,6 +517,78 @@ display:
           }
         }
       } else if (page == 2) {
+        // Page 3: Energy & Climate - 4 blocs in 2x2 grid
+        const int CARD_W = 105, CARD_H = 68;
+        const int GAP = 8;
+        const int GRID_X = (W - 2*CARD_W - GAP) / 2;
+        const int GRID_Y = 50;
+
+        // Bloc 1 (top-left): Conso globale Maison (W / kW)
+        {
+          int x1 = GRID_X, y1 = GRID_Y;
+          it.filled_rectangle(x1, y1, CARD_W, CARD_H, id(card_bg));
+          it.rectangle(x1, y1, CARD_W, CARD_H, id(divider));
+          it.image(x1 + 6, y1 + 8, id(energy_power_icon), id(blue));
+          it.print(x1 + 6, y1 + 50, id(info), id(white), "${energy_bloc1_label}");
+          if (id(energy_power).has_state()) {
+            float p = id(energy_power).state;
+            if (p >= 1000.0f) {
+              it.printf(x1 + 48, y1 + 18, id(info), id(white), "%.2f kW", p / 1000.0f);
+            } else {
+              it.printf(x1 + 48, y1 + 18, id(info), id(white), "%.0f W", p);
+            }
+          } else {
+            it.print(x1 + 48, y1 + 18, id(info), id(white), "-- W");
+          }
+        }
+
+        // Bloc 2 (top-right): Coût électricité du jour (€)
+        {
+          int x2 = GRID_X + CARD_W + GAP, y2 = GRID_Y;
+          it.filled_rectangle(x2, y2, CARD_W, CARD_H, id(card_bg));
+          it.rectangle(x2, y2, CARD_W, CARD_H, id(divider));
+          it.image(x2 + 6, y2 + 8, id(energy_cost_icon), id(blue));
+          it.print(x2 + 6, y2 + 50, id(info), id(white), "${energy_bloc2_label}");
+          if (id(energy_cost).has_state()) {
+            it.printf(x2 + 48, y2 + 18, id(info), id(white), "%.2f €", id(energy_cost).state);
+          } else {
+            it.print(x2 + 48, y2 + 18, id(info), id(white), "-- €");
+          }
+        }
+
+        // Bloc 3 (bottom-left): Puissance instantanée Clim (W / kW)
+        {
+          int x3 = GRID_X, y3 = GRID_Y + CARD_H + GAP;
+          it.filled_rectangle(x3, y3, CARD_W, CARD_H, id(card_bg));
+          it.rectangle(x3, y3, CARD_W, CARD_H, id(divider));
+          it.image(x3 + 6, y3 + 8, id(ac_power_icon), id(blue));
+          it.print(x3 + 6, y3 + 50, id(info), id(white), "${energy_bloc3_label}");
+          if (id(ac_power).has_state()) {
+            float p = id(ac_power).state;
+            if (p >= 1000.0f) {
+              it.printf(x3 + 48, y3 + 18, id(info), id(white), "%.2f kW", p / 1000.0f);
+            } else {
+              it.printf(x3 + 48, y3 + 18, id(info), id(white), "%.0f W", p);
+            }
+          } else {
+            it.print(x3 + 48, y3 + 18, id(info), id(white), "-- W");
+          }
+        }
+
+        // Bloc 4 (bottom-right): Conso Clim jour (kWh)
+        {
+          int x4 = GRID_X + CARD_W + GAP, y4 = GRID_Y + CARD_H + GAP;
+          it.filled_rectangle(x4, y4, CARD_W, CARD_H, id(card_bg));
+          it.rectangle(x4, y4, CARD_W, CARD_H, id(divider));
+          it.image(x4 + 6, y4 + 8, id(ac_energy_icon), id(blue));
+          it.print(x4 + 6, y4 + 50, id(info), id(white), "${energy_bloc4_label}");
+          if (id(ac_energy).has_state()) {
+            it.printf(x4 + 48, y4 + 18, id(info), id(white), "%.1f kWh", id(ac_energy).state);
+          } else {
+            it.print(x4 + 48, y4 + 18, id(info), id(white), "-- kWh");
+          }
+        }
+      } else if (page == 3) {
         // Page 3: Media Player
         // Title "Média" removed as requested
         
@@ -575,7 +649,7 @@ display:
            it.printf(CX, current_y, id(info), id(blue), TextAlign::TOP_CENTER, "[ %s ]", id(media_state).state.c_str());
         }
 
-      } else if (page == 3) {
+      } else if (page == 4) {
         // Page 4: 3D Printer — App style
         it.printf(CX, TITLE_Y - 10, id(info), id(white), TextAlign::CENTER, "%s — %s", "${i18n_printer_title}", "${printer_brand}");
         
@@ -693,19 +767,19 @@ display:
           it.print(COL2_X + TEXT_OFFSET, GRID_START_Y + ROW_HEIGHT + 10, id(info), id(white), TextAlign::CENTER_LEFT, "--°");
         }
       }
-      // Indicateur de page (• • •) en bas - nombre dynamique selon état imprimante
       // Indicateur de page (• • •) en bas - nombre dynamique
-      int total_dots = 2; // Home + Sensors always present
+      int total_dots = 3; // Weather + Sensors + Energy always present
       if (media_active) total_dots++;
       if (printer_on) total_dots++;
 
       int current_dot = page;
-      // Remap page index (0,1,2,3) to visual dot index (0..N-1)
-      if (page == 3) {
-        if (!media_active) current_dot = 2; // Shift left if media missing
-        // If media active(2) present, printer(3) stays at 3
+      // Remap page index (0,1,2,3,4) to visual dot index (0..N-1)
+      if (page == 4) {
+        current_dot = total_dots - 1; // Printer is always the last dot
+      } else if (page == 3) {
+        current_dot = 3; // Media is dot 3
       }
-      // If page is 2, it stays 2 (since 0,1 always present)
+      // If page is 0, 1, or 2, it maps directly to dot 0, 1, or 2!
       
       const int DOTS = total_dots;
       const int DOT_RADIUS = 3;

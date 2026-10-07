@@ -7,7 +7,7 @@ font:
   - file: "gfonts://Verdana"
     id: date
     size: 25
-    glyphs: &latin_glyphs " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,;:!?+-/%°()[]'\"&|àâäçèéêëîïôöùûüÿÂÄÇÈÉÊËÎÏÔÖÙÛÜŸ—"
+    glyphs: &latin_glyphs " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,;:!?+-/%°()[]'\"&|àâäçèéêëîïôöùûüÿÂÄÇÈÉÊËÎÏÔÖÙÛÜŸ—€"
   - file: "gfonts://Verdana"
     id: hour
     size: 60
@@ -199,5 +199,21 @@ image:
     type: BINARY
   - file: mdi:music
     id: media_icon
+    resize: 40x40
+    type: BINARY
+  - file: mdi:lightning-bolt
+    id: energy_power_icon
+    resize: 40x40
+    type: BINARY
+  - file: mdi:currency-eur
+    id: energy_cost_icon
+    resize: 40x40
+    type: BINARY
+  - file: mdi:air-conditioner
+    id: ac_power_icon
+    resize: 40x40
+    type: BINARY
+  - file: mdi:gauge
+    id: ac_energy_icon
     resize: 40x40
     type: BINARY
