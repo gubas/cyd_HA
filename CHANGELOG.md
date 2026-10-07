@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [4.1.0] - 2026-10-07
+
+### Added
+- **Energy & Climate Page**: New 2x2 grid dashboard page monitoring:
+  - Global home power (W / kW auto-scaling)
+  - Daily electricity cost (€)
+  - Air conditioning instantaneous power (W / kW auto-scaling)
+  - Air conditioning energy consumption today (kWh)
+- **Embedded Web Server**: Activated modern ESPHome v3 web interface on port 80.
+- **Dynamic 5-Dot Pagination**: Extended pagination dots to support up to 5 dynamic pages.
+- **Euro Currency Symbol**: Added `€` glyph to font definitions in `common.yaml`.
+- **Automatic GitHub Releases**: Added `.github/workflows/release.yml` workflow to automatically publish releases on tag push.
+
+### Changed
+- **Ultra-Smooth Screen Refresh**: Configured full framebuffer (`buffer_size: 1.0`) and 40MHz SPI data rate on `mipi_spi`, eliminating multi-pass slicing and screen stutter.
+
 ## [4.0.0] - 2026-10-05
 
 ### Added

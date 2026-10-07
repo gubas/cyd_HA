@@ -29,3 +29,10 @@ sensor_bloc3_label: "Chambres"
 sensor_bloc4_label: "Chambre P"
 
 i18n_media_title: "Média"
+i18n_energy_title: "Énergie"
+
+# ─── Blocs Énergie (Page Énergie) ────────────────────────────────────────────
+energy_bloc1_label: "Maison"
+energy_bloc2_label: "Coût / jour"
+energy_bloc3_label: "Climatisation"
+energy_bloc4_label: "Clim / jour"

@@ -49,6 +49,14 @@ sensor_bloc4_temp_entity: sensor.0xa4c1380ab395ffff_temperature
 sensor_bloc4_hum_entity: sensor.0xa4c1380ab395ffff_humidity
 sensor_bloc4_icon: bedroom
 
+# ─── Energy & Climate (Energy Page - 4 blocks) ──────────────────────────────
+# Labels defined in i18n/*.yaml
+# Use sensor.none to disable a block or if entity is not yet configured.
+energy_power_entity: sensor.none
+energy_cost_entity: sensor.none
+ac_power_entity: sensor.none
+ac_energy_entity: sensor.none
+
 # ─── 3D Printer ──────────────────────────────────────────────────────────────
 printer_brand: P1S
 printer_switch_entity: switch.0xa4c138724adb8456

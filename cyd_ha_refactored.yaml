@@ -70,6 +70,11 @@ wifi:
 # Captive Portal (for WiFi setup via fallback AP)
 captive_portal:
 
+# Embedded Web Server (v3 responsive dashboard)
+web_server:
+  port: 80
+  version: 3
+
 # =============================================================================
 # Global Variables
 # =============================================================================
