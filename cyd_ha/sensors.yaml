@@ -131,10 +131,26 @@ sensor:
     entity_id: $printer_nozzle_target_entity
     internal: true
 
+  # ── Wi-Fi Signal
+  - platform: wifi_signal
+    id: cyd_wifi_signal
+    name: "CYD WiFi Signal"
+    update_interval: 15s
+    internal: true
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Text Sensors (states/strings)
 # ─────────────────────────────────────────────────────────────────────────────
 text_sensor:
+  # ── Wi-Fi Diagnostics
+  - platform: wifi_info
+    ip_address:
+      id: cyd_ip_address
+      name: "CYD IP Address"
+    ssid:
+      id: cyd_wifi_ssid
+      name: "CYD Connected SSID"
+
   # ── Button States (for icon colors)
   - platform: homeassistant
     id: btn1_state

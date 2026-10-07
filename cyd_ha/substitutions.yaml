@@ -14,6 +14,10 @@
 device_name: cydhapanel
 device_friendly_name: CYD HA Panel
 
+# ─── Fallback Wi-Fi AP & Captive Portal ───────────────────────────────────────
+wifi_ap_ssid: "CYD-HA-Fallback"
+wifi_ap_password: "cyd_ha_password"
+
 # ─── Location ────────────────────────────────────────────────────────────────
 location_name: Mâcon
 

@@ -29,6 +29,37 @@ display:
     data_rate: 40MHz
     update_interval: 500ms
     lambda: |-
+      // 1. Check Wi-Fi state - If disconnected or in fallback AP mode, show QR setup screen
+      bool wifi_connected = wifi::global_wifi_component != nullptr && wifi::global_wifi_component->is_connected();
+      if (!wifi_connected) {
+        it.fill(id(black));
+        
+        // Header
+        it.printf(120, 15, id(info), id(blue), TextAlign::CENTER, "CONFIGURATION WI-FI");
+        it.print(120, 35, id(buttons), id(white), TextAlign::CENTER, "Scannez pour configurer :");
+
+        // QR Code - Centered (240x320 display)
+        it.qr_code(75, 55, id(qr_wifi_setup), id(white), 3);
+
+        // Card box for credentials below QR Code
+        const int BOX_X = 15;
+        const int BOX_Y = 160;
+        const int BOX_W = 210;
+        const int BOX_H = 95;
+        it.filled_rectangle(BOX_X, BOX_Y, BOX_W, BOX_H, id(card_bg));
+        it.rectangle(BOX_X, BOX_Y, BOX_W, BOX_H, id(divider));
+
+        it.print(BOX_X + 10, BOX_Y + 12, id(buttons), id(grey), "Point d'acces (AP) :");
+        it.print(BOX_X + 10, BOX_Y + 28, id(info), id(white), "${wifi_ap_ssid}");
+
+        it.print(BOX_X + 10, BOX_Y + 50, id(buttons), id(grey), "Mot de passe :");
+        it.print(BOX_X + 10, BOX_Y + 66, id(info), id(blue), "${wifi_ap_password}");
+
+        it.print(120, 275, id(buttons), id(white), TextAlign::CENTER, "Portail : http://192.168.4.1");
+        it.print(120, 298, id(buttons), id(grey), TextAlign::CENTER, "Ou via USB sur web.esphome.io");
+        return;
+      }
+
       // Use the global current_page instead of a static local variable
       int page = id(current_page);
       static unsigned long last_switch = 0;
@@ -147,6 +178,13 @@ display:
           it.image(45, 245, id(bulb), id(grey));
         }
         it.image(155, 245, id(back), id(grey));
+
+        // Footer: IP address & firmware version
+        if (id(cyd_ip_address).has_state() && id(cyd_ip_address).state != "") {
+          it.printf(120, 313, id(buttons), id(grey), TextAlign::CENTER, "IP: %s  |  v4.2", id(cyd_ip_address).state.c_str());
+        } else {
+          it.print(120, 313, id(buttons), id(grey), TextAlign::CENTER, "CYD HA Panel | v4.2");
+        }
         return;
       }
       // Render pages (3 screens)
@@ -156,9 +194,20 @@ display:
       const int H = 320;
       const int CX = W / 2;
       const int M = 14;
+
+      static unsigned long wifi_connect_time = 0;
+      if (wifi_connect_time == 0 && wifi_connected) {
+        wifi_connect_time = millis();
+      }
+      bool show_boot_ip = (wifi_connect_time > 0 && millis() - wifi_connect_time < 6000 && id(cyd_ip_address).has_state() && id(cyd_ip_address).state != "");
+
       const int HEADER_MARGIN = 10;
       const int HEADER_Y = 10;
-      it.print(HEADER_MARGIN, HEADER_Y, id(info), id(white), TextAlign::TOP_LEFT, "${device_friendly_name}");
+      if (show_boot_ip) {
+        it.printf(HEADER_MARGIN, HEADER_Y, id(info), id(blue), TextAlign::TOP_LEFT, "IP: %s", id(cyd_ip_address).state.c_str());
+      } else {
+        it.print(HEADER_MARGIN, HEADER_Y, id(info), id(white), TextAlign::TOP_LEFT, "${device_friendly_name}");
+      }
       it.strftime(W - HEADER_MARGIN, HEADER_Y, id(info), id(white), TextAlign::TOP_RIGHT, "%d/%m %H:%M", id(esptime).now());
       const int TITLE_Y = 64;
       if (page == 0) {
