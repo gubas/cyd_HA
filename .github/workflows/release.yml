@@ -60,12 +60,15 @@ jobs:
         run: |
           esphome compile cyd_ha.yaml
           mkdir -p release_assets
-          if [ -f .esphome/build/cydhapanel/.pioenvs/cydhapanel/firmware.factory.bin ]; then
-            cp .esphome/build/cydhapanel/.pioenvs/cydhapanel/firmware.factory.bin release_assets/cyd_ha_${{ github.ref_name }}_factory.bin
+          FACTORY_BIN=$(find .esphome/ -name "firmware.factory.bin" | head -n 1)
+          if [ -n "$FACTORY_BIN" ]; then
+            cp "$FACTORY_BIN" "release_assets/cyd_ha_${{ github.ref_name }}_factory.bin"
           fi
-          if [ -f .esphome/build/cydhapanel/.pioenvs/cydhapanel/firmware.ota.bin ]; then
-            cp .esphome/build/cydhapanel/.pioenvs/cydhapanel/firmware.ota.bin release_assets/cyd_ha_${{ github.ref_name }}_ota.bin
+          OTA_BIN=$(find .esphome/ -name "firmware.ota.bin" | head -n 1)
+          if [ -n "$OTA_BIN" ]; then
+            cp "$OTA_BIN" "release_assets/cyd_ha_${{ github.ref_name }}_ota.bin"
           fi
+          ls -la release_assets/
 
       - name: Extract Release Notes from CHANGELOG
         run: |
@@ -87,19 +90,23 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          ASSETS=(release_assets/*)
+          FILES=()
+          for f in release_assets/*; do
+            [ -e "$f" ] && FILES+=("$f")
+          done
+          
           if [ -s release_notes.md ]; then
-            gh release create "${{ github.ref_name }}" "${ASSETS[@]}" \
+            gh release create "${{ github.ref_name }}" "${FILES[@]}" \
               --title "${{ github.ref_name }}" \
               --notes-file release_notes.md || {
                 gh release edit "${{ github.ref_name }}" --title "${{ github.ref_name }}" --notes-file release_notes.md
-                gh release upload "${{ github.ref_name }}" "${ASSETS[@]}" --clobber
+                [ ${#FILES[@]} -gt 0 ] && gh release upload "${{ github.ref_name }}" "${FILES[@]}" --clobber
               }
           else
-            gh release create "${{ github.ref_name }}" "${ASSETS[@]}" \
+            gh release create "${{ github.ref_name }}" "${FILES[@]}" \
               --title "${{ github.ref_name }}" \
               --generate-notes || {
                 gh release edit "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes
-                gh release upload "${{ github.ref_name }}" "${ASSETS[@]}" --clobber
+                [ ${#FILES[@]} -gt 0 ] && gh release upload "${{ github.ref_name }}" "${FILES[@]}" --clobber
               }
           fi
