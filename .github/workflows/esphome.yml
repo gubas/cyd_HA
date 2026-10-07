@@ -20,11 +20,14 @@ on:
       - '**.yaml'
       - '**.yml'
       - '**.ttf'
+      - '**.h'
   pull_request:
     branches: [main, master]
     paths:
       - '**.yaml'
       - '**.yml'
+      - '**.ttf'
+      - '**.h'
 
 jobs:
   build:
