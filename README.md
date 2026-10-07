@@ -33,6 +33,22 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
 - **Modular architecture**: Configuration split into separate files for easy maintenance
 - **Auto-return**: Automatic return to display cycle after 10s menu inactivity
 
+## 📸 Galerie d'écrans / UI Gallery
+
+### Écrans physiques & Menu tactile
+
+| ☀️ Météo & Vigilance | 🌡️ Capteurs Intérieurs | ⚡ Énergie & Climat | 🔘 Menu Tactile 8 Touches |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/images/screen_weather.png" width="175" alt="Page Météo" /> | <img src="docs/images/screen_sensors.png" width="175" alt="Page Capteurs" /> | <img src="docs/images/screen_energy.png" width="175" alt="Page Énergie & Climat" /> | <img src="docs/images/screen_menu.png" width="175" alt="Menu Tactile" /> |
+
+### 🖥️ Simulateur Web Interactif (`/screen`)
+
+Un jumeau numérique en direct accessible directement via `http://<IP_DU_CYD>/screen` ou via le bandeau du tableau de bord ESPHome :
+
+<p align="center">
+  <img src="docs/images/web_simulator.png" width="680" alt="Simulateur Web CYD Live" />
+</p>
+
 ## 🛠️ Required Hardware
 
 - **ESP32-2432S028R** (Cheap Yellow Display)
@@ -47,6 +63,9 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
 ```
 cyd_HA/
 ├── cyd_ha_refactored.yaml     # ✅ Main file (USE THIS)
+├── cyd_screen_streamer.h      # 📺 Live screen streamer & Web simulator
+├── docs/                      # 🖼️ Documentation & screenshots
+│   └── images/
 ├── cyd_ha/                    # 📂 Module subfolder
 │   ├── substitutions.yaml     # ⚙️ All user configuration
 │   ├── common.yaml            # 🎨 UI resources (fonts, colors, icons)
