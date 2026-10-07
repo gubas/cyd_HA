@@ -1,6 +1,6 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Current version: **v4.1**
+> Current version: **v4.2**
 
 [![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 
@@ -18,6 +18,10 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
   - **Media Page**: Now Playing (Artist & Title) with automatic text wrapping and dynamic layout
   - **Printer Page**: Real-time BambuLab status (file, progress, nozzle/bed temps, remaining time)
   - **Dynamic Pagination**: Dots indicator adjusts automatically (3/4/5 dots) based on active pages (Media/Printer hidden when unused)
+- **Live Web Simulator & Screen Mirror**:
+  - 🖥️ **Interactive Simulator (`/screen`)**: Realistic CYD device enclosure mockup with live auto-refresh (1s), touchscreen click simulation, quick navigation pills (Accueil, Capteurs, Énergie, Média, 3D), menu toggle, and latency telemetry.
+  - 📷 **Zero-RAM Framebuffer Stream (`/screenshot.bmp`)**: Pixel-perfect 8-bit indexed BMP directly streamed over HTTP chunk by chunk from the display buffer. Ideal for Home Assistant picture entities or remote viewing without requiring PSRAM!
+  - 🕹️ **Control API (`/api/screen/page`)**: Remote HTTP endpoints to switch pages (`?page=N`) or toggle the configuration menu (`?action=toggle_menu`).
 - **Embedded Web Server**: Modern ESPHome v3 responsive web dashboard accessible via browser (port 80)
 - **Control menu**: Touch-activated, 8 configurable buttons to control Home Assistant entities (covers, lights, 3D printer)
   - Clean interface without header to maximize button space

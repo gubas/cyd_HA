@@ -31,6 +31,13 @@ esphome:
   name: ${device_name}
   friendly_name: ${device_friendly_name}
   comment: "ESP32 CYD Touch Panel for Home Assistant"
+  includes:
+    - cyd_screen_streamer.h
+  on_boot:
+    priority: -100.0
+    then:
+      - lambda: |-
+          init_cyd_screen_streamer();
 
 esp32:
   board: esp32dev
