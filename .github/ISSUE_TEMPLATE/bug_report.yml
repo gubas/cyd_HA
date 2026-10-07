@@ -1,0 +1,66 @@
+name: "🐛 Bug Report"
+description: "File a bug report for an issue with CYD HA Panel"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        Please make sure you have checked the [Troubleshooting section in README](https://github.com/gubas/cyd_HA#troubleshooting).
+
+  - type: dropdown
+    id: hardware
+    attributes:
+      label: CYD Hardware Model
+      description: Which CYD board do you have?
+      options:
+        - "ESP32-2432S028R (Resistive Touch, 1 Micro-USB port)"
+        - "ESP32-2432S028R (Resistive Touch, 2 USB ports: 1 Type-C + 1 Micro-USB)"
+        - "ESP32-2432S028C (Capacitive Touch)"
+        - "Other / Unknown"
+    validations:
+      required: true
+
+  - type: input
+    id: esphome_version
+    attributes:
+      label: ESPHome Version
+      description: What version of ESPHome are you running? (e.g., 2026.6.4)
+      placeholder: "e.g., 2026.6.4"
+    validations:
+      required: true
+
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant Version
+      description: What version of Home Assistant Core?
+      placeholder: "e.g., 2026.10.1"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can someone reproduce this behavior?
+      placeholder: |
+        1. Flash configuration with ...
+        2. Touch button ...
+        3. See error ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: ESPHome Logs
+      description: Paste relevant ESPHome console logs if applicable (please redact passwords/keys!).
+      render: text

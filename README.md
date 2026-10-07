@@ -49,6 +49,37 @@ A real-time digital twin accessible directly at `http://<CYD_IP_ADDRESS>/screen`
   <img src="docs/images/web_simulator.png" width="680" alt="Interactive Live CYD Web Simulator" />
 </p>
 
+## 🏠 Home Assistant Integration
+
+You can easily integrate your live CYD screen into Home Assistant dashboards:
+
+### 1. Live Screen Picture Entity (Generic Camera)
+Display the real-time CYD display buffer on any Lovelace dashboard:
+
+1. In Home Assistant, go to **Settings** → **Devices & Services** → **Add Integration** → **Generic Camera**.
+2. Configure:
+   - **Still Image URL**: `http://<CYD_IP_ADDRESS>/screenshot.bmp`
+   - **Frame Rate**: `1` fps
+3. Add a **Picture Entity** card to your dashboard:
+   ```yaml
+   type: picture-entity
+   entity: camera.cyd_live_screen
+   name: CYD Screen
+   show_state: false
+   tap_action:
+     action: url
+     url_path: http://<CYD_IP_ADDRESS>/screen
+   ```
+
+### 2. Interactive Simulator Card (Webpage / Iframe)
+Embed the interactive touch simulator and remote page switcher directly in Home Assistant:
+
+```yaml
+type: iframe
+url: http://<CYD_IP_ADDRESS>/screen
+aspect_ratio: 75%
+```
+
 ## 🛠️ Required Hardware
 
 - **ESP32-2432S028R** (Cheap Yellow Display)
@@ -62,10 +93,14 @@ A real-time digital twin accessible directly at `http://<CYD_IP_ADDRESS>/screen`
 
 ```
 cyd_HA/
-├── cyd_ha_refactored.yaml     # ✅ Main file (USE THIS)
+├── cyd_ha.yaml                # ✅ Main configuration file
+├── cyd_ha_refactored.yaml     # 🔄 Backward compatibility shim
 ├── cyd_screen_streamer.h      # 📺 Live screen streamer & Web simulator
 ├── docs/                      # 🖼️ Documentation & screenshots
 │   └── images/
+├── web_flasher/               # 🌐 ESP Web Tools browser installer
+│   ├── index.html
+│   └── manifest.json
 ├── cyd_ha/                    # 📂 Module subfolder
 │   ├── substitutions.yaml     # ⚙️ All user configuration
 │   ├── common.yaml            # 🎨 UI resources (fonts, colors, icons)
@@ -155,10 +190,10 @@ btn1_entity: cover.living_room_blinds
 ```
 
 ### 3. Flash
-
+ 
 ```bash
 # Compile and upload
-esphome run cyd_ha_refactored.yaml
+esphome run cyd_ha.yaml
 ```
 
 Or use the helper scripts:
