@@ -104,11 +104,7 @@ cyd_HA/
 │   └── images/
 ├── web_flasher/               # 🌐 ESP Web Tools browser installer
 │   ├── index.html
-│   ├── configurator.html      # 🛠️ Online Visual substitutions.yaml Configurator
 │   └── manifest.json
-├── configurator/              # 🛠️ Standalone Visual Substitutions Configurator
-│   └── index.html
-├── open-configurator.bat      # 🪟 Windows 1-click launcher for Configurator
 ├── cyd_ha/                    # 📂 Module subfolder
 │   ├── substitutions.yaml     # ⚙️ All user configuration
 │   ├── common.yaml            # 🎨 UI resources (fonts, colors, icons)
@@ -161,20 +157,7 @@ cyd_ha_ap_password: "CHANGE_ME_12345"
 
 #### c) Customize entities in `cyd_ha/substitutions.yaml`
 
-You can customize all your Home Assistant entities and settings using the **Visual Web Configurator** or by editing the file manually:
-
-##### 🛠️ Option 1: Visual Web Configurator (Recommended)
-- **Windows:** Double-click [`open-configurator.bat`](file:///open-configurator.bat) to open the interactive UI in your default browser.
-- **Direct in browser:** Open [`configurator/index.html`](file:///configurator/index.html) (or [`web_flasher/configurator.html`](file:///web_flasher/configurator.html)).
-- **Features:** 
-  - Visual forms for Weather, Indoor Sensors (with icon picker), 3D Printer, Energy & Climate, and 7 Menu Action Buttons.
-  - Live YAML preview with syntax highlighting.
-  - One-click `sensor.none` disabling for unused sensor blocks.
-  - Bidirectional: Import existing `substitutions.yaml` file or paste raw YAML to edit visually.
-  - Direct **Copy to Clipboard** and **Download substitutions.yaml** button.
-
-##### ✏️ Option 2: Edit manually
-All configuration is centralized in `cyd_ha/substitutions.yaml`:
+All configuration is centralized in this file:
 
 ```yaml
 # ─── Device ──────────────────────────────────────────────────
