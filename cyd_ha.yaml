@@ -71,11 +71,19 @@ wifi:
 
   # Fallback Access Point (if WiFi fails)
   ap:
-    ssid: !secret cyd_ha_ap_ssid
-    password: !secret cyd_ha_ap_password
+    ssid: ${wifi_ap_ssid}
+    password: ${wifi_ap_password}
 
 # Captive Portal (for WiFi setup via fallback AP)
 captive_portal:
+
+# Web Serial Wi-Fi Provisioning (ESP Web Tools / web.esphome.io)
+improv_serial:
+
+# QR Code for instant smartphone Wi-Fi configuration
+qr_code:
+  - id: qr_wifi_setup
+    value: "WIFI:S:${wifi_ap_ssid};T:WPA;P:${wifi_ap_password};;"
 
 # Embedded Web Server (v3 responsive dashboard)
 web_server:
