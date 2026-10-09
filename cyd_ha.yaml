@@ -8,16 +8,20 @@
 #          and displays real-time sensor data (weather, temperature, humidity)
 #
 # Architecture:
-#   - Main configuration: cyd_ha_refactored.yaml (this file)
+#   - Main configuration: cyd_ha.yaml (this file)
+#   - Backward compatibility shim: cyd_ha_refactored.yaml
+#   - UI Engine & Rain Cache: cyd_ui.h (zero-RAM rendering routines)
+#   - Live Streaming & Simulator: cyd_screen_streamer.h
 #   - Secrets: secrets.yaml (WiFi, API keys, passwords)
+#   - Substitutions & i18n: cyd_ha/substitutions.yaml & cyd_ha/i18n/
 #   - UI Resources: cyd_ha/common.yaml (fonts, colors, icons)
 #   - Hardware: cyd_ha/hardware.yaml (SPI, touch, display, outputs)
 #   - Sensors: cyd_ha/sensors.yaml (Home Assistant integrations)
 #   - Controls: cyd_ha/buttons.yaml (touchscreen button definitions)
-#   - Display: cyd_ha/display.yaml (UI rendering logic)
+#   - Display: cyd_ha/display_pages.yaml (display driver & page orchestration)
 #
-# Author: Refactored for maintainability and security
-# Date: October 2025
+# Author: Refactored for maintainability, performance and security
+# Date: October 2026
 # =============================================================================
 
 # Substitutions - centralized for easier sharing/localization
@@ -32,6 +36,7 @@ esphome:
   friendly_name: ${device_friendly_name}
   comment: "ESP32 CYD Touch Panel for Home Assistant"
   includes:
+    - cyd_ui.h
     - cyd_screen_streamer.h
   on_boot:
     priority: -100.0

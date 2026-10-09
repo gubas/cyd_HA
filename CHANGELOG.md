@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [4.6.0] - 2026-10-09
+
+### Added
+- **UI Engine & Rendering Module (`cyd_ui.h`)**: Modularized screen rendering routines (`cyd_draw_weather_page`, `cyd_draw_sensors_page`, etc.) from `display_pages.yaml` into a clean, maintainable C++ header.
+- **Physical Touch Page Navigation**: Hardware touchscreen now supports immediate page switching:
+  - Tap lower-right (Button 8 zone / dots): switches to **Next page** immediately without waiting for auto-cycle.
+  - Tap lower-left (Button 7 zone): switches to **Previous page**.
+  - Tap upper 75% of screen (Buttons 1–6): opens the 8-button control menu as before.
+- **Unified Navigation Logic**: Shared `cyd_next_page()` and `cyd_prev_page()` functions used seamlessly across hardware touch, auto-cycle timer, and web simulator API.
+
+### Performance
+- **Zero-Allocation Rain Forecast Cache**: Refactored Météo-France 1-hour forecast parsing to update event-driven via `on_value` trigger in `sensors.yaml`. Completely eliminates ~36 dynamic string allocations per second from the 500ms display rendering loop, preventing heap fragmentation on ESP32 without PSRAM.
+
+### Changed
+- **Streamlined Display Config**: Refactored `cyd_ha/display_pages.yaml` from 843 lines down to ~70 lines of high-level page lifecycle orchestration.
+- **Version Alignment**: Standardized version to `v4.5.0` across firmware footer, web simulator badges, README, and configuration substitutions.
+
 ## [4.5.0] - 2026-10-07
 
 ### Added

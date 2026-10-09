@@ -197,7 +197,7 @@
                 id: menu_display_time
                 value: !lambda "return millis();"
 
-# Button 7: Lower Left
+# Button 7: Lower Left (Previous page in cycle mode, Entity action in menu mode)
 - platform: touchscreen
   name: Button 7
   x_min: 15
@@ -214,12 +214,8 @@
           condition:
             lambda: 'return !id(show_return_page);'
           then:
-            - globals.set:
-                id: show_return_page
-                value: !lambda "return !id(show_return_page);"
-            - globals.set:
-                id: menu_display_time
-                value: !lambda "return millis();"
+            - lambda: |-
+                cyd_prev_page();
           else:
             - homeassistant.service:
                 service: $btn7_service
@@ -229,7 +225,7 @@
                 id: menu_display_time
                 value: !lambda "return millis();"
 
-# Button 8: Lower Right (Return/Back)
+# Button 8: Lower Right (Next page in cycle mode, Close menu in menu mode)
 - platform: touchscreen
   name: Button 8
   x_min: 125
@@ -246,10 +242,9 @@
           condition:
             lambda: 'return !id(show_return_page);'
           then:
-            # Opening menu - set timestamp for timeout
+            - lambda: |-
+                cyd_next_page();
+          else:
             - globals.set:
-                id: menu_display_time
-                value: !lambda "return millis();"
-      - globals.set:
-          id: show_return_page
-          value: !lambda "return !id(show_return_page);"
+                id: show_return_page
+                value: "false"

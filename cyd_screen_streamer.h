@@ -95,7 +95,7 @@ static const char CYD_HOME_PAGE_HTML[] PROGMEM = R"rawliteral(<!DOCTYPE html>
     <div class="brand">
       <span style="font-size: 1.3rem;">📺</span>
       <span>CYD HA Panel</span>
-      <span class="badge">v4.2</span>
+      <span class="badge">v4.6.0</span>
     </div>
     <a href="/screen" class="btn-simulator">
       <span>📱</span>
@@ -368,7 +368,7 @@ static const char CYD_SIMULATOR_HTML[] PROGMEM = R"rawliteral(<!DOCTYPE html>
 
 <div class="top-nav-bar">
   <a href="/" class="nav-back-link">&larr; &#127968; Tableau de bord ESPHome</a>
-  <span class="nav-badge">CYD Panel v4.2</span>
+  <span class="nav-badge">CYD Panel v4.6.0</span>
 </div>
 
 <header>
@@ -667,13 +667,9 @@ class CydScreenWebHandler : public web_server_idf::AsyncWebHandler {
     if (request->hasArg("action")) {
       std::string act = request->arg("action");
       if (act == "next") {
-        int p = (current_page->value() + 1) % 5;
-        current_page->value() = p;
-        show_return_page->value() = false;
+        cyd_next_page();
       } else if (act == "prev") {
-        int p = (current_page->value() + 4) % 5;
-        current_page->value() = p;
-        show_return_page->value() = false;
+        cyd_prev_page();
       } else if (act == "toggle_menu") {
         show_return_page->value() = !show_return_page->value();
         menu_display_time->value() = millis();

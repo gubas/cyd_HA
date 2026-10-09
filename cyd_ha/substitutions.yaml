@@ -13,6 +13,7 @@
 # ─── Device ──────────────────────────────────────────────────────────────────
 device_name: cydhapanel
 device_friendly_name: CYD HA Panel
+project_version: "v4.6.0"
 
 # ─── Fallback Wi-Fi AP & Captive Portal ───────────────────────────────────────
 wifi_ap_ssid: "CYD-HA-Fallback"
