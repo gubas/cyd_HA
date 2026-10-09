@@ -237,6 +237,10 @@ text_sensor:
     entity_id: $rain_forecast_entity
     attribute: 1_hour_forecast
     internal: true
+    on_value:
+      then:
+        - lambda: |-
+            cyd_update_rain_forecast(x);
 
   # ── 3D Printer — Text
   - platform: homeassistant

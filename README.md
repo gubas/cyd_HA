@@ -1,6 +1,6 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Current version: **v4.2**
+> Current version: **v4.6.0**
 
 [![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 
@@ -30,11 +30,17 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
 - **Easy Wi-Fi Setup & Zero-Friction Provisioning**:
   - 📷 **On-Screen QR Code**: When disconnected, the CYD automatically displays a QR code on screen. Scan with your smartphone camera to connect to the fallback hotspot (`CYD-HA-Fallback`) and open the captive portal (`http://192.168.4.1`).
   - 🔌 **Improv Serial USB Provisioning**: Plug the CYD via USB and open [web.esphome.io](https://web.esphome.io) or the included Web Flasher in Chrome/Edge to send Wi-Fi credentials in 1 click without any phone.
-  - ℹ️ **On-Screen IP Diagnostics**: Assigned IP address is displayed on boot in the top header and at the bottom of the touch menu (`IP: 192.168.1.84 | v4.2`).
+  - ℹ️ **On-Screen IP Diagnostics**: Assigned IP address is displayed on boot in the top header and at the bottom of the touch menu (`IP: 192.168.1.84 | v4.6.0`).
 - **Global header**: Device name and date/time (DD/MM HH:MM) on data pages
 - **Responsive touch interface**: Precise detection with XPT2046 calibration
+  - 👆 **Dual-Mode Touch Navigation**:
+    - *Page display mode*: Tap lower-right (dots area) for immediate **Next Page**, tap lower-left for **Previous Page**, or tap the upper 75% of the screen to open the 8-button control menu.
+    - *Control menu mode*: 8 configurable buttons with visual state feedback and 10s auto-return timeout.
+- **High-Performance Architecture & Zero-RAM Overhead**:
+  - Event-driven rain forecast byte cache (`cyd_ui.h`) computed only on sensor updates, eliminating ~36 dynamic string allocations/sec from the 500ms rendering loop.
+  - Dedicated modular UI engine (`cyd_ui.h`) separating rendering logic from YAML orchestration.
 - **Secure connection**: Encrypted API, password-protected OTA
-- **Modular architecture**: Configuration split into separate files for easy maintenance
+- **Modular architecture**: Configuration split into clean, single-responsibility files for easy maintenance
 - **Auto-return**: Automatic return to display cycle after 10s menu inactivity
 
 ## 📸 UI Gallery
@@ -99,6 +105,7 @@ aspect_ratio: 75%
 cyd_HA/
 ├── cyd_ha.yaml                # ✅ Main configuration file
 ├── cyd_ha_refactored.yaml     # 🔄 Backward compatibility shim
+├── cyd_ui.h                   # 🖥️ UI rendering engine, rain cache & navigation
 ├── cyd_screen_streamer.h      # 📺 Live screen streamer & Web simulator
 ├── docs/                      # 🖼️ Documentation & screenshots
 │   └── images/
@@ -111,7 +118,7 @@ cyd_HA/
 │   ├── hardware.yaml          # 🔧 Hardware config (SPI, touch, outputs)
 │   ├── sensors.yaml           # 📊 Home Assistant sensor integration
 │   ├── buttons.yaml           # 🔘 Touch zone definitions
-│   ├── display_pages.yaml     # 🖥️ UI rendering logic
+│   ├── display_pages.yaml     # 🖥️ Display setup & page orchestration
 │   └── i18n/                  # 🌍 Language packs
 │       ├── en.yaml
 │       ├── fr.yaml
