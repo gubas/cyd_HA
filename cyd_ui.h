@@ -599,6 +599,96 @@ inline void cyd_draw_media_page(display::Display &it) {
   }
 }
 
+inline std::string cyd_get_printer_end_time() {
+  // 1. Prioritize calculation from remaining time (time_remaining) + current local time:
+  // This uses ESPHome's internal timezone (Europe/Paris) and eliminates HA UTC formatting / timezone errors.
+  if (time_remaining->has_state() && esptime->now().is_valid()) {
+    const std::string &tr = time_remaining->state;
+    char *endptr = nullptr;
+    long rem_min = strtol(tr.c_str(), &endptr, 10);
+    if (endptr != tr.c_str() && rem_min > 0) {
+      time_t finish_epoch = esptime->now().timestamp + (rem_min * 60);
+      ESPTime finish_esp = ESPTime::from_epoch_local(finish_epoch);
+      if (finish_esp.is_valid()) {
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%02d:%02d", finish_esp.hour, finish_esp.minute);
+        return std::string(buf);
+      }
+    }
+  }
+
+  // 2. If remaining time is not available or 0, parse end_time sensor from Home Assistant
+  if (end_time->has_state() && !end_time->state.empty() &&
+      end_time->state != "unavailable" && end_time->state != "unknown") {
+    const std::string &end_str = end_time->state;
+
+    // Direct HH:MM format (e.g. "14:30")
+    if (end_str.length() == 5 && end_str[2] == ':' &&
+        isdigit(end_str[0]) && isdigit(end_str[1]) &&
+        isdigit(end_str[3]) && isdigit(end_str[4])) {
+      return end_str;
+    }
+
+    // Parse ISO / Home Assistant datetime format (UTC by default in HA)
+    // Examples: "2026-10-12T09:18:00+00:00", "2026-10-12 09:18:00", "2026-10-12T09:18:00Z"
+    int y = 0, m = 0, d = 0, h = 0, min = 0, s = 0;
+    char sep = 0;
+    bool parsed = false;
+    if (sscanf(end_str.c_str(), "%4d-%2d-%2d%c%2d:%2d:%2d", &y, &m, &d, &sep, &h, &min, &s) >= 6 && (sep == 'T' || sep == ' ')) {
+      parsed = true;
+    } else if (sscanf(end_str.c_str(), "%4d-%2d-%2d%c%2d:%2d", &y, &m, &d, &sep, &h, &min) >= 5 && (sep == 'T' || sep == ' ')) {
+      parsed = true;
+      s = 0;
+    }
+
+    if (parsed) {
+      // Check for explicit timezone offset (+HH:MM or -HH:MM)
+      size_t tz_pos = end_str.find_last_of("+-");
+      int tz_offset_sec = 0;
+      bool has_tz = false;
+      if (tz_pos != std::string::npos && tz_pos > 10) {
+        int tzh = 0, tzm = 0;
+        if (sscanf(end_str.c_str() + tz_pos + 1, "%2d:%2d", &tzh, &tzm) >= 1) {
+          tz_offset_sec = tzh * 3600 + tzm * 60;
+          if (end_str[tz_pos] == '-') tz_offset_sec = -tz_offset_sec;
+          has_tz = true;
+        }
+      }
+
+      ESPTime utc_time{};
+      utc_time.year = y;
+      utc_time.month = m;
+      utc_time.day_of_month = d;
+      utc_time.hour = h;
+      utc_time.minute = min;
+      utc_time.second = s;
+      utc_time.recalc_timestamp_utc(false);
+
+      if (utc_time.timestamp > 0) {
+        time_t epoch_utc = utc_time.timestamp;
+        if (has_tz) epoch_utc -= tz_offset_sec;
+        ESPTime local_esp = ESPTime::from_epoch_local(epoch_utc);
+        if (local_esp.is_valid()) {
+          char buf[8];
+          snprintf(buf, sizeof(buf), "%02d:%02d", local_esp.hour, local_esp.minute);
+          return std::string(buf);
+        }
+      }
+    }
+
+    // Fallback if space-separated: extract time part
+    size_t space_pos = end_str.find(' ');
+    if (space_pos != std::string::npos && end_str.length() >= space_pos + 6) {
+      return end_str.substr(space_pos + 1, 5);
+    }
+    if (end_str.length() <= 8) {
+      return end_str;
+    }
+  }
+
+  return "--:--";
+}
+
 inline void cyd_draw_printer_page(display::Display &it, const char* title, const char* brand) {
   const int W = 240;
   const int CX = W / 2;
@@ -670,18 +760,8 @@ inline void cyd_draw_printer_page(display::Display &it, const char* title, const
   }
 
   it.image(COL2_X, GRID_START_Y, clock_end_small, blue);
-  if (end_time->has_state()) {
-    std::string end_str = end_time->state;
-    size_t space_pos = end_str.find(' ');
-    if (space_pos != std::string::npos && end_str.length() > space_pos + 5) {
-      std::string time_part = end_str.substr(space_pos + 1, 5);
-      it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + 10, info, white, display::TextAlign::CENTER_LEFT, "%s", time_part.c_str());
-    } else {
-      it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + 10, info, white, display::TextAlign::CENTER_LEFT, "%s", end_time->state.c_str());
-    }
-  } else {
-    it.print(COL2_X + TEXT_OFFSET, GRID_START_Y + 10, info, white, display::TextAlign::CENTER_LEFT, "--:--");
-  }
+  std::string end_str = cyd_get_printer_end_time();
+  it.printf(COL2_X + TEXT_OFFSET, GRID_START_Y + 10, info, white, display::TextAlign::CENTER_LEFT, "%s", end_str.c_str());
 
   // Ligne 2: Temp buse | Temp lit
   it.image(COL1_X, GRID_START_Y + ROW_HEIGHT, nozzle_small, blue);
