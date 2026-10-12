@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [4.6.1] - 2026-10-12
+
+### Fixed
+- **BambuLab Print End Time Timezone**: Fixed finish time display on the 3D printer page.
+  - Estimated finish time is now computed directly on-device using local synchronized time (`esptime` with `Europe/Paris` timezone) and remaining print minutes (`time_remaining`), preventing Home Assistant UTC storage offset mismatch.
+  - Added robust parsing for ISO UTC datetime strings and timezone offsets with automatic conversion to local time as fallback for `end_time` sensors.
+
 ## [4.6.0] - 2026-10-09
 
 ### Added

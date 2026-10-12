@@ -95,7 +95,7 @@ static const char CYD_HOME_PAGE_HTML[] PROGMEM = R"rawliteral(<!DOCTYPE html>
     <div class="brand">
       <span style="font-size: 1.3rem;">📺</span>
       <span>CYD HA Panel</span>
-      <span class="badge">v4.6.0</span>
+      <span class="badge">v4.6.1</span>
     </div>
     <a href="/screen" class="btn-simulator">
       <span>📱</span>
@@ -368,7 +368,7 @@ static const char CYD_SIMULATOR_HTML[] PROGMEM = R"rawliteral(<!DOCTYPE html>
 
 <div class="top-nav-bar">
   <a href="/" class="nav-back-link">&larr; &#127968; Tableau de bord ESPHome</a>
-  <span class="nav-badge">CYD Panel v4.6.0</span>
+  <span class="nav-badge">CYD Panel v4.6.1</span>
 </div>
 
 <header>

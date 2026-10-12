@@ -1,6 +1,6 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Current version: **v4.6.0**
+> Current version: **v4.6.1**
 
 [![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 
@@ -30,7 +30,7 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
 - **Easy Wi-Fi Setup & Zero-Friction Provisioning**:
   - 📷 **On-Screen QR Code**: When disconnected, the CYD automatically displays a QR code on screen. Scan with your smartphone camera to connect to the fallback hotspot (`CYD-HA-Fallback`) and open the captive portal (`http://192.168.4.1`).
   - 🔌 **Improv Serial USB Provisioning**: Plug the CYD via USB and open [web.esphome.io](https://web.esphome.io) or the included Web Flasher in Chrome/Edge to send Wi-Fi credentials in 1 click without any phone.
-  - ℹ️ **On-Screen IP Diagnostics**: Assigned IP address is displayed on boot in the top header and at the bottom of the touch menu (`IP: 192.168.1.84 | v4.6.0`).
+  - ℹ️ **On-Screen IP Diagnostics**: Assigned IP address is displayed on boot in the top header and at the bottom of the touch menu (`IP: 192.168.1.84 | v4.6.1`).
 - **Global header**: Device name and date/time (DD/MM HH:MM) on data pages
 - **Responsive touch interface**: Precise detection with XPT2046 calibration
   - 👆 **Dual-Mode Touch Navigation**:
