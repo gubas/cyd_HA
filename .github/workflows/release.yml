@@ -29,46 +29,6 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Cache PlatformIO
-        uses: actions/cache@v4
-        with:
-          path: ~/.platformio
-          key: ${{ runner.os }}-platformio-${{ hashFiles('cyd_ha.yaml', 'cyd_ha/*.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-platformio-
-
-      - name: Install ESPHome
-        run: pip install esphome
-
-      - name: Download Material Design Icons font
-        run: |
-          curl -L -s -o materialdesignicons-webfont.ttf \
-            "https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf"
-
-      - name: Create factory secrets and local substitutions
-        run: |
-          cat > secrets.yaml << 'EOF'
-          wifi_ssid: "SetupWiFi"
-          wifi_password: "SetupPassword"
-          cyd_ha_api_encryption_key: "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY="
-          cyd_ha_ota_password: "esphome_factory"
-          EOF
-          cp cyd_ha/substitutions.yaml cyd_ha/substitutions.local.yaml
-
-      - name: Compile factory firmware
-        run: |
-          esphome compile cyd_ha.yaml
-          mkdir -p release_assets
-          FACTORY_BIN=$(find .esphome/ -name "firmware.factory.bin" | head -n 1)
-          if [ -n "$FACTORY_BIN" ]; then
-            cp "$FACTORY_BIN" "release_assets/cyd_ha_${{ github.ref_name }}_factory.bin"
-          fi
-          OTA_BIN=$(find .esphome/ -name "firmware.ota.bin" | head -n 1)
-          if [ -n "$OTA_BIN" ]; then
-            cp "$OTA_BIN" "release_assets/cyd_ha_${{ github.ref_name }}_ota.bin"
-          fi
-          ls -la release_assets/
-
       - name: Extract Release Notes from CHANGELOG
         run: |
           python -c "
@@ -89,23 +49,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          FILES=()
-          for f in release_assets/*; do
-            [ -e "$f" ] && FILES+=("$f")
-          done
-          
           if [ -s release_notes.md ]; then
-            gh release create "${{ github.ref_name }}" "${FILES[@]}" \
+            gh release create "${{ github.ref_name }}" \
               --title "${{ github.ref_name }}" \
               --notes-file release_notes.md || {
                 gh release edit "${{ github.ref_name }}" --title "${{ github.ref_name }}" --notes-file release_notes.md
-                [ ${#FILES[@]} -gt 0 ] && gh release upload "${{ github.ref_name }}" "${FILES[@]}" --clobber
               }
           else
-            gh release create "${{ github.ref_name }}" "${FILES[@]}" \
+            gh release create "${{ github.ref_name }}" \
               --title "${{ github.ref_name }}" \
               --generate-notes || {
                 gh release edit "${{ github.ref_name }}" --title "${{ github.ref_name }}" --generate-notes
-                [ ${#FILES[@]} -gt 0 ] && gh release upload "${{ github.ref_name }}" "${FILES[@]}" --clobber
               }
           fi
