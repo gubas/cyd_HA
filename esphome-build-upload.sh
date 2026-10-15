@@ -72,6 +72,12 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   exit 1
 fi
 
+# Ensure substitutions.local.yaml exists (copy template if missing)
+if [[ ! -f "cyd_ha/substitutions.local.yaml" && -f "cyd_ha/substitutions.yaml" ]]; then
+  echo "Creating cyd_ha/substitutions.local.yaml from template..."
+  cp "cyd_ha/substitutions.yaml" "cyd_ha/substitutions.local.yaml"
+fi
+
 # Auto-download Material Design Icons font if not present
 if [[ ! -f "materialdesignicons-webfont.ttf" ]]; then
   echo "Downloading Material Design Icons font..."

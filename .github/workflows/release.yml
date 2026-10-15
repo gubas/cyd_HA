@@ -45,16 +45,15 @@ jobs:
           curl -L -s -o materialdesignicons-webfont.ttf \
             "https://github.com/Templarian/MaterialDesign-Webfont/raw/master/fonts/materialdesignicons-webfont.ttf"
 
-      - name: Create factory secrets
+      - name: Create factory secrets and local substitutions
         run: |
           cat > secrets.yaml << 'EOF'
           wifi_ssid: "SetupWiFi"
           wifi_password: "SetupPassword"
           cyd_ha_api_encryption_key: "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY="
           cyd_ha_ota_password: "esphome_factory"
-          cyd_ha_ap_ssid: "CYD-HA-Fallback"
-          cyd_ha_ap_password: "cyd_ha_password"
           EOF
+          cp cyd_ha/substitutions.yaml cyd_ha/substitutions.local.yaml
 
       - name: Compile factory firmware
         run: |

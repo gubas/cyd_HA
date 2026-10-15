@@ -33,6 +33,14 @@ if not exist "%CONFIG_FILE%" (
     exit /b 1
 )
 
+:: Ensure substitutions.local.yaml exists (copy template if missing)
+if not exist "cyd_ha\substitutions.local.yaml" (
+    if exist "cyd_ha\substitutions.yaml" (
+        echo Creating cyd_ha\substitutions.local.yaml from template...
+        copy "cyd_ha\substitutions.yaml" "cyd_ha\substitutions.local.yaml" >nul
+    )
+)
+
 :: Auto-download Material Design Icons font if not present
 if not exist "materialdesignicons-webfont.ttf" (
     echo Downloading Material Design Icons font...

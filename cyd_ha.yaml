@@ -24,8 +24,9 @@
 # Date: October 2026
 # =============================================================================
 
-# Substitutions - centralized for easier sharing/localization
-substitutions: !include cyd_ha/substitutions.yaml
+# Substitutions - user configuration (private, protected by .gitignore)
+# Copy cyd_ha/substitutions.yaml to cyd_ha/substitutions.local.yaml to customize
+substitutions: !include cyd_ha/substitutions.local.yaml
 
 # =============================================================================
 # Core ESPHome Configuration

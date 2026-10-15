@@ -144,7 +144,13 @@ cyd_HA/
 
 #### a) Create `secrets.yaml`
 
-Create `secrets.yaml` (from template `secrets.yaml.example`):
+Copy the template `secrets.yaml.example` to `secrets.yaml` (protected by `.gitignore`):
+
+```bash
+cp secrets.yaml.example secrets.yaml
+```
+
+Fill in your actual Wi-Fi and Home Assistant API credentials:
 
 ```yaml
 # Global WiFi (shared)
@@ -156,15 +162,26 @@ cyd_ha_api_encryption_key: "YOUR_API_KEY"
 cyd_ha_ota_password: "YOUR_OTA_PASSWORD"
 ```
 
-#### b) Download Material Design Icons font
+#### b) Create `cyd_ha/substitutions.local.yaml`
 
-[Download MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf) (auto-downloaded by the build scripts)
+Copy the template `cyd_ha/substitutions.yaml` to `cyd_ha/substitutions.local.yaml` (auto-created by the build scripts and protected by `.gitignore`):
 
-#### c) Customize entities in `cyd_ha/substitutions.yaml`
+```bash
+cp cyd_ha/substitutions.yaml cyd_ha/substitutions.local.yaml
+```
 
-All user configuration, hardware names, and Wi-Fi hotspot credentials are centralized in this file:
+> [!TIP]
+> **Why `substitutions.local.yaml`?**
+> This file is ignored by Git. All your customized Home Assistant entity IDs, room names, and private settings are safely kept on your machine and will never be committed or exposed if you push changes or share your repo.
+
+Customize your entities, language, and Wi-Fi fallback credentials in `cyd_ha/substitutions.local.yaml`:
 
 ```yaml
+# ─── Language (uncomment ONE line only) ───────────────────────
+<<: !include i18n/fr.yaml
+# <<: !include i18n/en.yaml
+# <<: !include i18n/es.yaml
+
 # ─── Device ──────────────────────────────────────────────────
 device_name: cydhapanel
 device_friendly_name: CYD HA Panel
@@ -181,7 +198,7 @@ weather_entity: weather.paris
 rain_chance_entity: sensor.paris_rain_chance
 # ... more entities
 
-# ─── Media Player ────────────────────────────────────────────────────────────
+# ─── Media Player ────────────────────────────────────────────
 media_player_entity: media_player.example
 
 # ─── Sensor Blocks (up to 4) ─────────────────────────────────
@@ -201,6 +218,10 @@ btn1_service: cover.open_cover
 btn1_entity: cover.living_room_blinds
 # ... configure all 7 buttons
 ```
+
+#### c) Download Material Design Icons font
+
+[Download MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf) (auto-downloaded by the build scripts)
 
 ### 3. Flash
  
