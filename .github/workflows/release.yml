@@ -1,12 +1,12 @@
 # =============================================================================
-# GitHub Release Automation Pipeline
+# GitHub Release Automation Pipeline (Semantic Release)
 # =============================================================================
-# Automatically creates a GitHub Release whenever:
-#   1. A push to `main` introduces a new version in CHANGELOG.md
-#   2. A version tag (v*) is pushed directly
-#   3. Triggered manually via workflow_dispatch
-#
-# Extracts release notes directly from CHANGELOG.md for the target version.
+# Automates the whole package release workflow including:
+#   - Determining the next version number based on Conventional Commits
+#   - Generating / updating CHANGELOG.md
+#   - Updating version constants across codebase via scripts/update-version.py
+#   - Committing release artifacts back to `main`
+#   - Creating Git tag and GitHub Release
 # =============================================================================
 
 name: Release
@@ -15,16 +15,16 @@ on:
   push:
     branches:
       - main
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   release:
-    name: Publish GitHub Release
+    name: Semantic Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -37,65 +37,21 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Extract Release Notes from CHANGELOG
-        id: extract
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Semantic Release & plugins
         run: |
-          python -c "
-          import re, os, sys
+          npm install --no-save \
+            semantic-release@^24.2.0 \
+            @semantic-release/changelog@^6.0.3 \
+            @semantic-release/git@^10.0.1 \
+            @semantic-release/exec@^6.0.3 \
+            conventional-changelog-conventionalcommits@^8.0.0
 
-          ref_type = os.environ.get('GITHUB_REF_TYPE', '')
-          ref_name = os.environ.get('GITHUB_REF_NAME', '')
-
-          content = open('CHANGELOG.md', 'r', encoding='utf-8').read() if os.path.exists('CHANGELOG.md') else ''
-
-          if ref_type == 'tag':
-              tag = ref_name
-              version = tag.lstrip('v')
-          else:
-              m = re.search(r'##\s*\[([^\]]+)\]', content)
-              if not m:
-                  print('Error: No version header found in CHANGELOG.md', file=sys.stderr)
-                  sys.exit(1)
-              version = m.group(1).strip()
-              tag = 'v' + version if not version.startswith('v') else version
-
-          pattern = rf'##\s*\[{re.escape(version)}\][^\n]*\n(.*?)(?=\n##\s*\[|\Z)'
-          match = re.search(pattern, content, re.DOTALL)
-          notes = match.group(1).strip() if match else ''
-
-          with open('release_notes.md', 'w', encoding='utf-8') as f:
-              f.write(notes)
-
-          output_file = os.environ.get('GITHUB_OUTPUT')
-          if output_file:
-              with open(output_file, 'a', encoding='utf-8') as f:
-                  f.write(f'tag={tag}\n')
-                  f.write(f'version={version}\n')
-
-          print(f'Detected tag: {tag} (version {version})')
-          "
-
-      - name: Create or Update GitHub Release
+      - name: Run Semantic Release
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="${{ steps.extract.outputs.tag }}"
-          echo "Target release tag: $TAG"
-
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release $TAG already exists on GitHub. Nothing to do."
-            exit 0
-          fi
-
-          echo "Publishing new release $TAG..."
-          if [ -s release_notes.md ]; then
-            gh release create "$TAG" \
-              --target main \
-              --title "$TAG" \
-              --notes-file release_notes.md
-          else
-            gh release create "$TAG" \
-              --target main \
-              --title "$TAG" \
-              --generate-notes
-          fi
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
