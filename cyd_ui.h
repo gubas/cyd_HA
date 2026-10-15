@@ -277,34 +277,28 @@ inline void cyd_draw_weather_page(display::Display &it, const char* weather_titl
 
   // Alerts
   const int ALERT_Y = 135;
-  static char alert_buffer[100];
+  static char alert_buffer[128];
   alert_buffer[0] = '\0';
+  size_t alert_len = 0;
   bool has_alert = false;
 
-  if (alert_vent->has_state() && alert_vent->state != "Vert" && alert_vent->state != "vert") {
-    sprintf(alert_buffer + strlen(alert_buffer), "Vent(%s) ", alert_vent->state.c_str());
-    has_alert = true;
-  }
-  if (alert_pluie->has_state() && alert_pluie->state != "Vert" && alert_pluie->state != "vert") {
-    if (has_alert) strcat(alert_buffer, "| ");
-    sprintf(alert_buffer + strlen(alert_buffer), "Pluie(%s) ", alert_pluie->state.c_str());
-    has_alert = true;
-  }
-  if (alert_orages->has_state() && alert_orages->state != "Vert" && alert_orages->state != "vert") {
-    if (has_alert) strcat(alert_buffer, "| ");
-    sprintf(alert_buffer + strlen(alert_buffer), "Orage(%s) ", alert_orages->state.c_str());
-    has_alert = true;
-  }
-  if (alert_neige->has_state() && alert_neige->state != "Vert" && alert_neige->state != "vert") {
-    if (has_alert) strcat(alert_buffer, "| ");
-    sprintf(alert_buffer + strlen(alert_buffer), "Neige(%s) ", alert_neige->state.c_str());
-    has_alert = true;
-  }
-  if (alert_inondation->has_state() && alert_inondation->state != "Vert" && alert_inondation->state != "vert") {
-    if (has_alert) strcat(alert_buffer, "| ");
-    sprintf(alert_buffer + strlen(alert_buffer), "Inond(%s) ", alert_inondation->state.c_str());
-    has_alert = true;
-  }
+  auto append_alert = [&](const char* prefix, const std::string& state) {
+    if (state != "Vert" && state != "vert") {
+      if (has_alert && alert_len + 2 < sizeof(alert_buffer)) {
+        alert_len += snprintf(alert_buffer + alert_len, sizeof(alert_buffer) - alert_len, "| ");
+      }
+      if (alert_len < sizeof(alert_buffer)) {
+        alert_len += snprintf(alert_buffer + alert_len, sizeof(alert_buffer) - alert_len, "%s(%s) ", prefix, state.c_str());
+      }
+      has_alert = true;
+    }
+  };
+
+  if (alert_vent->has_state()) append_alert("Vent", alert_vent->state);
+  if (alert_pluie->has_state()) append_alert("Pluie", alert_pluie->state);
+  if (alert_orages->has_state()) append_alert("Orage", alert_orages->state);
+  if (alert_neige->has_state()) append_alert("Neige", alert_neige->state);
+  if (alert_inondation->has_state()) append_alert("Inond", alert_inondation->state);
 
   if (has_alert) {
     it.printf(CX, ALERT_Y, info, white, display::TextAlign::CENTER, "%s", alert_buffer);
@@ -715,6 +709,7 @@ inline void cyd_draw_printer_page(display::Display &it, const char* title, const
         if (scroll_pos > len - MAX_DISPLAY_CHARS) scroll_pos = 0;
         last_scroll = millis();
       }
+      if (scroll_pos > len - MAX_DISPLAY_CHARS) scroll_pos = 0;
       strncpy(filename_buf, fname + scroll_pos, MAX_DISPLAY_CHARS);
       filename_buf[MAX_DISPLAY_CHARS] = '\0';
       it.printf(W - 135, ICON_Y - 15, info, white, display::TextAlign::TOP_LEFT, "%s", filename_buf);

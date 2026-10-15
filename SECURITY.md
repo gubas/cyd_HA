@@ -17,6 +17,8 @@ If you discover a security issue or vulnerability with CYD HA Panel, please repo
 ## Security Best Practices for Users
 
 1. **Keep Secrets Private**: Never commit `secrets.yaml` to public Git repositories. The file is listed in `.gitignore` by default.
-2. **API Encryption**: Always enable encryption keys in `cyd_ha/substitutions.yaml` (`cyd_ha_api_encryption_key`) for secure communications with Home Assistant.
-3. **OTA Passwords**: Protect Over-The-Air updates with a strong password (`cyd_ha_ota_password`).
-4. **Fallback Hotspot**: Change the default fallback Wi-Fi AP password (`cyd_ha_ap_password`) to prevent unauthorized access if the device loses connection to your main router.
+2. **API Encryption**: Always enable encryption keys in `secrets.yaml` (`cyd_ha_api_encryption_key`) for secure encrypted communications with Home Assistant.
+3. **OTA Passwords**: Protect Over-The-Air updates with a strong password in `secrets.yaml` (`cyd_ha_ota_password`).
+4. **Fallback Hotspot & QR Code**: Change the default fallback Wi-Fi AP password in `cyd_ha/substitutions.yaml` (`wifi_ap_password`) to prevent unauthorized access if the device loses connection to your main router. This setting is defined in substitutions so that the scannable Wi-Fi setup QR code can be generated at compile-time.
+5. **Local Web Server Access**: The embedded ESPHome web server (`port 80`) and screen streaming endpoints (`/screen`, `/screenshot.bmp`, `/api/screen/page`) are accessible without authentication on your local network by default. If your local network is untrusted or you want restricted access, configure authentication under `web_server:` in `cyd_ha.yaml`.
+6. **Privacy when Sharing Configs**: When posting your configuration on forums or sharing it publicly, make sure to replace personal entities in `cyd_ha/substitutions.yaml` (such as Zigbee hardware IEEE addresses, printer serial numbers, and home location) with generic placeholders.

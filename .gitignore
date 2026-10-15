@@ -5,6 +5,10 @@
 
 # Secrets (DO NOT COMMIT)
 secrets.yaml
+secrets.*.yaml
+*.local.yaml
+release_assets/
+release_notes.md
 
 # Backups
 *.backup

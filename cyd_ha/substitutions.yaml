@@ -17,7 +17,7 @@ project_version: "v4.6.1"
 
 # ─── Fallback Wi-Fi AP & Captive Portal ───────────────────────────────────────
 wifi_ap_ssid: "CYD-HA-Fallback"
-wifi_ap_password: "cyd_ha_password"
+wifi_ap_password: "cyd_ha_password"  # Minimum 8 characters
 
 # ─── Location ────────────────────────────────────────────────────────────────
 location_name: Paris
@@ -62,18 +62,18 @@ energy_cost_entity: sensor.none
 ac_power_entity: sensor.none
 ac_energy_entity: sensor.none
 
-# ─── 3D Printer ──────────────────────────────────────────────────────────────
+# ─── 3D Printer (Optional - BambuLab / Octoprint / Klipper) ─────────────────
 printer_brand: P1S
 printer_switch_entity: switch.3d_printer_power
-printer_progress_entity: sensor.p1s_3d_printer_progression_de_l_impression
-printer_status_entity: sensor.p1s_3d_printer_etat_de_l_impression
-printer_gcode_entity: sensor.p1s_3d_printer_ficher_g_code
-printer_time_remaining_entity: sensor.p1s_3d_printer_temps_restant
-printer_end_time_entity: sensor.datefin_print
-printer_bed_temp_entity: sensor.p1s_3d_printer_temperature_du_lit
-printer_bed_target_entity: number.p1s_3d_printer_temperature_cible_du_lit
-printer_nozzle_temp_entity: sensor.p1s_3d_printer_temperature_de_la_buse
-printer_nozzle_target_entity: number.p1s_3d_printer_temperature_cible_de_la_buse
+printer_progress_entity: sensor.3d_printer_progress
+printer_status_entity: sensor.3d_printer_status
+printer_gcode_entity: sensor.3d_printer_current_file
+printer_time_remaining_entity: sensor.3d_printer_time_remaining
+printer_end_time_entity: sensor.3d_printer_end_time
+printer_bed_temp_entity: sensor.3d_printer_bed_temperature
+printer_bed_target_entity: number.3d_printer_bed_target_temperature
+printer_nozzle_temp_entity: sensor.3d_printer_nozzle_temperature
+printer_nozzle_target_entity: number.3d_printer_nozzle_target_temperature
 
 # ─── Media Player ────────────────────────────────────────────────────────────
 media_player_entity: media_player.living_room_speaker

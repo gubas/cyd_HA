@@ -8,7 +8,7 @@ set -euo pipefail
 #   ./esphome-build-upload.sh -u                   # USB upload (/dev/ttyUSB0)
 #   ./esphome-build-upload.sh -u /dev/ttyACM0      # USB upload (custom port)
 #   ./esphome-build-upload.sh -h                   # Show help
-# Default config is cyd_ha_refactored.yaml if not provided.
+# Default config is cyd_ha.yaml if not provided.
 
 show_help() {
   cat << EOF

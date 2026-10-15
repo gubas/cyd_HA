@@ -144,7 +144,7 @@ cyd_HA/
 
 #### a) Create `secrets.yaml`
 
-Create `secrets.yaml` (can be shared across all ESPHome projects):
+Create `secrets.yaml` (from template `secrets.yaml.example`):
 
 ```yaml
 # Global WiFi (shared)
@@ -154,22 +154,24 @@ wifi_password: "YOUR_WIFI_PASSWORD"
 # Project-specific secrets (prefixed with "cyd_ha")
 cyd_ha_api_encryption_key: "YOUR_API_KEY"
 cyd_ha_ota_password: "YOUR_OTA_PASSWORD"
-cyd_ha_ap_ssid: "CYD HA Fallback Hotspot"
-cyd_ha_ap_password: "CHANGE_ME_12345"
 ```
 
 #### b) Download Material Design Icons font
 
-[Download MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf)
+[Download MaterialDesignIcons](https://github.com/Templarian/MaterialDesign-Webfont/blob/master/fonts/materialdesignicons-webfont.ttf) (auto-downloaded by the build scripts)
 
 #### c) Customize entities in `cyd_ha/substitutions.yaml`
 
-All configuration is centralized in this file:
+All user configuration, hardware names, and Wi-Fi hotspot credentials are centralized in this file:
 
 ```yaml
 # ─── Device ──────────────────────────────────────────────────
 device_name: cydhapanel
 device_friendly_name: CYD HA Panel
+
+# ─── Fallback Wi-Fi AP & Captive Portal ───────────────────────
+wifi_ap_ssid: "CYD-HA-Fallback"
+wifi_ap_password: "CHANGE_ME_PASSWORD"  # Min 8 chars (for QR code & AP)
 
 # ─── Location ────────────────────────────────────────────────
 location_name: Paris

@@ -4,7 +4,7 @@ setlocal
 :: Simple helper to compile and upload the ESPHome config for Windows.
 :: Usage:
 ::   esphome-build-upload.bat [config.yaml]
-:: Default config is cyd_ha_refactored.yaml if not provided.
+:: Default config is cyd_ha.yaml if not provided.
 
 :: Change to the directory of this script
 cd /d "%~dp0"

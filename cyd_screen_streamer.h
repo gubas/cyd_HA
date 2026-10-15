@@ -571,6 +571,11 @@ class CydScreenWebHandler : public web_server_idf::AsyncWebHandler {
       }
     }
 
+    if (esp_display == nullptr) {
+      request->send(503, "text/plain", "Display not initialized");
+      return;
+    }
+
     uint8_t *raw_buf = CydBufferAccessor::get_buffer(esp_display);
     if (raw_buf == nullptr) {
       request->send(500, "text/plain", "Display buffer not ready");
