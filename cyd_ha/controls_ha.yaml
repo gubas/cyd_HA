@@ -1,0 +1,263 @@
+# =============================================================================
+# Home Assistant Dynamic Configuration & Controls
+# =============================================================================
+# Exposes interactive controls, customizable room labels, icon selectors,
+# temperature offsets, and screen behavior directly to Home Assistant.
+# All settings are saved in Flash (NVS) and persist across reboots.
+# =============================================================================
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 1. Screen & Navigation Controls
+# ─────────────────────────────────────────────────────────────────────────────
+switch:
+  - platform: template
+    name: "CYD Défilement Automatique"
+    id: cyd_auto_cycle
+    icon: mdi:autorenew
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    turn_on_action: []
+    turn_off_action: []
+
+select:
+  - platform: template
+    name: "CYD Page Active"
+    id: cyd_page_selector
+    icon: mdi:book-open-page-variant
+    optimistic: true
+    options:
+      - "Météo"
+      - "Capteurs"
+      - "Énergie"
+      - "Média"
+      - "Imprimante 3D"
+    initial_option: "Météo"
+    set_action:
+      - lambda: |-
+          if (x == "Météo") id(current_page) = 0;
+          else if (x == "Capteurs") id(current_page) = 1;
+          else if (x == "Énergie") id(current_page) = 2;
+          else if (x == "Média") id(current_page) = 3;
+          else if (x == "Imprimante 3D") id(current_page) = 4;
+          id(show_return_page) = false;
+
+  # ── Room Icon Selectors
+  - platform: template
+    name: "CYD Bloc 1 Icône"
+    id: cyd_b1_icon
+    icon: mdi:home-thermometer
+    optimistic: true
+    restore_value: true
+    options:
+      - "Salon/Maison"
+      - "Bureau"
+      - "Chambre"
+      - "Cuisine"
+      - "Thermostat"
+      - "Lumière"
+      - "Ventilateur"
+      - "Lampadaire"
+    initial_option: "Salon/Maison"
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 2 Icône"
+    id: cyd_b2_icon
+    icon: mdi:desk
+    optimistic: true
+    restore_value: true
+    options:
+      - "Salon/Maison"
+      - "Bureau"
+      - "Chambre"
+      - "Cuisine"
+      - "Thermostat"
+      - "Lumière"
+      - "Ventilateur"
+      - "Lampadaire"
+    initial_option: "Bureau"
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 3 Icône"
+    id: cyd_b3_icon
+    icon: mdi:bed
+    optimistic: true
+    restore_value: true
+    options:
+      - "Salon/Maison"
+      - "Bureau"
+      - "Chambre"
+      - "Cuisine"
+      - "Thermostat"
+      - "Lumière"
+      - "Ventilateur"
+      - "Lampadaire"
+    initial_option: "Chambre"
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 4 Icône"
+    id: cyd_b4_icon
+    icon: mdi:bed
+    optimistic: true
+    restore_value: true
+    options:
+      - "Salon/Maison"
+      - "Bureau"
+      - "Chambre"
+      - "Cuisine"
+      - "Thermostat"
+      - "Lumière"
+      - "Ventilateur"
+      - "Lampadaire"
+    initial_option: "Chambre"
+    set_action: []
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2. Timing & Calibration Numbers
+# ─────────────────────────────────────────────────────────────────────────────
+number:
+  - platform: template
+    name: "CYD Vitesse Défilement"
+    id: cyd_cycle_speed
+    icon: mdi:timer-sand
+    unit_of_measurement: "s"
+    min_value: 3
+    max_value: 60
+    step: 1
+    initial_value: 8
+    optimistic: true
+    restore_value: true
+    set_action: []
+
+  - platform: template
+    name: "CYD Menu Timeout"
+    id: cyd_menu_timeout
+    icon: mdi:timer-outline
+    unit_of_measurement: "s"
+    min_value: 5
+    max_value: 60
+    step: 1
+    initial_value: 10
+    optimistic: true
+    restore_value: true
+    set_action: []
+
+  # ── Temperature Calibration Offsets
+  - platform: template
+    name: "CYD Bloc 1 Offset Temp"
+    id: cyd_b1_offset
+    icon: mdi:thermometer-plus
+    unit_of_measurement: "°C"
+    min_value: -5.0
+    max_value: 5.0
+    step: 0.1
+    initial_value: 0.0
+    optimistic: true
+    restore_value: true
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 2 Offset Temp"
+    id: cyd_b2_offset
+    icon: mdi:thermometer-plus
+    unit_of_measurement: "°C"
+    min_value: -5.0
+    max_value: 5.0
+    step: 0.1
+    initial_value: 0.0
+    optimistic: true
+    restore_value: true
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 3 Offset Temp"
+    id: cyd_b3_offset
+    icon: mdi:thermometer-plus
+    unit_of_measurement: "°C"
+    min_value: -5.0
+    max_value: 5.0
+    step: 0.1
+    initial_value: 0.0
+    optimistic: true
+    restore_value: true
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 4 Offset Temp"
+    id: cyd_b4_offset
+    icon: mdi:thermometer-plus
+    unit_of_measurement: "°C"
+    min_value: -5.0
+    max_value: 5.0
+    step: 0.1
+    initial_value: 0.0
+    optimistic: true
+    restore_value: true
+    set_action: []
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 3. Customizable Text Labels (NVS Flash Storage)
+# ─────────────────────────────────────────────────────────────────────────────
+text:
+  - platform: template
+    name: "CYD Nom Ville Météo"
+    id: cyd_city_text
+    icon: mdi:city
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "${location_name}"
+    min_length: 0
+    max_length: 30
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 1 Nom"
+    id: cyd_b1_label
+    icon: mdi:rename-box
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "${sensor_bloc1_label}"
+    min_length: 0
+    max_length: 20
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 2 Nom"
+    id: cyd_b2_label
+    icon: mdi:rename-box
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "${sensor_bloc2_label}"
+    min_length: 0
+    max_length: 20
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 3 Nom"
+    id: cyd_b3_label
+    icon: mdi:rename-box
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "${sensor_bloc3_label}"
+    min_length: 0
+    max_length: 20
+    set_action: []
+
+  - platform: template
+    name: "CYD Bloc 4 Nom"
+    id: cyd_b4_label
+    icon: mdi:rename-box
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "${sensor_bloc4_label}"
+    min_length: 0
+    max_length: 20
+    set_action: []
+

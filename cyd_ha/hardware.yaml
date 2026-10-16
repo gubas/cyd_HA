@@ -58,9 +58,13 @@ light:
     id: backlight
     restore_mode: ALWAYS_ON
   - platform: rgb
-    name: LED
-    red: output_red
+    name: "CYD Wall LED"
     id: led
+    red: output_red
     green: output_green
     blue: output_blue
     restore_mode: ALWAYS_OFF
+    default_transition_length: 500ms
+
+
+

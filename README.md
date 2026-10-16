@@ -39,9 +39,16 @@ A smart touch panel to control Home Assistant using an ESP32-2432S028R (CYD - Ch
 - **High-Performance Architecture & Zero-RAM Overhead**:
   - Event-driven rain forecast byte cache (`cyd_ui.h`) computed only on sensor updates, eliminating ~36 dynamic string allocations/sec from the 500ms rendering loop.
   - Dedicated modular UI engine (`cyd_ui.h`) separating rendering logic from YAML orchestration.
+- **Home Assistant Dynamic Controls & Customization**:
+  - 🎛️ **Live Customization from HA**: Edit room block names (`text`), select room icons (`select`), and tune temperature calibration offsets (`number`) directly from Home Assistant without recompiling or reflashing.
+  - 🔄 **Bidirectional Page Selector (`select`)**: View the active screen page in real-time or force a specific page from Home Assistant automations (e.g. show 3D printer when printing starts).
+  - ⏱️ **Configurable Screen Timings**: Adjust page auto-cycle speed (3-60s), toggle auto-cycle (`switch`), and configure menu timeout directly from Home Assistant.
+  - 💾 **Flash NVS Persistence**: All settings modified in Home Assistant persist across power cycles.
+  - 🧩 **Optional Virtual Helpers Package**: Map sensors through dynamic Home Assistant drop-down helpers (`input_select`) to reassign rooms without touching firmware (see [`docs/homeassistant_helpers.yaml`](docs/homeassistant_helpers.yaml)).
 - **Secure connection**: Encrypted API, password-protected OTA
 - **Modular architecture**: Configuration split into clean, single-responsibility files for easy maintenance
-- **Auto-return**: Automatic return to display cycle after 10s menu inactivity
+- **Auto-return**: Automatic return to display cycle after menu inactivity
+
 
 ## 📸 UI Gallery
 

@@ -421,11 +421,23 @@ inline void cyd_draw_weather_page(display::Display &it, const char* weather_titl
   }
 }
 
+inline image::Image* cyd_get_room_icon(const std::string& icon_name, image::Image* fallback) {
+  if (icon_name == "Salon/Maison" || icon_name == "hometemperature") return hometemperature;
+  if (icon_name == "Bureau" || icon_name == "deskroom") return deskroom;
+  if (icon_name == "Chambre" || icon_name == "bedroom") return bedroom;
+  if (icon_name == "Cuisine" || icon_name == "kitchenroom") return kitchenroom;
+  if (icon_name == "Thermostat" || icon_name == "thermostat") return thermostat;
+  if (icon_name == "Lumière" || icon_name == "bulb") return bulb;
+  if (icon_name == "Ventilateur" || icon_name == "fan") return fan;
+  if (icon_name == "Lampadaire" || icon_name == "lampadaire") return lampadaire;
+  return fallback;
+}
+
 inline void cyd_draw_sensors_page(display::Display &it,
-                                  const char* l1, image::Image* ic1,
-                                  const char* l2, image::Image* ic2,
-                                  const char* l3, image::Image* ic3,
-                                  const char* l4, image::Image* ic4) {
+                                  const char* l1, image::Image* ic1, float off1,
+                                  const char* l2, image::Image* ic2, float off2,
+                                  const char* l3, image::Image* ic3, float off3,
+                                  const char* l4, image::Image* ic4, float off4) {
   const int W = 240;
   const int CARD_W = 105, CARD_H = 68;
   const int GAP = 8;
@@ -439,7 +451,7 @@ inline void cyd_draw_sensors_page(display::Display &it,
     it.rectangle(x1, y1, CARD_W, CARD_H, divider);
     it.image(x1 + 6, y1 + 8, ic1, blue);
     it.print(x1 + 6, y1 + 50, info, white, l1);
-    it.printf(x1 + 48, y1 + 12, info, white, "%.1f C", sensor_bloc1_temp->state);
+    it.printf(x1 + 48, y1 + 12, info, white, "%.1f C", sensor_bloc1_temp->state + off1);
     if (sensor_bloc1_hum->has_state()) {
       it.printf(x1 + 48, y1 + 30, info, white, "%.0f %%", sensor_bloc1_hum->state);
     }
@@ -452,7 +464,7 @@ inline void cyd_draw_sensors_page(display::Display &it,
     it.rectangle(x2, y2, CARD_W, CARD_H, divider);
     it.image(x2 + 6, y2 + 8, ic2, blue);
     it.print(x2 + 6, y2 + 50, info, white, l2);
-    it.printf(x2 + 48, y2 + 12, info, white, "%.1f C", sensor_bloc2_temp->state);
+    it.printf(x2 + 48, y2 + 12, info, white, "%.1f C", sensor_bloc2_temp->state + off2);
     if (sensor_bloc2_hum->has_state()) {
       it.printf(x2 + 48, y2 + 30, info, white, "%.0f %%", sensor_bloc2_hum->state);
     }
@@ -465,7 +477,7 @@ inline void cyd_draw_sensors_page(display::Display &it,
     it.rectangle(x3, y3, CARD_W, CARD_H, divider);
     it.image(x3 + 6, y3 + 8, ic3, blue);
     it.print(x3 + 6, y3 + 50, info, white, l3);
-    it.printf(x3 + 48, y3 + 12, info, white, "%.1f C", sensor_bloc3_temp->state);
+    it.printf(x3 + 48, y3 + 12, info, white, "%.1f C", sensor_bloc3_temp->state + off3);
     if (sensor_bloc3_hum->has_state()) {
       it.printf(x3 + 48, y3 + 30, info, white, "%.0f %%", sensor_bloc3_hum->state);
     }
@@ -478,7 +490,7 @@ inline void cyd_draw_sensors_page(display::Display &it,
     it.rectangle(x4, y4, CARD_W, CARD_H, divider);
     it.image(x4 + 6, y4 + 8, ic4, blue);
     it.print(x4 + 6, y4 + 50, info, white, l4);
-    it.printf(x4 + 48, y4 + 12, info, white, "%.1f C", sensor_bloc4_temp->state);
+    it.printf(x4 + 48, y4 + 12, info, white, "%.1f C", sensor_bloc4_temp->state + off4);
     if (sensor_bloc4_hum->has_state()) {
       it.printf(x4 + 48, y4 + 30, info, white, "%.0f %%", sensor_bloc4_hum->state);
     }

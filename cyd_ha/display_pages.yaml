@@ -44,8 +44,10 @@ display:
         return;
       }
 
-      // Auto-cycle pages every 8 seconds
-      if (millis() - last_switch > 8000) {
+      // Auto-cycle pages if enabled
+      unsigned long cycle_interval_ms = id(cyd_cycle_speed).has_state() ? (unsigned long)(id(cyd_cycle_speed).state * 1000) : 8000;
+      bool auto_cycle_on = id(cyd_auto_cycle).state;
+      if (auto_cycle_on && (millis() - last_switch > cycle_interval_ms)) {
         cyd_next_page();
         last_switch = millis();
       }
@@ -62,14 +64,37 @@ display:
 
       // 5. Render Active Page
       int page = id(current_page);
+
+      // Sync active page selector with current screen
+      const char* const page_names[5] = {"Météo", "Capteurs", "Énergie", "Média", "Imprimante 3D"};
+      if (page >= 0 && page < 5 && id(cyd_page_selector).state != page_names[page]) {
+        id(cyd_page_selector).publish_state(page_names[page]);
+      }
+
       if (page == 0) {
-        cyd_draw_weather_page(it, "${i18n_weather_title}", "${location_name}", "${i18n_no_alerts}", "${i18n_next_rain_prefix}", "${i18n_next_rain_none}");
+        const char* city = id(cyd_city_text).state.empty() ? "${location_name}" : id(cyd_city_text).state.c_str();
+        cyd_draw_weather_page(it, "${i18n_weather_title}", city, "${i18n_no_alerts}", "${i18n_next_rain_prefix}", "${i18n_next_rain_none}");
       } else if (page == 1) {
+        const char* l1 = id(cyd_b1_label).state.empty() ? "${sensor_bloc1_label}" : id(cyd_b1_label).state.c_str();
+        const char* l2 = id(cyd_b2_label).state.empty() ? "${sensor_bloc2_label}" : id(cyd_b2_label).state.c_str();
+        const char* l3 = id(cyd_b3_label).state.empty() ? "${sensor_bloc3_label}" : id(cyd_b3_label).state.c_str();
+        const char* l4 = id(cyd_b4_label).state.empty() ? "${sensor_bloc4_label}" : id(cyd_b4_label).state.c_str();
+
+        image::Image* ic1 = cyd_get_room_icon(id(cyd_b1_icon).state, id(${sensor_bloc1_icon}));
+        image::Image* ic2 = cyd_get_room_icon(id(cyd_b2_icon).state, id(${sensor_bloc2_icon}));
+        image::Image* ic3 = cyd_get_room_icon(id(cyd_b3_icon).state, id(${sensor_bloc3_icon}));
+        image::Image* ic4 = cyd_get_room_icon(id(cyd_b4_icon).state, id(${sensor_bloc4_icon}));
+
+        float off1 = id(cyd_b1_offset).has_state() ? id(cyd_b1_offset).state : 0.0f;
+        float off2 = id(cyd_b2_offset).has_state() ? id(cyd_b2_offset).state : 0.0f;
+        float off3 = id(cyd_b3_offset).has_state() ? id(cyd_b3_offset).state : 0.0f;
+        float off4 = id(cyd_b4_offset).has_state() ? id(cyd_b4_offset).state : 0.0f;
+
         cyd_draw_sensors_page(it,
-          "${sensor_bloc1_label}", id(${sensor_bloc1_icon}),
-          "${sensor_bloc2_label}", id(${sensor_bloc2_icon}),
-          "${sensor_bloc3_label}", id(${sensor_bloc3_icon}),
-          "${sensor_bloc4_label}", id(${sensor_bloc4_icon})
+          l1, ic1, off1,
+          l2, ic2, off2,
+          l3, ic3, off3,
+          l4, ic4, off4
         );
       } else if (page == 2) {
         cyd_draw_energy_page(it,

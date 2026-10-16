@@ -49,9 +49,14 @@ esp32:
   board: esp32dev
   framework:
     type: arduino
+    advanced:
+      minimum_chip_revision: "3.1"
+      sram1_as_iram: true
 
 # Logging Configuration
 logger:
+  level: INFO
+
 
 # Home Assistant API (encrypted connection)
 api:
@@ -135,8 +140,8 @@ interval:
           if (id(show_return_page)) {
             // Only check timeout if menu_display_time was actually set
             if (id(menu_display_time) > 0) {
-              // Check if timeout has passed since menu was displayed
-              if (millis() - id(menu_display_time) >= ${menu_timeout_ms}) {
+              unsigned long timeout_ms = id(cyd_menu_timeout).has_state() ? (unsigned long)(id(cyd_menu_timeout).state * 1000) : ${menu_timeout_ms};
+              if (millis() - id(menu_display_time) >= timeout_ms) {
                 id(show_return_page) = false;
               }
             }
@@ -155,8 +160,11 @@ interval:
 # Home Assistant Sensors Integration
 <<: !include cyd_ha/sensors.yaml
 
+# Home Assistant Dynamic Configuration & Controls (Option C)
+<<: !include cyd_ha/controls_ha.yaml
+
 # Touchscreen Button Definitions
 binary_sensor: !include cyd_ha/buttons.yaml
 
 # Display UI Rendering Logic (menu classique + pages défilantes)
-<<: !include cyd_ha/display_pages.yaml
+<<: !include cyd_ha/display_pages.yaml

@@ -37,6 +37,10 @@ outside_temp_entity: sensor.outdoor_temperature
 # ─── Indoor Sensors (Sensors Page - 4 blocks max) ────────────────────────────
 # Labels defined in i18n/*.yaml (sensor_bloc1_label, sensor_bloc2_label, etc.)
 # Use sensor.none to disable a block.
+#
+# Option A (Standard) : Direct Home Assistant entity IDs
+# Option B (Helpers)  : Virtual HA template sensors (see docs/homeassistant_helpers.yaml)
+#                       e.g. sensor.cyd_bloc1_temperature, sensor.cyd_bloc1_humidity
 
 sensor_bloc1_temp_entity: sensor.living_room_temperature
 sensor_bloc1_hum_entity: sensor.living_room_humidity

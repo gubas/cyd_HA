@@ -1,0 +1,222 @@
+# =============================================================================
+# Home Assistant - Package Sondes Virtuelles & Helpers pour CYD HA Panel
+# =============================================================================
+# Ce fichier permet de créer des sondes virtuelles dans Home Assistant.
+# Au lieu de lier le CYD en dur à vos adresses Zigbee/Bluetooth matérielles,
+# le CYD lit ces 4 entités génériques. Vous pouvez ainsi changer de sonde
+# dans Home Assistant sans jamais devoir recompiler ni reflasher le CYD !
+#
+# Installation :
+# 1. Copiez ce contenu dans votre dossier Home Assistant (ex: packages/cyd_helpers.yaml)
+#    ou ajoutez les sections dans votre configuration.yaml.
+# 2. Dans substitutions.local.yaml sur le CYD, décommentez l'Option 1 (Helpers).
+# =============================================================================
+
+# ─────────────────────────────────────────────────────────────────────────────
+# OPTION A : Sondes Virtuelles Dynamiques avec Listes Déroulantes (Recommandé)
+# ─────────────────────────────────────────────────────────────────────────────
+# Permet de choisir la sonde de chaque bloc via un menu déroulant dans Home Assistant !
+
+input_select:
+  cyd_bloc1_source:
+    name: "CYD Bloc 1 - Pièce assignée"
+    icon: mdi:home-thermometer
+    options:
+      - "Salon"
+      - "Bureau"
+      - "Chambre Parents"
+      - "Chambre Enfants"
+      - "Cuisine"
+      - "Extérieur"
+    initial: "Salon"
+
+  cyd_bloc2_source:
+    name: "CYD Bloc 2 - Pièce assignée"
+    icon: mdi:desk
+    options:
+      - "Salon"
+      - "Bureau"
+      - "Chambre Parents"
+      - "Chambre Enfants"
+      - "Cuisine"
+      - "Extérieur"
+    initial: "Bureau"
+
+  cyd_bloc3_source:
+    name: "CYD Bloc 3 - Pièce assignée"
+    icon: mdi:bed
+    options:
+      - "Salon"
+      - "Bureau"
+      - "Chambre Parents"
+      - "Chambre Enfants"
+      - "Cuisine"
+      - "Extérieur"
+    initial: "Chambre Parents"
+
+  cyd_bloc4_source:
+    name: "CYD Bloc 4 - Pièce assignée"
+    icon: mdi:bed
+    options:
+      - "Salon"
+      - "Bureau"
+      - "Chambre Parents"
+      - "Chambre Enfants"
+      - "Cuisine"
+      - "Extérieur"
+    initial: "Chambre Enfants"
+
+template:
+  - sensor:
+      # ─── BLOC 1 VIRTUAL SENSOR ─────────────────────────────────────────────
+      - name: "CYD Bloc 1 Température"
+        unique_id: cyd_bloc1_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >-
+          {% set source = states('input_select.cyd_bloc1_source') %}
+          {% if source == 'Salon' %} {{ states('sensor.living_room_temperature') }}
+          {% elif source == 'Bureau' %} {{ states('sensor.office_temperature') }}
+          {% elif source == 'Chambre Parents' %} {{ states('sensor.bedroom_temperature') }}
+          {% elif source == 'Chambre Enfants' %} {{ states('sensor.kids_room_temperature') }}
+          {% elif source == 'Cuisine' %} {{ states('sensor.kitchen_temperature') }}
+          {% elif source == 'Extérieur' %} {{ states('sensor.outdoor_temperature') }}
+          {% else %} {{ states('sensor.none') }}
+          {% endif %}
+
+      - name: "CYD Bloc 1 Humidité"
+        unique_id: cyd_bloc1_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >-
+          {% set source = states('input_select.cyd_bloc1_source') %}
+          {% if source == 'Salon' %} {{ states('sensor.living_room_humidity') }}
+          {% elif source == 'Bureau' %} {{ states('sensor.office_humidity') }}
+          {% elif source == 'Chambre Parents' %} {{ states('sensor.bedroom_humidity') }}
+          {% elif source == 'Chambre Enfants' %} {{ states('sensor.kids_room_humidity') }}
+          {% elif source == 'Cuisine' %} {{ states('sensor.kitchen_humidity') }}
+          {% elif source == 'Extérieur' %} {{ states('sensor.outdoor_humidity') }}
+          {% else %} {{ states('sensor.none') }}
+          {% endif %}
+
+      # ─── BLOC 2 VIRTUAL SENSOR ─────────────────────────────────────────────
+      - name: "CYD Bloc 2 Température"
+        unique_id: cyd_bloc2_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >-
+          {% set source = states('input_select.cyd_bloc2_source') %}
+          {% if source == 'Salon' %} {{ states('sensor.living_room_temperature') }}
+          {% elif source == 'Bureau' %} {{ states('sensor.office_temperature') }}
+          {% elif source == 'Chambre Parents' %} {{ states('sensor.bedroom_temperature') }}
+          {% elif source == 'Chambre Enfants' %} {{ states('sensor.kids_room_temperature') }}
+          {% elif source == 'Cuisine' %} {{ states('sensor.kitchen_temperature') }}
+          {% elif source == 'Extérieur' %} {{ states('sensor.outdoor_temperature') }}
+          {% else %} {{ states('sensor.none') }}
+          {% endif %}
+
+      - name: "CYD Bloc 2 Humidité"
+        unique_id: cyd_bloc2_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >-
+          {% set source = states('input_select.cyd_bloc2_source') %}
+          {% if source == 'Salon' %} {{ states('sensor.living_room_humidity') }}
+          {% elif source == 'Bureau' %} {{ states('sensor.office_humidity') }}
+          {% elif source == 'Chambre Parents' %} {{ states('sensor.bedroom_humidity') }}
+          {% elif source == 'Chambre Enfants' %} {{ states('sensor.kids_room_humidity') }}
+          {% elif source == 'Cuisine' %} {{ states('sensor.kitchen_humidity') }}
+          {% elif source == 'Extérieur' %} {{ states('sensor.outdoor_humidity') }}
+          {% else %} {{ states('sensor.none') }}
+          {% endif %}
+
+      # ─── BLOC 3 VIRTUAL SENSOR ─────────────────────────────────────────────
+      - name: "CYD Bloc 3 Température"
+        unique_id: cyd_bloc3_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >-
+          {% set source = states('input_select.cyd_bloc3_source') %}
+          {% if source == 'Salon' %} {{ states('sensor.living_room_temperature') }}
+          {% elif source == 'Bureau' %} {{ states('sensor.office_temperature') }}
+          {% elif source == 'Chambre Parents' %} {{ states('sensor.bedroom_temperature') }}
+          {% elif source == 'Chambre Enfants' %} {{ states('sensor.kids_room_temperature') }}
+          {% elif source == 'Cuisine' %} {{ states('sensor.kitchen_temperature') }}
+          {% elif source == 'Extérieur' %} {{ states('sensor.outdoor_temperature') }}
+          {% else %} {{ states('sensor.none') }}
+          {% endif %}
+
+      - name: "CYD Bloc 3 Humidité"
+        unique_id: cyd_bloc3_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >-
+          {% set source = states('input_select.cyd_bloc3_source') %}
+          {% if source == 'Salon' %} {{ states('sensor.living_room_humidity') }}
+          {% elif source == 'Bureau' %} {{ states('sensor.office_humidity') }}
+          {% elif source == 'Chambre Parents' %} {{ states('sensor.bedroom_humidity') }}
+          {% elif source == 'Chambre Enfants' %} {{ states('sensor.kids_room_humidity') }}
+          {% elif source == 'Cuisine' %} {{ states('sensor.kitchen_humidity') }}
+          {% elif source == 'Extérieur' %} {{ states('sensor.outdoor_humidity') }}
+          {% else %} {{ states('sensor.none') }}
+          {% endif %}
+
+      # ─── BLOC 4 VIRTUAL SENSOR ─────────────────────────────────────────────
+      - name: "CYD Bloc 4 Température"
+        unique_id: cyd_bloc4_temperature
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state_class: measurement
+        state: >-
+          {% set source = states('input_select.cyd_bloc4_source') %}
+          {% if source == 'Salon' %} {{ states('sensor.living_room_temperature') }}
+          {% elif source == 'Bureau' %} {{ states('sensor.office_temperature') }}
+          {% elif source == 'Chambre Parents' %} {{ states('sensor.bedroom_temperature') }}
+          {% elif source == 'Chambre Enfants' %} {{ states('sensor.kids_room_temperature') }}
+          {% elif source == 'Cuisine' %} {{ states('sensor.kitchen_temperature') }}
+          {% elif source == 'Extérieur' %} {{ states('sensor.outdoor_temperature') }}
+          {% else %} {{ states('sensor.none') }}
+          {% endif %}
+
+      - name: "CYD Bloc 4 Humidité"
+        unique_id: cyd_bloc4_humidity
+        unit_of_measurement: "%"
+        device_class: humidity
+        state_class: measurement
+        state: >-
+          {% set source = states('input_select.cyd_bloc4_source') %}
+          {% if source == 'Salon' %} {{ states('sensor.living_room_humidity') }}
+          {% elif source == 'Bureau' %} {{ states('sensor.office_humidity') }}
+          {% elif source == 'Chambre Parents' %} {{ states('sensor.bedroom_humidity') }}
+          {% elif source == 'Chambre Enfants' %} {{ states('sensor.kids_room_humidity') }}
+          {% elif source == 'Cuisine' %} {{ states('sensor.kitchen_humidity') }}
+          {% elif source == 'Extérieur' %} {{ states('sensor.outdoor_humidity') }}
+          {% else %} {{ states('sensor.none') }}
+          {% endif %}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EXEMPLE DE CARTE DASHBOARD LOVELACE (À coller dans votre interface HA)
+# ─────────────────────────────────────────────────────────────────────────────
+# type: entities
+# title: "CYD HA Panel - Configuration Capteurs"
+# show_header_toggle: false
+# entities:
+#   - entity: input_select.cyd_bloc1_source
+#     name: "Bloc 1 (Haut Gauche)"
+#   - entity: text.cyd_bloc_1_nom
+#     name: "Nom affiché Bloc 1"
+#   - entity: select.cyd_bloc_1_icone
+#     name: "Icône Bloc 1"
+#   - type: divider
+#   - entity: input_select.cyd_bloc2_source
+#     name: "Bloc 2 (Haut Droite)"
+#   - entity: text.cyd_bloc_2_nom
+#     name: "Nom affiché Bloc 2"
+#   - entity: select.cyd_bloc_2_icone
+#     name: "Icône Bloc 2"
