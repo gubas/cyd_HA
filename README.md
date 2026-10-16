@@ -1,6 +1,6 @@
 # ESP32 CYD Home Assistant Touch Panel
 
-> Current version: **v4.6.1**
+> Current version: **v4.7.0**
 
 [![ESPHome Build](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml/badge.svg)](https://github.com/gubas/cyd_HA/actions/workflows/esphome.yml)
 

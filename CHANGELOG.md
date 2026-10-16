@@ -1,3 +1,9 @@
+## [4.7.0](https://github.com/gubas/cyd_HA/compare/v4.6.1...v4.7.0) (2026-10-16)
+
+### ✨ Features
+
+* add dynamic Home Assistant controls, page selector, and optional virtual helpers package ([0073b20](https://github.com/gubas/cyd_HA/commit/0073b20d2aff93380b470e907859668d03adde43))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

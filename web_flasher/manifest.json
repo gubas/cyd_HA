@@ -1,6 +1,6 @@
 {
   "name": "CYD HA Panel",
-  "version": "4.6.1",
+  "version": "4.7.0",
   "home_assistant_domain": "esphome",
   "funding_url": "https://esphome.io",
   "new_install_prompt_erase": false,
