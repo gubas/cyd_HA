@@ -67,7 +67,7 @@ display:
 
       // Sync active page selector with current screen
       const char* const page_names[5] = {"Météo", "Capteurs", "Énergie", "Média", "Imprimante 3D"};
-      if (page >= 0 && page < 5 && id(cyd_page_selector).state != page_names[page]) {
+      if (page >= 0 && page < 5 && id(cyd_page_selector).current_option() != page_names[page]) {
         id(cyd_page_selector).publish_state(page_names[page]);
       }
 
@@ -80,10 +80,10 @@ display:
         const char* l3 = id(cyd_b3_label).state.empty() ? "${sensor_bloc3_label}" : id(cyd_b3_label).state.c_str();
         const char* l4 = id(cyd_b4_label).state.empty() ? "${sensor_bloc4_label}" : id(cyd_b4_label).state.c_str();
 
-        image::Image* ic1 = cyd_get_room_icon(id(cyd_b1_icon).state, id(${sensor_bloc1_icon}));
-        image::Image* ic2 = cyd_get_room_icon(id(cyd_b2_icon).state, id(${sensor_bloc2_icon}));
-        image::Image* ic3 = cyd_get_room_icon(id(cyd_b3_icon).state, id(${sensor_bloc3_icon}));
-        image::Image* ic4 = cyd_get_room_icon(id(cyd_b4_icon).state, id(${sensor_bloc4_icon}));
+        image::Image* ic1 = cyd_get_room_icon(id(cyd_b1_icon).current_option(), id(${sensor_bloc1_icon}));
+        image::Image* ic2 = cyd_get_room_icon(id(cyd_b2_icon).current_option(), id(${sensor_bloc2_icon}));
+        image::Image* ic3 = cyd_get_room_icon(id(cyd_b3_icon).current_option(), id(${sensor_bloc3_icon}));
+        image::Image* ic4 = cyd_get_room_icon(id(cyd_b4_icon).current_option(), id(${sensor_bloc4_icon}));
 
         float off1 = id(cyd_b1_offset).has_state() ? id(cyd_b1_offset).state : 0.0f;
         float off2 = id(cyd_b2_offset).has_state() ? id(cyd_b2_offset).state : 0.0f;

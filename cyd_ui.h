@@ -421,7 +421,7 @@ inline void cyd_draw_weather_page(display::Display &it, const char* weather_titl
   }
 }
 
-inline image::Image* cyd_get_room_icon(const std::string& icon_name, image::Image* fallback) {
+inline image::Image* cyd_get_room_icon(const esphome::StringRef& icon_name, image::Image* fallback) {
   if (icon_name == "Salon/Maison" || icon_name == "hometemperature") return hometemperature;
   if (icon_name == "Bureau" || icon_name == "deskroom") return deskroom;
   if (icon_name == "Chambre" || icon_name == "bedroom") return bedroom;
