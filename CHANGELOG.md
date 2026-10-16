@@ -1,3 +1,9 @@
+## [4.7.1](https://github.com/gubas/cyd_HA/compare/v4.7.0...v4.7.1) (2026-10-16)
+
+### 🐛 Bug Fixes
+
+* **ci:** use current_option() instead of deprecated .state on select entities ([588fc0f](https://github.com/gubas/cyd_HA/commit/588fc0fb735ef78e1e98a349b519bcc09bc209f4))
+
 ## [4.7.0](https://github.com/gubas/cyd_HA/compare/v4.6.1...v4.7.0) (2026-10-16)
 
 ### ✨ Features

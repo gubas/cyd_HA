@@ -13,7 +13,7 @@
 //   - Modular rendering routines for all display screens
 // =============================================================================
 
-#define CYD_VERSION "v4.7.0"
+#define CYD_VERSION "v4.7.1"
 
 // -----------------------------------------------------------------------------
 // 1. Rain Forecast Cache (Optimized for 0 RAM allocation per frame)
