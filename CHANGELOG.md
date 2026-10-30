@@ -1,3 +1,9 @@
+## [4.8.1](https://github.com/gubas/cyd_HA/compare/v4.8.0...v4.8.1) (2026-10-30)
+
+### 🐛 Bug Fixes
+
+* **3d:** make build scripts work from any current directory using script root ([bf10219](https://github.com/gubas/cyd_HA/commit/bf1021948a23cda7c566ef89274abb6e4aa74173))
+
 ## [4.8.0](https://github.com/gubas/cyd_HA/compare/v4.7.1...v4.8.0) (2026-10-30)
 
 ### ✨ Features
