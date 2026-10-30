@@ -1,3 +1,9 @@
+## [4.8.0](https://github.com/gubas/cyd_HA/compare/v4.7.1...v4.8.0) (2026-10-30)
+
+### ✨ Features
+
+* **3d:** add OpenSCAD models, STLs, build automation, and native Bambu 3MF project for IKEA SKADIS case ([a364918](https://github.com/gubas/cyd_HA/commit/a364918d9d027fdfe5c7ec4b6e3a1eef6ba66068))
+
 ## [4.7.1](https://github.com/gubas/cyd_HA/compare/v4.7.0...v4.7.1) (2026-10-16)
 
 ### 🐛 Bug Fixes
